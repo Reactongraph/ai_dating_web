@@ -1,5 +1,29 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Setup
+
+The project uses different environment configurations for development, staging, and production. Environment templates are provided in the `env-templates` directory.
+
+1. Choose the appropriate environment template from `env-templates`:
+   - `template.env.development` - for local development
+   - `template.env.staging` - for staging environment
+   - `template.env.production` - for production environment
+
+2. Copy the chosen template to the project root and rename it according to your environment:
+
+   ```bash
+   # For development
+   cp env-templates/template.env.development .env.development.local
+
+   # For staging
+   cp env-templates/template.env.staging .env.staging.local
+
+   # For production
+   cp env-templates/template.env.production .env.production.local
+   ```
+
+3. Update the environment variables in your local .env file as needed
+
 ## Getting Started
 
 First, run the development server:
