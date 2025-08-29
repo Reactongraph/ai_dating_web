@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar';
+import Footer from '../footer/Footer';
 
 interface NavigationWrapperProps {
   children: React.ReactNode;
@@ -16,11 +17,12 @@ const NavigationWrapper = ({ children }: NavigationWrapperProps) => {
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Sidebar isExpanded={isSidebarExpanded} onToggle={toggleSidebar} />
       <NavBar />
-      <main className="pt-16 pl-16">{children}</main>
-    </>
+      <main className="pt-16 pl-16 flex-grow">{children}</main>
+      <Footer />
+    </div>
   );
 };
 

@@ -32,11 +32,18 @@ export const colors = {
     secondary: '#1A1A1A', // Lighter background
     elevated: '#222222', // Cards, modals, etc.
     hover: '#FFFFFF1A', // Hover state background
+    card: '#121212', // Card background
+    cardShadow: '#222222', // Card shadow/border effect
   },
   text: {
     primary: '#FFFFFF',
     secondary: '#A6A6A6',
     disabled: '#737373',
+    muted: '#666666', // Muted text color
+    inactive: '#666666', // Inactive tab color
+  },
+  border: {
+    divider: '#222222', // Tab bottom border
   },
   status: {
     success: '#52C41A',
