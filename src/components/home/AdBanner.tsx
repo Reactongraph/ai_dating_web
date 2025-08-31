@@ -14,8 +14,18 @@ const AdBanner = ({
   buttonHref,
 }: AdBannerProps) => {
   return (
-    <div className="relative w-full bg-gradient-to-r from-[#0066FF] via-[#7000FF] to-[#FF1493] py-4 px-6">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <div
+      className="relative w-full py-4 px-6 bg-cover bg-center"
+      style={{ backgroundImage: 'url("/assets/advBanner.png")' }}
+    >
+      {/* Sparkle overlay */}
+      {/* <div
+        className="absolute inset-0 bg-cover bg-center pointer-events-none"
+        style={{ backgroundImage: 'url("/assets/sparkle.png")' }}
+      /> */}
+
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <h2 className="text-2xl font-semibold text-white">{text}</h2>
           <span className="text-4xl font-bold text-[#FFD700]">{discount}</span>
@@ -26,12 +36,6 @@ const AdBanner = ({
         >
           {buttonText}
         </Link>
-      </div>
-      {/* Decorative stars */}
-      <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-2 right-4 w-2 h-2 bg-white opacity-50 rounded-full" />
-        <div className="absolute top-6 right-12 w-1 h-1 bg-white opacity-30 rounded-full" />
-        <div className="absolute top-1 right-24 w-1.5 h-1.5 bg-white opacity-40 rounded-full" />
       </div>
     </div>
   );

@@ -25,14 +25,17 @@ const HeroSection = ({
   imageSrc,
 }: HeroSectionProps) => {
   return (
-    <div className="relative w-full bg-black min-h-[600px] overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-[#4B0082] to-[#FF69B4] opacity-50" />
+    <div className="relative w-full min-h-[400px] overflow-hidden">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0  bg-no-repeat"
+        style={{ backgroundImage: 'url("/assets/banner.png")' }}
+      />
 
       {/* Content */}
-      <div className="relative max-w-7xl mx-auto px-6 py-16 flex flex-col lg:flex-row items-center">
+      <div className="relative  mx-auto  flex flex-col md:flex-row items-center">
         {/* Text Content */}
-        <div className="flex-1 space-y-6 z-10">
+        <div className="flex-1 md:ml-10 space-y-6 z-10">
           <h1 className="text-5xl font-bold text-white space-y-2">
             <span className="block">{title.main}</span>
             <span className="block">
@@ -64,13 +67,6 @@ const HeroSection = ({
             />
           </div>
         </div>
-      </div>
-
-      {/* Decorative elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 right-1/3 w-2 h-2 bg-white opacity-50 rounded-full" />
-        <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-white opacity-30 rounded-full" />
-        <div className="absolute top-1/2 right-1/5 w-1.5 h-1.5 bg-white opacity-40 rounded-full" />
       </div>
     </div>
   );

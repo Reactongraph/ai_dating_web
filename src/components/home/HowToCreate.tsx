@@ -14,7 +14,7 @@ const StepCard = ({ iconSrc, title, description }: StepCardProps) => (
     {/* Main Card */}
     <div className="relative bg-background-card rounded-[24px] p-12 flex flex-col items-center text-center">
       {/* Icon Container */}
-      <div className="relative w-24 h-24 mb-8">
+      <div className="relative w-[72px] h-[72px] mb-8">
         <Image
           src={iconSrc}
           alt={title}
@@ -35,19 +35,19 @@ const StepCard = ({ iconSrc, title, description }: StepCardProps) => (
 const HowToCreate = () => {
   const steps = [
     {
-      iconSrc: '/icons/signup.svg',
+      iconSrc: '/assets/signUp.svg',
       title: 'Sign Up',
       description:
         'Join the True Companion community with a quick and easy registration.',
     },
     {
-      iconSrc: '/icons/magic-wand.svg',
+      iconSrc: '/assets/wand.svg',
       title: 'Bring AI',
       description:
         'Use our powerful AI tools to create your first personalized AI character.',
     },
     {
-      iconSrc: '/icons/chat.svg',
+      iconSrc: '/assets/chat.svg',
       title: 'Conversation',
       description:
         'When she comes to life, enjoy deep and playful chats with your dream AI Girlfriend.',

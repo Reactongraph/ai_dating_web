@@ -1,0 +1,77 @@
+{
+  "editor": {
+    "formatOnSave": true,
+    "defaultFormatter": "prettier",
+    "tabSize": 2,
+    "insertSpaces": true,
+    "rulers": [80, 100],
+    "wordWrap": "off",
+    "trimTrailingWhitespace": true,
+    "insertFinalNewline": true
+  },
+  "typescript": {
+    "suggest": {
+      "completeFunctionCalls": true,
+      "autoImports": true
+    },
+    "preferences": {
+      "importModuleSpecifier": "non-relative"
+    }
+  },
+  "tailwindCSS": {
+    "experimental": {
+      "classRegex": [
+        ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+        ["cx\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+      ]
+    },
+    "validate": true
+  },
+  "search": {
+    "exclude": {
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "**/*.code-search": true,
+      ".git": true,
+      ".next": true,
+      "out": true,
+      "coverage": true,
+      "dist": true,
+      "build": true
+    }
+  },
+  "files": {
+    "watcherExclude": {
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/node_modules/**": true,
+      "**/.hg/store/**": true,
+      "**/coverage/**": true,
+      "**/.next/**": true,
+      "**/out/**": true,
+      "**/dist/**": true,
+      "**/build/**": true
+    },
+    "associations": {
+      "*.css": "tailwindcss",
+      "*.module.css": "tailwindcss",
+      "*.tsx": "typescriptreact",
+      "*.ts": "typescript",
+      "*.mdx": "markdown"
+    }
+  },
+  "git": {
+    "enabled": true,
+    "autofetch": true,
+    "confirmSync": true
+  },
+  "terminal": {
+    "integrated": {
+      "defaultProfile": {
+        "linux": "bash",
+        "osx": "bash",
+        "windows": "powershell"
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import CompanionCard, { Companion } from '@/components/cards/CompanionCard';
+import CompanionCard from '@/components/cards/CompanionCard';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import CategoryTabs from '@/components/navigation/CategoryTabs';
 
@@ -16,7 +16,7 @@ const companionCategories = [
         age: 26,
         description:
           'Energetic woman who travels the world to find new experiences.Show morecreated at Sep',
-        imageSrc: '/companions/aley.jpg',
+        imageSrc: '/assets/cardgirl2.jpg',
         tags: ['Aley, 26', 'Caregiver'],
       },
       {
@@ -25,7 +25,7 @@ const companionCategories = [
         age: 25,
         description:
           'Energetic woman who travels the world to find new experiences.Show morecreated at Sep',
-        imageSrc: '/companions/fraha.jpg',
+        imageSrc: '/assets/cardgirl3.jpg',
         tags: ['Aley, 26', 'Caregiver'],
       },
       {
@@ -34,7 +34,7 @@ const companionCategories = [
         age: 28,
         description:
           'Energetic woman who travels the world to find new experiences.Show morecreated at Sep',
-        imageSrc: '/companions/molley.jpg',
+        imageSrc: '/assets/cardgirl2.jpg',
         tags: ['Aley, 26', 'Caregiver'],
       },
       {
@@ -43,7 +43,7 @@ const companionCategories = [
         age: 27,
         description:
           'Energetic woman who travels the world to find new experiences.Show morecreated at Sep',
-        imageSrc: '/companions/sarah.jpg',
+        imageSrc: '/assets/cardgirl3.jpg',
         tags: ['Aley, 26', 'Caregiver'],
       },
     ],
@@ -58,7 +58,7 @@ const companionCategories = [
         age: 28,
         description:
           'Charismatic and adventurous spirit seeking meaningful connections.Show morecreated at Sep',
-        imageSrc: '/companions/alex.jpg',
+        imageSrc: '/assets/cardgirl2.jpg',
         tags: ['Alex, 28', 'Adventurer'],
       },
       {
@@ -67,7 +67,7 @@ const companionCategories = [
         age: 30,
         description:
           'Creative soul with a passion for arts and deep conversations.Show morecreated at Sep',
-        imageSrc: '/companions/james.jpg',
+        imageSrc: '/assets/cardgirl3.jpg',
         tags: ['James, 30', 'Artist'],
       },
     ],
@@ -82,7 +82,7 @@ const companionCategories = [
         age: 21,
         description:
           'Kawaii anime character with a sweet personality and magical powers.Show morecreated at Sep',
-        imageSrc: '/companions/sakura.jpg',
+        imageSrc: '/assets/cardgirl2.jpg',
         tags: ['Sakura, 21', 'Magical'],
       },
       {
@@ -91,7 +91,7 @@ const companionCategories = [
         age: 23,
         description:
           'Mysterious anime companion with supernatural abilities.Show morecreated at Sep',
-        imageSrc: '/companions/yuki.jpg',
+        imageSrc: '/assets/cardgirl3.jpg',
         tags: ['Yuki, 23', 'Mysterious'],
       },
     ],
@@ -109,7 +109,10 @@ const AICompanionsSection = () => {
   return (
     <section>
       {/* Banner Title */}
-      <div className="relative w-full bg-gradient-to-r from-[#0066FF] via-[#7000FF] to-[#FF1493]">
+      <div
+        className="relative w-full bg-cover bg-center"
+        style={{ backgroundImage: 'url("/assets/meetai.png")' }}
+      >
         <div className="max-w-7xl mx-auto px-4 py-8 text-center">
           <h2 className="text-5xl font-bold text-white">
             Meet Your AI Companions

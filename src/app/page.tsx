@@ -28,7 +28,7 @@ export default function Home() {
         subtitle="From chats to charm — design the AI girlfriend of your dreams."
         buttonText="Create AI Character"
         buttonHref="/create-character"
-        imageSrc="/hero-image.png"
+        imageSrc="/assets/girlBanner.png"
       />
 
       {/* AI Companions Section */}

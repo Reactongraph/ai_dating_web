@@ -1,8 +1,11 @@
 import Link from 'next/link';
 
 const CreateCompanionCard = () => (
-  <div className="relative h-[480px] rounded-2xl overflow-hidden bg-gradient-to-br from-purple-600 to-blue-500">
-    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+  <div
+    className="relative h-[480px] rounded-2xl overflow-hidden bg-cover bg-center"
+    style={{ backgroundImage: 'url("/assets/cardgirl1.png")' }}
+  >
+    <div className="absolute inset-0 flex flex-col items-center justify-end p-6 text-center bg-black/30">
       <h3 className="text-3xl font-bold text-white mb-6">
         Create your own
         <br />

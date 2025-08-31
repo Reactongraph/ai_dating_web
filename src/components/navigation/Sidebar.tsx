@@ -191,11 +191,15 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
             </svg>
-            <span className="absolute -top-1 -right-1 px-2 py-0.5 text-xs bg-primary-500 rounded-full">
-              -70%
-            </span>
           </div>
-          {isExpanded && <span className="ml-4">Premium Now</span>}
+          {isExpanded && (
+            <span className="ml-4">
+              Premium Now{' '}
+              <span className="px-2 py-1.5 text-md  text-white bg-gradient-to-r from-[#00C2FF] to-[#00A3FF] rounded-full">
+                -70%
+              </span>
+            </span>
+          )}
         </Link>
 
         {/* Privacy & Terms */}
