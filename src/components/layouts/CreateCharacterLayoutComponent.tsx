@@ -1,0 +1,34 @@
+'use client';
+
+import { useState } from 'react';
+import NavBar from '@/components/navigation/NavBar';
+import Sidebar from '@/components/navigation/Sidebar';
+
+interface CreateCharacterLayoutComponentProps {
+  children: React.ReactNode;
+}
+
+const CreateCharacterLayoutComponent = ({
+  children,
+}: CreateCharacterLayoutComponentProps) => {
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarExpanded((prev) => !prev);
+  };
+
+  return (
+    <div className="h-screen flex flex-col bg-black text-white">
+      {/* Sidebar */}
+      <Sidebar isExpanded={isSidebarExpanded} onToggle={toggleSidebar} />
+
+      {/* Header */}
+      <NavBar />
+
+      {/* Main Content Area - No Footer */}
+      <main className="pt-16 pl-16 flex-grow">{children}</main>
+    </div>
+  );
+};
+
+export default CreateCharacterLayoutComponent;

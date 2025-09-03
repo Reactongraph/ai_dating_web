@@ -1,15 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import NavBar from './NavBar';
-import Sidebar from './Sidebar';
-import Footer from '../footer/Footer';
+import NavBar from '@/components/navigation/NavBar';
+import Sidebar from '@/components/navigation/Sidebar';
+import Footer from '@/components/footer/Footer';
 
-interface NavigationWrapperProps {
+interface GlobalLayoutProps {
   children: React.ReactNode;
 }
 
-const NavigationWrapper = ({ children }: NavigationWrapperProps) => {
+const GlobalLayout = ({ children }: GlobalLayoutProps) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   const toggleSidebar = () => {
@@ -17,13 +17,20 @@ const NavigationWrapper = ({ children }: NavigationWrapperProps) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col">
+      {/* Sidebar */}
       <Sidebar isExpanded={isSidebarExpanded} onToggle={toggleSidebar} />
+
+      {/* Header */}
       <NavBar />
+
+      {/* Main Content */}
       <main className="pt-16 pl-16 flex-grow">{children}</main>
+
+      {/* Footer */}
       <Footer />
     </div>
   );
 };
 
-export default NavigationWrapper;
+export default GlobalLayout;

@@ -50,9 +50,12 @@ const NavBar = () => {
 
           {/* Right Side - Create AI Character Button and Profile */}
           <div className="flex items-center space-x-6">
-            <button className="bg-gradient-to-r from-primary-500 to-primary-600 text-black text-lg font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition-colors">
+            <Link
+              href="/create-character"
+              className="bg-gradient-to-r from-primary-500 to-primary-600 text-black text-lg font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition-colors"
+            >
               Create AI Character
-            </button>
+            </Link>
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}

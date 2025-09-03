@@ -3,7 +3,7 @@ import CollectionCard from '@/components/collection/CollectionCard';
 
 export default function CollectionPage() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className=" bg-black">
       {/* Header */}
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4">

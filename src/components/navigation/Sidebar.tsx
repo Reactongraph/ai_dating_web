@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface SidebarProps {
@@ -156,25 +157,21 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
 
         {/* Create AI Character Button */}
         <div className={isExpanded ? 'px-3 mx-3' : 'flex justify-center'}>
-          <button className="w-full h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-md flex items-center justify-center text-white hover:opacity-90 transition-opacity">
+          <Link
+            href="/create-character"
+            className="w-full h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-md flex items-center justify-center text-white hover:opacity-90 transition-opacity"
+          >
             {isExpanded ? (
               <span>Create AI Character</span>
             ) : (
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
+              <Image
+                src="/assets/wand3.svg"
+                alt="Create AI Character"
+                width={24}
+                height={24}
+              />
             )}
-          </button>
+          </Link>
         </div>
       </div>
 

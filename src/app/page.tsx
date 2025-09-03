@@ -3,10 +3,11 @@ import HeroSection from '@/components/home/HeroSection';
 import AICompanionsSection from '@/components/home/AICompanionsSection';
 import HowToCreate from '@/components/home/HowToCreate';
 import ExperienceAndFAQ from '@/components/home/ExperienceAndFAQ';
+import GlobalLayout from '@/components/layouts/GlobalLayout';
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <GlobalLayout>
       {/* Ad Banner */}
       <AdBanner
         text="Exclusive Discount on Premium New Users"
@@ -27,7 +28,6 @@ export default function Home() {
         }}
         subtitle="From chats to charm — design the AI girlfriend of your dreams."
         buttonText="Create AI Character"
-        buttonHref="/create-character"
         imageSrc="/assets/girlBanner.png"
       />
 
@@ -39,6 +39,6 @@ export default function Home() {
 
       {/* Experience and FAQ Section */}
       <ExperienceAndFAQ />
-    </div>
+    </GlobalLayout>
   );
 }
