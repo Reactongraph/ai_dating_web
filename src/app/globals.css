@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -10,6 +10,52 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-primary-50: #e6f7ff;
+  --color-primary-100: #bae7ff;
+  --color-primary-200: #91d5ff;
+  --color-primary-300: #69c0ff;
+  --color-primary-400: #40a9ff;
+  --color-primary-500: #3bb9ff;
+  --color-primary-600: #2aa8ee;
+  --color-primary-700: #1890ff;
+  --color-primary-800: #0c53b7;
+  --color-primary-900: #094293;
+
+  --color-background-primary: #111111;
+  --color-background-secondary: #1a1a1a;
+  --color-background-elevated: #222222;
+  --color-background-hover: #ffffff1a;
+  --color-background-card: #121212;
+  --color-background-cardShadow: #222222;
+  --color-sub-card: #232223;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a6a6a6;
+  --color-text-disabled: #737373;
+  --color-text-muted: #666666;
+  --color-text-inactive: #666666;
+
+  --color-border-divider: #222222;
+  --color-status-success: #52c41a;
+  --color-status-warning: #faad14;
+  --color-status-error: #ff4d4f;
+  --color-status-info: #1890ff;
+
+  /* Additional colors found in components */
+  --color-accent-blue: #07e9fd;
+  --color-accent-cyan: #00c2ff;
+  --color-accent-cyan-dark: #00a3ff;
+  --color-accent-yellow: #ffd700;
+  --color-gray-333: #333333;
+  --color-gray-666: #666666;
+  --color-gray-222: #222222;
+  --color-gray-1a: #1a1a1a;
+  --color-gray-2a: #2a2a2a;
+  --color-white-1a: #ffffff1a;
 }
 
 @media (prefers-color-scheme: dark) {

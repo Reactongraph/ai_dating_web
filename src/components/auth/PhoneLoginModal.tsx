@@ -59,10 +59,10 @@ const PhoneLoginModal = ({
               country={'in'}
               value={phoneNumber}
               onChange={handlePhoneChange}
-              inputClass="!w-full !h-12 !bg-[#2A2A2A] !text-white !border-0 !pl-[52px] !rounded-lg"
-              buttonClass="!bg-[#2A2A2A] !border-0 !rounded-l-lg"
-              dropdownClass="!bg-[#2A2A2A] !text-white"
-              containerClass="!bg-[#2A2A2A] rounded-lg"
+              inputClass="!w-full !h-12 !bg-gray-2a !text-white !border-0 !pl-[52px] !rounded-lg"
+              buttonClass="!bg-gray-2a !border-0 !rounded-l-lg"
+              dropdownClass="!bg-gray-2a !text-white"
+              containerClass="!bg-gray-2a rounded-lg"
             />
           </div>
           {errors.phoneNumber && (
@@ -80,7 +80,7 @@ const PhoneLoginModal = ({
           <button
             type="submit"
             disabled={isSubmitting || !phoneNumber}
-            className="w-full bg-gradient-to-r from-[#00C2FF] to-[#00A3FF] text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Sending...' : 'SEND OTP'}
           </button>

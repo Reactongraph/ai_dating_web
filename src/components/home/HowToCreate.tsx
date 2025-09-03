@@ -9,7 +9,7 @@ interface StepCardProps {
 const StepCard = ({ iconSrc, title, description }: StepCardProps) => (
   <div className="relative">
     {/* Shadow/Border Effect - positioned behind the main card */}
-    <div className="absolute -right-1 -bottom-1 w-full h-full bg-background-cardShadow rounded-[24px]" />
+    <div className="absolute -right-1 -bottom-1 w-full h-full bg-sub-card rounded-[24px]" />
 
     {/* Main Card */}
     <div className="relative bg-background-card rounded-[24px] p-12 flex flex-col items-center text-center">

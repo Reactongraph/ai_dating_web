@@ -55,7 +55,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
             type="email"
             id="email"
             placeholder="Enter your email"
-            className="w-full bg-[#2A2A2A] text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C2FF]"
+            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
@@ -81,7 +81,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
               type={showPassword ? 'text' : 'password'}
               id="password"
               placeholder="Enter your password"
-              className="w-full bg-[#2A2A2A] text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C2FF]"
+              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
             />
             <button
               type="button"
@@ -105,7 +105,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
         <div className="flex justify-end">
           <button
             type="button"
-            className="text-[#00C2FF] text-sm hover:underline"
+            className="text-accent-cyan text-sm hover:underline"
           >
             Forgot Password?
           </button>
@@ -114,7 +114,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-[#00C2FF] to-[#00A3FF] text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Logging in...' : 'LOGIN'}
         </button>
@@ -124,7 +124,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
             <div className="w-full border-t border-gray-700"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-[#1A1A1A] text-gray-400">
+            <span className="px-2 bg-gray-1a text-gray-400">
               Or continue with
             </span>
           </div>
@@ -139,11 +139,11 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
         </button>
 
         <p className="text-center text-gray-400">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <button
             type="button"
             onClick={onSignupClick}
-            className="text-[#00C2FF] hover:underline"
+            className="text-accent-cyan hover:underline"
           >
             Signup
           </button>

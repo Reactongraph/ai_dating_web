@@ -21,7 +21,7 @@ const AuthModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="flex w-full max-w-[900px] bg-[#1A1A1A] rounded-2xl overflow-hidden">
+      <div className="flex w-full max-w-[900px] bg-gray-1a rounded-2xl overflow-hidden">
         {/* Left Side - Image */}
         <div className="relative w-1/2 bg-gradient-to-br from-purple-600 to-pink-500">
           <Image
@@ -57,7 +57,7 @@ const AuthModal = ({
         </div>
 
         {/* Right Side - Content */}
-        <div className="relative w-1/2 p-8 bg-[#1A1A1A]">
+        <div className="relative w-1/2 p-8 bg-gray-1a">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"

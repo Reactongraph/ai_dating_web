@@ -31,7 +31,7 @@ const TabNavigation = ({
               className={`relative px-12 py-4 text-[28px] transition-colors duration-200 block ${
                 activeTab === tab.label
                   ? 'text-text-primary'
-                  : 'text-[#666666] hover:text-text-secondary'
+                  : 'text-gray-666 hover:text-text-secondary'
               }`}
             >
               {tab.label}
@@ -52,7 +52,7 @@ const TabNavigation = ({
       </div>
 
       {/* Bottom Border - Full Width */}
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#222222]" />
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-222" />
     </div>
   );
 };

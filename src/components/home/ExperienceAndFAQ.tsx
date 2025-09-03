@@ -57,7 +57,7 @@ const ExperienceAndFAQ = () => {
       <div className="text-center">
         <Link
           href="/create-character"
-          className="inline-flex bg-gradient-to-r from-[#3BB9FF] to-[#2AA8EE] text-white px-8 py-3 rounded-lg text-lg font-medium items-center space-x-2 hover:opacity-90 transition-opacity"
+          className="inline-flex bg-gradient-to-r from-primary-500 to-primary-600 text-white px-8 py-3 rounded-lg text-lg font-medium items-center space-x-2 hover:opacity-90 transition-opacity"
         >
           <FaWandMagicSparkles className="w-5 h-5" />
           <span>Create AI Girlfriend</span>

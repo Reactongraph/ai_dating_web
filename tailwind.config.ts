@@ -1,5 +1,4 @@
 import type { Config } from 'tailwindcss';
-import { theme as customTheme } from './src/theme';
 
 const config: Config = {
   content: [
@@ -10,33 +9,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: customTheme.colors.primary,
-        secondary: customTheme.colors.secondary,
-        background: {
-          primary: customTheme.colors.background.primary,
-          secondary: customTheme.colors.background.secondary,
-          elevated: customTheme.colors.background.elevated,
-          hover: customTheme.colors.background.hover,
-          card: customTheme.colors.background.card,
-          cardShadow: customTheme.colors.background.cardShadow,
-        },
-        text: {
-          primary: customTheme.colors.text.primary,
-          secondary: customTheme.colors.text.secondary,
-          disabled: customTheme.colors.text.disabled,
-          muted: customTheme.colors.text.muted,
-          inactive: customTheme.colors.text.inactive,
-        },
-        border: {
-          divider: customTheme.colors.border.divider,
-        },
-        status: customTheme.colors.status,
-        accent: customTheme.colors.accent,
+        'accent-blue': 'var(--color-accent-blue)',
+        'accent-cyan': 'var(--color-accent-cyan)',
+        'accent-cyan-dark': 'var(--color-accent-cyan-dark)',
+        'accent-yellow': 'var(--color-accent-yellow)',
+        'gray-333': 'var(--color-gray-333)',
+        'gray-666': 'var(--color-gray-666)',
+        'gray-222': 'var(--color-gray-222)',
+        'gray-1a': 'var(--color-gray-1a)',
+        'gray-2a': 'var(--color-gray-2a)',
+        'white-1a': 'var(--color-white-1a)',
       },
-      fontFamily: customTheme.fontFamily,
-      fontSize: customTheme.fontSize,
-      spacing: customTheme.spacing,
-      borderRadius: customTheme.borderRadius,
     },
   },
   plugins: [],

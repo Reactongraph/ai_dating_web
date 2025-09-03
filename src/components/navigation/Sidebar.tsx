@@ -64,7 +64,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
           href="/explore"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
             isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
-          } hover:bg-[#FFFFFF1A]`}
+          } hover:bg-white-1a`}
         >
           <svg
             className="w-6 h-6"
@@ -87,7 +87,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
           href="/collection"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
             isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
-          } hover:bg-[#FFFFFF1A]`}
+          } hover:bg-white-1a`}
         >
           <svg
             className="w-6 h-6"
@@ -110,7 +110,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
           href="/chat"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
             isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
-          } hover:bg-[#FFFFFF1A]`}
+          } hover:bg-white-1a`}
         >
           <svg
             className="w-6 h-6"
@@ -133,7 +133,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
           href="/my-ai"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
             isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
-          } hover:bg-[#FFFFFF1A]`}
+          } hover:bg-white-1a`}
         >
           <div className="relative">
             <svg
@@ -156,7 +156,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
 
         {/* Create AI Character Button */}
         <div className={isExpanded ? 'px-3 mx-3' : 'flex justify-center'}>
-          <button className="w-full h-10 bg-gradient-to-r from-[#3BB9FF] to-[#2AA8EE] rounded-md flex items-center justify-center text-white hover:opacity-90 transition-opacity">
+          <button className="w-full h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-md flex items-center justify-center text-white hover:opacity-90 transition-opacity">
             {isExpanded ? (
               <span>Create AI Character</span>
             ) : (
@@ -185,7 +185,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
           href="/premium"
           className={`flex items-center text-yellow-500 hover:text-yellow-400 group rounded-xl transition-colors ${
             isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
-          } hover:bg-[#FFFFFF1A]`}
+          } hover:bg-white-1a`}
         >
           <div className="relative">
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -195,7 +195,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
           {isExpanded && (
             <span className="ml-4">
               Premium Now{' '}
-              <span className="px-2 py-1.5 text-md  text-white bg-gradient-to-r from-[#00C2FF] to-[#00A3FF] rounded-full">
+              <span className="px-2 py-1.5 text-md  text-white bg-gradient-to-r from-accent-cyan to-accent-cyan-dark rounded-full">
                 -70%
               </span>
             </span>
@@ -207,7 +207,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
           href="/privacy-terms"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
             isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
-          } hover:bg-[#FFFFFF1A]`}
+          } hover:bg-white-1a`}
         >
           <svg
             className="w-6 h-6"
@@ -230,7 +230,7 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
           href="/help"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
             isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
-          } hover:bg-[#FFFFFF1A]`}
+          } hover:bg-white-1a`}
         >
           <svg
             className="w-6 h-6"

@@ -28,11 +28,13 @@ const AdBanner = ({
       <div className="relative z-10 max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <h2 className="text-2xl font-semibold text-white">{text}</h2>
-          <span className="text-4xl font-bold text-[#FFD700]">{discount}</span>
+          <span className="text-4xl font-bold text-accent-yellow">
+            {discount}
+          </span>
         </div>
         <Link
           href={buttonHref}
-          className="bg-[#3BB9FF] hover:opacity-90 transition-opacity text-white px-6 py-2 rounded-full text-lg font-medium"
+          className="bg-primary-500 hover:opacity-90 transition-opacity text-white px-6 py-2 rounded-full text-lg font-medium"
         >
           {buttonText}
         </Link>

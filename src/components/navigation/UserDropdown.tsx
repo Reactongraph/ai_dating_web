@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { FiLogIn } from 'react-icons/fi';
 import { RiVipCrownFill } from 'react-icons/ri';
@@ -65,7 +65,7 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick }: UserDropdownProps) => {
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 top-full mt-2 w-56 rounded-lg bg-[#2A2A2A] shadow-lg ring-1 ring-black ring-opacity-5 z-50"
+      className="absolute right-0 top-full mt-2 w-56 rounded-lg bg-gray-2a shadow-lg ring-1 ring-black ring-opacity-5 z-50"
     >
       <div className="py-2">
         {options.map((option, index) => {

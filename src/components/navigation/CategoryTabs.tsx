@@ -41,7 +41,7 @@ const CategoryTabs = ({ tabs, activeTab, onTabChange }: CategoryTabsProps) => {
             className={`relative py-2 text-[28px] transition-colors duration-200 ${
               activeTab === tab.id
                 ? 'text-white'
-                : 'text-[#666666] hover:text-gray-300'
+                : 'text-gray-666 hover:text-gray-300'
             }`}
           >
             {tab.label}
@@ -59,7 +59,7 @@ const CategoryTabs = ({ tabs, activeTab, onTabChange }: CategoryTabsProps) => {
       />
 
       {/* Bottom Border */}
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#222222]" />
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-222" />
     </div>
   );
 };

@@ -21,7 +21,7 @@ export default function Home() {
           main: 'Create your Perfect',
           highlight: {
             text: 'AI',
-            color: '#3BB9FF',
+            color: 'text-primary-500',
           },
           rest: ' girlfriend',
         }}

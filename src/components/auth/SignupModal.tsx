@@ -76,7 +76,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type="text"
               id="fullName"
               placeholder="Full Name"
-              className="w-full bg-[#2A2A2A] text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C2FF]"
+              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
             />
             {errors.fullName && (
               <p className="mt-1 text-sm text-red-500">
@@ -100,7 +100,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type="email"
               id="email"
               placeholder="Enter Your email"
-              className="w-full bg-[#2A2A2A] text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C2FF]"
+              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-500">
@@ -120,7 +120,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
                 key={gender}
                 className={`
                   flex items-center justify-center px-4 py-3 rounded-lg cursor-pointer
-                  ${watch('gender') === gender ? 'bg-[#00C2FF] text-black' : 'bg-[#2A2A2A] text-white'}
+                  ${watch('gender') === gender ? 'bg-accent-cyan text-black' : 'bg-gray-2a text-white'}
                 `}
               >
                 <input
@@ -155,7 +155,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type="text"
               id="dateOfBirth"
               placeholder="dd/mm/yyyy"
-              className="w-full bg-[#2A2A2A] text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C2FF]"
+              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
               onFocus={(e) => (e.target.type = 'date')}
               onBlur={(e) => (e.target.type = 'text')}
             />
@@ -199,7 +199,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type={showPassword ? 'text' : 'password'}
               id="password"
               placeholder="********"
-              className="w-full bg-[#2A2A2A] text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C2FF]"
+              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
             />
             <button
               type="button"
@@ -237,7 +237,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type={showConfirmPassword ? 'text' : 'password'}
               id="confirmPassword"
               placeholder="********"
-              className="w-full bg-[#2A2A2A] text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C2FF]"
+              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
             />
             <button
               type="button"
@@ -267,7 +267,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
             id="aboutMe"
             rows={4}
             placeholder="Write something about your self..."
-            className="w-full bg-[#2A2A2A] text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00C2FF] resize-none"
+            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan resize-none"
             maxLength={300}
             onChange={handleAboutMeChange}
           />
@@ -283,7 +283,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               required: 'You must agree to the terms and conditions',
             })}
             id="agreeToTerms"
-            className="rounded bg-[#2A2A2A] border-gray-600 text-[#00C2FF] focus:ring-[#00C2FF]"
+            className="rounded bg-gray-2a border-gray-600 text-accent-cyan focus:ring-accent-cyan"
           />
           <label htmlFor="agreeToTerms" className="text-sm text-gray-400">
             I agree with the{' '}
@@ -303,7 +303,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-[#00C2FF] to-[#00A3FF] text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+          className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mt-6"
         >
           Submit
         </button>

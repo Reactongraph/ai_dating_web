@@ -32,15 +32,15 @@ const NavBar = () => {
                   key={link.href}
                   href={link.href}
                   className={`relative h-16 flex items-center text-lg
-                    ${pathname === link.href ? 'text-[#07E9FD]' : 'text-text-secondary hover:text-white'}
+                    ${pathname === link.href ? 'text-accent-blue' : 'text-text-secondary hover:text-white'}
                     transition-colors
                   `}
                 >
                   {link.label}
                   {pathname === link.href && (
                     <div
-                      className="absolute bottom-0 left-0 w-full h-0.5 bg-[#07E9FD]"
-                      style={{ boxShadow: '0 0 8px #07E9FD' }}
+                      className="absolute bottom-0 left-0 w-full h-0.5 bg-accent-blue"
+                      style={{ boxShadow: '0 0 8px var(--color-accent-blue)' }}
                     />
                   )}
                 </Link>
@@ -50,7 +50,7 @@ const NavBar = () => {
 
           {/* Right Side - Create AI Character Button and Profile */}
           <div className="flex items-center space-x-6">
-            <button className="bg-gradient-to-r from-[#3BB9FF] to-[#2AA8EE] text-black text-lg font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition-colors">
+            <button className="bg-gradient-to-r from-primary-500 to-primary-600 text-black text-lg font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition-colors">
               Create AI Character
             </button>
             <div className="relative">

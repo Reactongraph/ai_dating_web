@@ -72,7 +72,7 @@ const ImageGallery = ({
             key={image.id}
             onClick={() => setCurrentIndex(index)}
             className={`w-16 h-16 relative rounded-lg overflow-hidden transition-opacity
-              ${index === currentIndex ? 'ring-2 ring-[#07E9FD]' : 'opacity-50 hover:opacity-100'}`}
+              ${index === currentIndex ? 'ring-2 ring-accent-blue' : 'opacity-50 hover:opacity-100'}`}
           >
             <Image
               src={image.url}

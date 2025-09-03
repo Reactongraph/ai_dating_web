@@ -56,7 +56,7 @@ const OtpModal = ({
             renderInput={(props) => (
               <input
                 {...props}
-                className="!w-12 !h-12 !bg-[#2A2A2A] text-white border-0 rounded-lg mx-1 text-center text-xl"
+                className="!w-12 !h-12 !bg-gray-2a text-white border-0 rounded-lg mx-1 text-center text-xl"
               />
             )}
             containerStyle="justify-center"
@@ -72,17 +72,17 @@ const OtpModal = ({
           <button
             type="submit"
             disabled={isSubmitting || otp.length !== 6}
-            className="w-full bg-[#00C2FF] text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-accent-cyan text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Verifying...' : 'VERIFY'}
           </button>
 
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-400">
-              Didn't receive the code?{' '}
+              Didn&apos;t receive the code?{' '}
               <button
                 type="button"
-                className="text-[#00C2FF] hover:underline"
+                className="text-accent-cyan hover:underline"
                 onClick={() => {
                   // Handle resend logic
                 }}
