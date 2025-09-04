@@ -4,13 +4,11 @@ import { useState } from 'react';
 import NavBar from '@/components/navigation/NavBar';
 import Sidebar from '@/components/navigation/Sidebar';
 
-interface CreateCharacterLayoutComponentProps {
+interface LayoutWithoutFooterProps {
   children: React.ReactNode;
 }
 
-const CreateCharacterLayoutComponent = ({
-  children,
-}: CreateCharacterLayoutComponentProps) => {
+const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   const toggleSidebar = () => {
@@ -31,4 +29,4 @@ const CreateCharacterLayoutComponent = ({
   );
 };
 
-export default CreateCharacterLayoutComponent;
+export default LayoutWithoutFooter;

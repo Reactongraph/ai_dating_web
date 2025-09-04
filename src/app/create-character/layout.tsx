@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import CreateCharacterLayoutComponent from '@/components/layouts/CreateCharacterLayoutComponent';
+import LayoutWithoutFooter from '@/components/layouts/LayoutWithoutFooter';
 
 export const metadata: Metadata = {
   title: 'Create AI Character - True Companion',
@@ -12,7 +12,5 @@ export default function CreateCharacterLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <CreateCharacterLayoutComponent>{children}</CreateCharacterLayoutComponent>
-  );
+  return <LayoutWithoutFooter>{children}</LayoutWithoutFooter>;
 }

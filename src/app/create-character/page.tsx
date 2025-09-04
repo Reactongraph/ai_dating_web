@@ -6,12 +6,14 @@ import { useForm, FormProvider } from 'react-hook-form';
 import CharacterCreationForm from '@/components/character-creation/CharacterCreationForm';
 import { CharacterFormData } from '@/types/character';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
+import ConfirmationModal from '@/components/common/ConfirmationModal';
 
 const CreateCharacterPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showForm, setShowForm] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [showCloseModal, setShowCloseModal] = useState(false);
 
   const methods = useForm<CharacterFormData>({
     defaultValues: {
@@ -91,6 +93,56 @@ const CreateCharacterPage = () => {
     goToStep(1);
   };
 
+  const handleClose = () => {
+    setShowCloseModal(true);
+  };
+
+  const handleConfirmClose = () => {
+    // Reset form data
+    methods.reset({
+      // Step 1: Create
+      characterType: 'girl',
+      style: 'realistic',
+
+      // Step 2: Ethnicity and Eye Color
+      ethnicity: 'caucasian',
+      eyeColor: 'blue',
+
+      // Step 3: Hairstyle, Color, Age
+      hairstyle: 'ponytail',
+      hairColor: 'brown',
+      age: '30s',
+
+      // Step 4: Body Type
+      bodyType: 'petite',
+      breastSize: 'medium',
+      bootySize: 'medium',
+
+      // Step 5: Personality
+      personality: 'caregiver',
+
+      // Step 6: Occupation and Hobbies
+      occupation: 'student',
+      hobbies: [],
+
+      // Step 7: Relationship
+      relationship: 'stranger',
+
+      // Step 8: Clothing
+      clothing: 'casual',
+    });
+
+    // Reset state and navigate back to landing page
+    setShowForm(false);
+    setCurrentStep(1);
+    setShowCloseModal(false);
+    router.push('/create-character');
+  };
+
+  const handleCancelClose = () => {
+    setShowCloseModal(false);
+  };
+
   if (!showForm) {
     return (
       <div className="h-full bg-black text-white flex flex-col">
@@ -129,6 +181,19 @@ const CreateCharacterPage = () => {
         onNext={goToNextStep}
         onPrevious={goToPreviousStep}
         onSubmit={onSubmit}
+        onClose={handleClose}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showCloseModal}
+        onClose={handleCancelClose}
+        onConfirm={handleConfirmClose}
+        title="Are you sure you want to cancel persona creation process and exit?"
+        message=""
+        confirmText="Cancel and exit"
+        cancelText="Continue creating"
+        confirmButtonVariant="danger"
       />
     </FormProvider>
   );

@@ -13,13 +13,16 @@ import Step7Relationship from './steps/Step7Relationship';
 import Step8Clothing from './steps/Step8Clothing';
 import Step9Summary from './steps/Step9Summary';
 
-type CharacterCreationFormProps = FormStepProps;
+type CharacterCreationFormProps = FormStepProps & {
+  onClose: () => void;
+};
 
 const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
   currentStep,
   onNext,
   onPrevious,
   onSubmit,
+  onClose,
 }) => {
   const { handleSubmit } = useFormContext<CharacterFormData>();
 
@@ -92,7 +95,10 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
               Create AI Character
             </h1>
 
-            <button className="text-white hover:text-gray-200">
+            <button
+              onClick={onClose}
+              className="text-white hover:text-gray-200"
+            >
               <svg
                 className="w-6 h-6"
                 fill="none"
