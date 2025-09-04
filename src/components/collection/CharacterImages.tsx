@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { FiMoreVertical } from 'react-icons/fi';
+import Link from 'next/link';
+import { FiMoreVertical, FiChevronRight } from 'react-icons/fi';
 import { CollectionCharacter } from '@/types/collection';
 import ImageGallery from './ImageGallery';
 
@@ -21,20 +22,31 @@ const CharacterImages = ({ character }: CharacterImagesProps) => {
 
   return (
     <div className=" bg-black">
-      {/* Header */}
+      {/* Header with Breadcrumb */}
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center space-x-2">
-            <h1 className="text-3xl font-bold text-white">My Collection</h1>
-            <Image
-              src={character.mainImage}
-              alt={character.name}
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-            <h2 className="text-3xl font-bold text-white">{character.name}</h2>
-          </div>
+          {/* Breadcrumb Navigation */}
+          <nav className="flex items-center space-x-2 mb-6">
+            <Link
+              href="/collection"
+              className="text-2xl font-bold text-white hover:text-gray-300 transition-colors"
+            >
+              My Collection
+            </Link>
+            <FiChevronRight className="text-gray-400" size={20} />
+            <div className="flex items-center space-x-2">
+              <Image
+                src={character.mainImage}
+                alt={character.name}
+                width={24}
+                height={24}
+                className="rounded-full"
+              />
+              <span className="text-2xl font-bold text-white">
+                {character.name}
+              </span>
+            </div>
+          </nav>
         </div>
       </div>
 
