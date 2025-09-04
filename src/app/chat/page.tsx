@@ -1,12 +1,41 @@
 'use client';
 
+import { useState } from 'react';
+import { mockChats, quickSuggestions, privacyMessage } from '@/data/chat';
+import { Chat } from '@/types/chat';
+import ChatList from '@/components/chat/ChatList';
+import ChatArea from '@/components/chat/ChatArea';
+import ProfilePanel from '@/components/chat/ProfilePanel';
+
 export default function ChatPage() {
+  const [chats] = useState<Chat[]>(mockChats); // In real app, this would come from API
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+
+  const selectedChat = chats.find((chat) => chat.id === selectedChatId) || null;
+
+  const handleChatSelect = (chatId: string) => {
+    setSelectedChatId(chatId);
+  };
+
+  const handleSendMessage = (message: string) => {
+    console.log('Sending message:', message);
+    // TODO: Integrate with API to send message
+    // This would typically:
+    // 1. Add the user message to the chat
+    // 2. Send to API
+    // 3. Receive and display AI response
+  };
+
+  const handleQuickSuggestionClick = (suggestion: string) => {
+    handleSendMessage(suggestion);
+  };
+
   return (
-    <div className="h-screen bg-black flex">
+    <div className="h-[calc(100vh-64px)] bg-black flex overflow-hidden ">
       {/* Chat Sidebar */}
-      <div className="w-80 bg-black border-r border-gray-800 flex flex-col">
+      <div className="w-80 bg-black border-r border-gray-800 flex flex-col flex-shrink-0">
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-gray-800">
+        <div className="p-6 border-b border-gray-800 flex-shrink-0">
           <h1 className="text-3xl font-bold text-white mb-6">Chats</h1>
 
           {/* Chat Tabs */}
@@ -18,53 +47,27 @@ export default function ChatPage() {
         </div>
 
         {/* Chat List */}
-        <div className="flex-1 flex flex-col items-center justify-center p-6">
-          <div className="text-center">
-            <h3 className="text-white text-xl font-semibold mb-2">
-              List is Empty
-            </h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Customize your character and start a smart, fun
-              <br />
-              conversation in seconds.
-            </p>
-          </div>
-        </div>
+        <ChatList
+          chats={chats}
+          selectedChatId={selectedChatId || undefined}
+          onChatSelect={handleChatSelect}
+        />
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col items-center justify-center bg-black">
-        <div className="text-center max-w-md">
-          {/* Chat Icons */}
-          <div className="mb-8 relative">
-            {/* Background Chat Bubble */}
-            <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              </div>
-            </div>
+      <div className="flex-1 min-w-0">
+        <ChatArea
+          chat={selectedChat}
+          quickSuggestions={quickSuggestions}
+          privacyMessage={privacyMessage}
+          onSendMessage={handleSendMessage}
+          onQuickSuggestionClick={handleQuickSuggestionClick}
+        />
+      </div>
 
-            {/* Foreground Chat Bubble */}
-            <div className="absolute top-6 right-1/2 transform translate-x-8 w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center">
-              <div className="flex space-x-1">
-                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Empty State Content */}
-          <h2 className="text-3xl font-bold text-white mb-4">
-            No Chats Yet? Let&apos;s Get Started
-          </h2>
-          <p className="text-gray-400 text-lg leading-relaxed">
-            Personalize your AI character and dive into smart, fun conversations
-            <br />— your companion is just a click away.
-          </p>
-        </div>
+      {/* Profile Panel - Always Visible */}
+      <div className="flex-shrink-0">
+        <ProfilePanel user={selectedChat?.user || null} />
       </div>
     </div>
   );
