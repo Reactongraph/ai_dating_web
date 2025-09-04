@@ -9,7 +9,7 @@ interface SidebarProps {
 const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-black text-text-primary flex flex-col py-4 z-50 transition-all duration-300 ${
+      className={`fixed left-0 top-0 h-screen bg-black text-text-primary flex flex-col py-4 z-50 transition-all duration-300  ${
         isExpanded ? 'w-64' : 'w-16'
       }`}
     >
@@ -64,11 +64,11 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
         <Link
           href="/explore"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
-            isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
+            isExpanded ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <svg
-            className="w-6 h-6"
+            className="w-6 h-6 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -87,11 +87,11 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
         <Link
           href="/collection"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
-            isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
+            isExpanded ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <svg
-            className="w-6 h-6"
+            className="w-6 h-6 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -110,11 +110,11 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
         <Link
           href="/chat"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
-            isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
+            isExpanded ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <svg
-            className="w-6 h-6"
+            className="w-6 h-6 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -133,10 +133,10 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
         <Link
           href="/my-ai"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
-            isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
+            isExpanded ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
-          <div className="relative">
+          <div className="relative flex-shrink-0 w-6 h-6">
             <svg
               className="w-6 h-6"
               fill="none"
@@ -156,19 +156,32 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
         </Link>
 
         {/* Create AI Character Button */}
-        <div className={isExpanded ? 'px-3 mx-3' : 'flex justify-center'}>
+        <div className={isExpanded ? 'px-2 mx-2' : 'mx-2 flex justify-center'}>
           <Link
             href="/create-character"
-            className="w-full h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-md flex items-center justify-center text-white hover:opacity-90 transition-opacity"
+            className={`bg-gradient-to-r from-primary-500 to-primary-600 rounded-md flex items-center justify-center text-white hover:opacity-90 transition-opacity ${
+              isExpanded ? 'w-full h-10' : 'w-12 h-12'
+            }`}
           >
             {isExpanded ? (
-              <span>Create AI Character</span>
+              <span className="flex items-center justify-center gap-2">
+                {' '}
+                <Image
+                  src="/assets/wand2.svg"
+                  alt="Create AI Character"
+                  width={24}
+                  height={24}
+                  className="flex-shrink-0 brightness-0 invert"
+                />
+                Create AI Character
+              </span>
             ) : (
               <Image
                 src="/assets/wand3.svg"
                 alt="Create AI Character"
-                width={24}
-                height={24}
+                width={22}
+                height={22}
+                className="flex-shrink-0"
               />
             )}
           </Link>
@@ -181,10 +194,10 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
         <Link
           href="/premium"
           className={`flex items-center text-yellow-500 hover:text-yellow-400 group rounded-xl transition-colors ${
-            isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
+            isExpanded ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
-          <div className="relative">
+          <div className="relative flex-shrink-0 w-6 h-6">
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
             </svg>
@@ -203,11 +216,11 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
         <Link
           href="/privacy-terms"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
-            isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
+            isExpanded ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <svg
-            className="w-6 h-6"
+            className="w-6 h-6 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -226,11 +239,11 @@ const Sidebar = ({ isExpanded, onToggle }: SidebarProps) => {
         <Link
           href="/help"
           className={`flex items-center text-text-secondary hover:text-white group rounded-xl transition-colors ${
-            isExpanded ? 'mx-3 px-3 py-2' : 'justify-center w-12 h-12'
+            isExpanded ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <svg
-            className="w-6 h-6"
+            className="w-6 h-6 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
