@@ -10,7 +10,11 @@ const Step3Hairstyle: React.FC = () => {
   const hairColor = watch('hairColor');
   const age = watch('age');
 
-  const hairstyleOptions = [
+  const hairstyleOptions: Array<{
+    value: CharacterFormData['hairstyle'];
+    label: string;
+    image: string;
+  }> = [
     {
       value: 'ponytail',
       label: 'Ponytail',
@@ -28,7 +32,11 @@ const Step3Hairstyle: React.FC = () => {
     { value: 'short', label: 'Short', image: '/assets/hairstyles/short.jpg' },
   ];
 
-  const hairColorOptions = [
+  const hairColorOptions: Array<{
+    value: CharacterFormData['hairColor'];
+    label: string;
+    color: string;
+  }> = [
     { value: 'blonde', label: 'Blonde', color: '#F4D03F' },
     { value: 'brown', label: 'Brown', color: '#8B4513' },
     { value: 'black', label: 'Black', color: '#000000' },
@@ -40,7 +48,14 @@ const Step3Hairstyle: React.FC = () => {
     { value: 'purple', label: 'Purple', color: '#800080' },
   ];
 
-  const ageOptions = ['18+', '20s', '30s', '40s', '50s', 'custom'];
+  const ageOptions: CharacterFormData['age'][] = [
+    '18+',
+    '20s',
+    '30s',
+    '40s',
+    '50s',
+    'custom',
+  ];
 
   return (
     <div className="space-y-8">

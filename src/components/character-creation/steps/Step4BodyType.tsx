@@ -10,7 +10,11 @@ const Step4BodyType: React.FC = () => {
   const breastSize = watch('breastSize');
   const bootySize = watch('bootySize');
 
-  const bodyTypeOptions = [
+  const bodyTypeOptions: Array<{
+    value: CharacterFormData['bodyType'];
+    label: string;
+    image: string;
+  }> = [
     {
       value: 'petite',
       label: 'Petite',
@@ -30,7 +34,11 @@ const Step4BodyType: React.FC = () => {
     },
   ];
 
-  const breastSizeOptions = [
+  const breastSizeOptions: Array<{
+    value: CharacterFormData['breastSize'];
+    label: string;
+    image: string;
+  }> = [
     { value: 'flat', label: 'Flat', image: '/assets/breast-sizes/flat.jpg' },
     { value: 'small', label: 'Small', image: '/assets/breast-sizes/small.jpg' },
     {
@@ -42,7 +50,11 @@ const Step4BodyType: React.FC = () => {
     { value: 'huge', label: 'Huge', image: '/assets/breast-sizes/huge.jpg' },
   ];
 
-  const bootySizeOptions = [
+  const bootySizeOptions: Array<{
+    value: CharacterFormData['bootySize'];
+    label: string;
+    image: string;
+  }> = [
     { value: 'small', label: 'Small', image: '/assets/booty-sizes/small.jpg' },
     {
       value: 'medium',

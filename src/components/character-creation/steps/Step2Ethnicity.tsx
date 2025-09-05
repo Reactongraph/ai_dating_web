@@ -9,7 +9,11 @@ const Step2Ethnicity: React.FC = () => {
   const ethnicity = watch('ethnicity');
   const eyeColor = watch('eyeColor');
 
-  const ethnicityOptions = [
+  const ethnicityOptions: Array<{
+    value: CharacterFormData['ethnicity'];
+    label: string;
+    image: string;
+  }> = [
     {
       value: 'caucasian',
       label: 'Caucasian',
@@ -34,7 +38,11 @@ const Step2Ethnicity: React.FC = () => {
     },
   ];
 
-  const eyeColorOptions = [
+  const eyeColorOptions: Array<{
+    value: CharacterFormData['eyeColor'];
+    label: string;
+    image: string;
+  }> = [
     { value: 'blue', label: 'Blue', image: '/assets/eyes/blue.jpg' },
     { value: 'green', label: 'Green', image: '/assets/eyes/green.jpg' },
     { value: 'brown', label: 'Brown', image: '/assets/eyes/brown.jpg' },

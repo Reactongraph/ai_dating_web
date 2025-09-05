@@ -9,7 +9,7 @@ const Step6Occupation: React.FC = () => {
   const occupation = watch('occupation');
   const hobbies = watch('hobbies') || [];
 
-  const occupationOptions = [
+  const occupationOptions: CharacterFormData['occupation'][] = [
     'student',
     'teacher',
     'doctor',

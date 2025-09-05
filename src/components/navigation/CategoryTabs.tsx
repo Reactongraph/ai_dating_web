@@ -36,7 +36,9 @@ const CategoryTabs = ({ tabs, activeTab, onTabChange }: CategoryTabsProps) => {
         {tabs.map((tab, index) => (
           <button
             key={tab.id}
-            ref={(el) => (tabsRef.current[index] = el)}
+            ref={(el) => {
+              tabsRef.current[index] = el;
+            }}
             onClick={() => onTabChange(tab.id)}
             className={`relative py-2 text-[28px] transition-colors duration-200 ${
               activeTab === tab.id
