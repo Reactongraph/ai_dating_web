@@ -8,7 +8,7 @@ const Step8Clothing: React.FC = () => {
 
   const clothing = watch('clothing');
 
-  const clothingOptions = [
+  const clothingOptions: CharacterFormData['clothing'][] = [
     'casual',
     'formal',
     'sporty',
@@ -17,14 +17,6 @@ const Step8Clothing: React.FC = () => {
     'bikini',
     'uniform',
     'costume',
-    'business',
-    'party',
-    'vintage',
-    'modern',
-    'traditional',
-    'gothic',
-    'punk',
-    'bohemian',
   ];
 
   return (

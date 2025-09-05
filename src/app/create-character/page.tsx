@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import CharacterCreationForm from '@/components/character-creation/CharacterCreationForm';
@@ -8,7 +8,7 @@ import { CharacterFormData } from '@/types/character';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
 
-const CreateCharacterPage = () => {
+const CreateCharacterPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showForm, setShowForm] = useState(false);
@@ -196,6 +196,20 @@ const CreateCharacterPage = () => {
         confirmButtonVariant="danger"
       />
     </FormProvider>
+  );
+};
+
+const CreateCharacterPage = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-screen bg-black flex items-center justify-center text-white">
+          Loading...
+        </div>
+      }
+    >
+      <CreateCharacterPageContent />
+    </Suspense>
   );
 };
 

@@ -5,13 +5,14 @@ import CharacterImages from '@/components/collection/CharacterImages';
 import { notFound } from 'next/navigation';
 
 interface CharacterPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function CharacterPage({ params }: CharacterPageProps) {
-  const character = mockCollection.characters.find((c) => c.id === params.id);
+export default async function CharacterPage({ params }: CharacterPageProps) {
+  const { id } = await params;
+  const character = mockCollection.characters.find((c) => c.id === id);
 
   if (!character) {
     notFound();

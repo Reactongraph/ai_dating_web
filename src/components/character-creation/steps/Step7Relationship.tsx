@@ -8,7 +8,11 @@ const Step7Relationship: React.FC = () => {
 
   const relationship = watch('relationship');
 
-  const relationshipOptions = [
+  const relationshipOptions: Array<{
+    value: CharacterFormData['relationship'];
+    label: string;
+    icon: string;
+  }> = [
     { value: 'stranger', label: 'Stranger', icon: '🕵️' },
     { value: 'schoolmate', label: 'School Mate', icon: '🎓' },
     { value: 'colleague', label: 'Colleague', icon: '💼' },

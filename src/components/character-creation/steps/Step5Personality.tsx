@@ -8,7 +8,12 @@ const Step5Personality: React.FC = () => {
 
   const personality = watch('personality');
 
-  const personalityOptions = [
+  const personalityOptions: Array<{
+    value: CharacterFormData['personality'];
+    label: string;
+    emoji: string;
+    description: string;
+  }> = [
     {
       value: 'caregiver',
       label: 'Caregiver',
