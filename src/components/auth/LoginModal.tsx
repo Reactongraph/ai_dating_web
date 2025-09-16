@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import AuthModal from './AuthModal';
 import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import { FcGoogle } from 'react-icons/fc';
+import { useLoginMutation } from '@/redux/services/authApi';
+import { useAppSelector } from '@/redux/hooks';
+import { useSnackbar } from '@/providers';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -17,18 +20,65 @@ interface LoginFormData {
 
 const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [login, { isLoading }] = useLoginMutation();
+  const { error, requiresVerification, isAuthenticated } = useAppSelector(
+    (state) => state.auth
+  );
+  const { showSnackbar } = useSnackbar();
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormData>();
+
+  // Close modal when successfully authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      onClose();
+    }
+  }, [isAuthenticated, onClose]);
+
+  // Show error message if there is an error
+  useEffect(() => {
+    if (error) {
+      showSnackbar(error, 'error');
+    }
+  }, [error, showSnackbar]);
+
+  // Show verification message if required
+  useEffect(() => {
+    if (requiresVerification) {
+      showSnackbar(
+        'Please verify your email address before logging in.',
+        'warning'
+      );
+    }
+  }, [requiresVerification, showSnackbar]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      // Here you would typically make an API call to login
-      console.log('Logging in with:', data);
-    } catch (error) {
-      console.error('Login failed:', error);
+      // The login mutation will automatically update the Redux store
+      const response = await login(data).unwrap();
+
+      if (response.statusCode === 200) {
+        showSnackbar('Login successful!', 'success');
+      } else if (response.user && !response.user.isEmailVerified) {
+        showSnackbar(
+          'Please verify your email address before logging in.',
+          'warning'
+        );
+      }
+    } catch (err: unknown) {
+      console.error('Login failed:', err);
+      // Show error message
+      const errorMessage =
+        typeof err === 'object' && err !== null && 'data' in err
+          ? (err.data as { message?: string })?.message
+          : typeof err === 'object' && err !== null && 'message' in err
+            ? (err as Error).message
+            : 'Login failed. Please try again.';
+      showSnackbar(errorMessage || 'Login failed. Please try again.', 'error');
     }
   };
 
@@ -100,6 +150,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
               {errors.password.message}
             </p>
           )}
+          {/* Error and verification messages are now handled by the Snackbar component */}
         </div>
 
         <div className="flex justify-end">
@@ -113,10 +164,10 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isLoading}
           className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Logging in...' : 'LOGIN'}
+          {isLoading ? 'Logging in...' : 'LOGIN'}
         </button>
 
         <div className="relative">

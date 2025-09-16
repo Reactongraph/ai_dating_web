@@ -1,7 +1,11 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { FiLogIn } from 'react-icons/fi';
+import { FiLogIn, FiSettings, FiLogOut, FiUser } from 'react-icons/fi';
 import { RiVipCrownFill } from 'react-icons/ri';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+// Removed useLogoutMutation import as we don't need to call the API
+import { clearCredentials } from '@/redux/slices/authSlice';
+import { useSnackbar } from '@/providers';
 
 interface DropdownOption {
   icon: React.ReactNode;
@@ -20,6 +24,9 @@ interface UserDropdownProps {
 
 const UserDropdown = ({ isOpen, onClose, onLoginClick }: UserDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const { showSnackbar } = useSnackbar();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -41,32 +48,80 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick }: UserDropdownProps) => {
     };
   }, [isOpen, onClose]);
 
-  const options: DropdownOption[] = [
-    {
-      icon: <FiLogIn className="w-5 h-5" />,
-      label: 'Log in',
-      href: '#',
-      onClick: () => {
-        onClose();
-        onLoginClick();
-      },
-    },
-    {
-      icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
-      label: 'Subscription',
-      href: '/subscription',
-      highlight: true,
-      badge: '70%',
-    },
-  ];
+  const handleLogout = () => {
+    // Just clear the credentials without making an API call
+    dispatch(clearCredentials());
+    showSnackbar('Logged out successfully', 'success');
+    onClose();
+  };
+
+  // Different options based on authentication status
+  const options: DropdownOption[] =
+    isAuthenticated && user
+      ? [
+          {
+            icon: <FiUser className="w-5 h-5" />,
+            label: user.name || 'User Profile',
+            href: '/profile',
+          },
+          {
+            icon: <FiSettings className="w-5 h-5" />,
+            label: 'Account Settings',
+            href: '/account-settings',
+          },
+          {
+            icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
+            label: 'Subscription',
+            href: '/subscription',
+            highlight: true,
+            badge: user.subscriber?.isPremiumSubscriber ? 'PREMIUM' : '70%',
+          },
+          {
+            icon: <FiLogOut className="w-5 h-5" />,
+            label: 'Logout',
+            href: '#',
+            onClick: handleLogout,
+          },
+        ]
+      : [
+          {
+            icon: <FiLogIn className="w-5 h-5" />,
+            label: 'Log in',
+            href: '#',
+            onClick: () => {
+              onClose();
+              onLoginClick();
+            },
+          },
+          {
+            icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
+            label: 'Subscription',
+            href: '/subscription',
+            highlight: true,
+            badge: '70%',
+          },
+        ];
 
   if (!isOpen) return null;
 
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 top-full mt-2 w-56 rounded-lg bg-gray-2a shadow-lg ring-1 ring-black ring-opacity-5 z-50"
+      className="absolute right-0 top-full mt-2 w-64 rounded-lg bg-gray-2a shadow-lg ring-1 ring-black ring-opacity-5 z-50"
     >
+      {isAuthenticated && user && (
+        <div className="px-4 py-3 border-b border-gray-700">
+          <div className="font-medium text-white truncate">{user.name}</div>
+          <div className="text-sm text-gray-400 truncate">{user.email}</div>
+          {user.subscriber?.isPremiumSubscriber && (
+            <div className="mt-1">
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-400 text-black">
+                Premium
+              </span>
+            </div>
+          )}
+        </div>
+      )}
       <div className="py-2">
         {options.map((option, index) => {
           const commonClasses = `

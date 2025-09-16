@@ -4,12 +4,14 @@ import Image from 'next/image';
 import UserDropdown from './UserDropdown';
 import Auth from '../auth/Auth';
 import { usePathname } from 'next/navigation';
+import { useAppSelector } from '@/redux/hooks';
 
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const pathname = usePathname();
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   // Check if banner is visible and adjust navbar position
   useEffect(() => {
@@ -79,15 +81,30 @@ const NavBar = () => {
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="w-[46px] h-[46px] rounded-full bg-secondary-700 flex items-center justify-center hover:opacity-90 transition-opacity"
+                className="w-[46px] h-[46px] rounded-full bg-secondary-700 flex items-center justify-center hover:opacity-90 transition-opacity overflow-hidden"
               >
-                <Image
-                  src="/assets/profile.svg"
-                  alt="Profile"
-                  width={46}
-                  height={46}
-                  className="rounded-full"
-                />
+                {isAuthenticated && user ? (
+                  <div className="relative w-full h-full">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-white font-bold text-lg">
+                      {(() => {
+                        // Safely extract first letter of name
+                        const name = user.name as unknown;
+                        if (typeof name === 'string' && name.length > 0) {
+                          return name.charAt(0).toUpperCase();
+                        }
+                        return 'U';
+                      })()}
+                    </div>
+                  </div>
+                ) : (
+                  <Image
+                    src="/assets/profile.svg"
+                    alt="Profile"
+                    width={46}
+                    height={46}
+                    className="rounded-full"
+                  />
+                )}
               </button>
               <UserDropdown
                 isOpen={isDropdownOpen}

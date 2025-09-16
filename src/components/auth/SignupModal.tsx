@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import AuthModal from './AuthModal';
 import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
-import { IoChevronDownOutline } from 'react-icons/io5';
+import { FcGoogle } from 'react-icons/fc';
+import { useSignupMutation } from '@/redux/services/authApi';
+import { useAppSelector } from '@/redux/hooks';
+import { useSnackbar } from '@/providers';
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -11,167 +14,215 @@ interface SignupModalProps {
 }
 
 interface SignupFormData {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  gender: 'Man' | 'Woman' | 'Other';
-  dateOfBirth: string;
   password: string;
   confirmPassword: string;
-  aboutMe: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  gender: string;
   agreeToTerms: boolean;
 }
 
 const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [charCount, setCharCount] = useState(0);
+  const [signup, { isLoading }] = useSignupMutation();
+  const { error, requiresVerification } = useAppSelector((state) => state.auth);
+  const { showSnackbar } = useSnackbar();
 
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignupFormData>();
 
   const password = watch('password');
 
+  // Show success message and redirect to login after successful signup
+  useEffect(() => {
+    if (requiresVerification) {
+      showSnackbar(
+        'Account created successfully! Please check your email to verify your account before logging in.',
+        'success',
+        8000
+      );
+
+      // Wait a bit before redirecting to login
+      const timer = setTimeout(() => {
+        onLoginClick();
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [requiresVerification, onLoginClick, showSnackbar]);
+
+  // Show error message if there is an error
+  useEffect(() => {
+    if (error) {
+      showSnackbar(error, 'error');
+    }
+  }, [error, showSnackbar]);
+
   const onSubmit = async (data: SignupFormData) => {
     try {
-      // Here you would typically make an API call to register
-      console.log('Signing up with:', data);
-    } catch (error) {
-      console.error('Signup failed:', error);
-    }
-  };
+      // Only pass the required parameters to the API
+      // Use firstName as fullName for the API
+      const signupData = {
+        firstName: `${data.firstName} ${data.lastName}`.trim(), // Combine as fullName
+        email: data.email,
+        password: data.password,
+      };
 
-  const handleAboutMeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-    setCharCount(text.length);
+      // The signup mutation will automatically update the Redux store
+      const response = await signup(signupData).unwrap();
+
+      // Handle successful signup response manually for better control
+      if (response.success) {
+        showSnackbar(
+          'Account created successfully! Please check your email to verify your account before logging in.',
+          'success',
+          8000
+        );
+      }
+    } catch (err: unknown) {
+      console.error('Signup failed:', err);
+      // Show error message
+      const errorMessage =
+        typeof err === 'object' && err !== null && 'data' in err
+          ? (err.data as { message?: string })?.message
+          : typeof err === 'object' && err !== null && 'message' in err
+            ? (err as Error).message
+            : 'Signup failed. Please try again.';
+      showSnackbar(errorMessage || 'Signup failed. Please try again.', 'error');
+    }
   };
 
   return (
     <AuthModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Let's Get to Know You"
-      subtitle="Just a few quick questions to make your experience awesome!"
+      title="Create Your Account"
+      subtitle="Sign up to start your AI journey."
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label
-              htmlFor="fullName"
+              htmlFor="firstName"
               className="block text-sm text-gray-400 mb-2"
             >
-              Full Name
+              First Name
             </label>
             <input
-              {...register('fullName', {
-                required: 'Full name is required',
+              {...register('firstName', {
+                required: 'First name is required',
                 minLength: {
                   value: 2,
-                  message: 'Name must be at least 2 characters',
+                  message: 'First name must be at least 2 characters',
                 },
               })}
               type="text"
-              id="fullName"
-              placeholder="Full Name"
+              id="firstName"
+              placeholder="Enter your first name"
               className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
             />
-            {errors.fullName && (
+            {errors.firstName && (
               <p className="mt-1 text-sm text-red-500">
-                {errors.fullName.message}
+                {errors.firstName.message}
               </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm text-gray-400 mb-2">
-              Email id
+            <label
+              htmlFor="lastName"
+              className="block text-sm text-gray-400 mb-2"
+            >
+              Last Name
             </label>
             <input
-              {...register('email', {
-                required: 'Email is required',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address',
-                },
-              })}
-              type="email"
-              id="email"
-              placeholder="Enter Your email"
-              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-400 mb-2">
-            Select Gender
-          </label>
-          <div className="grid grid-cols-3 gap-4">
-            {['Man', 'Woman', 'Other'].map((gender) => (
-              <label
-                key={gender}
-                className={`
-                  flex items-center justify-center px-4 py-3 rounded-lg cursor-pointer
-                  ${watch('gender') === gender ? 'bg-accent-cyan text-black' : 'bg-gray-2a text-white'}
-                `}
-              >
-                <input
-                  type="radio"
-                  {...register('gender', {
-                    required: 'Please select your gender',
-                  })}
-                  value={gender}
-                  className="hidden"
-                />
-                {gender}
-              </label>
-            ))}
-          </div>
-          {errors.gender && (
-            <p className="mt-1 text-sm text-red-500">{errors.gender.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label
-            htmlFor="dateOfBirth"
-            className="block text-sm text-gray-400 mb-2"
-          >
-            Date of Birth
-          </label>
-          <div className="relative">
-            <input
-              {...register('dateOfBirth', {
-                required: 'Date of birth is required',
-              })}
+              {...register('lastName')}
               type="text"
-              id="dateOfBirth"
-              placeholder="dd/mm/yyyy"
+              id="lastName"
+              placeholder="Enter your last name"
               className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
-              onFocus={(e) => (e.target.type = 'date')}
-              onBlur={(e) => (e.target.type = 'text')}
-            />
-            <IoChevronDownOutline
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
-              size={20}
             />
           </div>
-          <p className="mt-1 text-xs text-gray-500">
-            Your age cannot be changed later
-          </p>
-          {errors.dateOfBirth && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.dateOfBirth.message}
-            </p>
+        </div>
+
+        <div>
+          <label htmlFor="email" className="block text-sm text-gray-400 mb-2">
+            Email
+          </label>
+          <input
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Invalid email address',
+              },
+            })}
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+          />
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
           )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="phoneNumber"
+              className="block text-sm text-gray-400 mb-2"
+            >
+              Phone Number (Optional)
+            </label>
+            <input
+              {...register('phoneNumber')}
+              type="tel"
+              id="phoneNumber"
+              placeholder="Enter your phone number"
+              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="dateOfBirth"
+              className="block text-sm text-gray-400 mb-2"
+            >
+              Date of Birth (Optional)
+            </label>
+            <input
+              {...register('dateOfBirth')}
+              type="date"
+              id="dateOfBirth"
+              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="gender" className="block text-sm text-gray-400 mb-2">
+            Gender (Optional)
+          </label>
+          <select
+            {...register('gender')}
+            id="gender"
+            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+          >
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+            <option value="prefer-not-to-say">Prefer not to say</option>
+          </select>
         </div>
 
         <div>
@@ -186,19 +237,13 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               {...register('password', {
                 required: 'Password is required',
                 minLength: {
-                  value: 8,
-                  message: 'Password must be at least 8 characters',
-                },
-                pattern: {
-                  value:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  message:
-                    'Password must contain uppercase, lowercase, number and special character',
+                  value: 6,
+                  message: 'Password must be at least 6 characters',
                 },
               })}
               type={showPassword ? 'text' : 'password'}
               id="password"
-              placeholder="********"
+              placeholder="Create a password"
               className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
             />
             <button
@@ -232,11 +277,11 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               {...register('confirmPassword', {
                 required: 'Please confirm your password',
                 validate: (value) =>
-                  value === password || 'The passwords do not match',
+                  value === password || 'Passwords do not match',
               })}
               type={showConfirmPassword ? 'text' : 'password'}
               id="confirmPassword"
-              placeholder="********"
+              placeholder="Confirm your password"
               className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
             />
             <button
@@ -258,55 +303,78 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
           )}
         </div>
 
-        <div>
-          <label htmlFor="aboutMe" className="block text-sm text-gray-400 mb-2">
-            About Me
-          </label>
-          <textarea
-            {...register('aboutMe')}
-            id="aboutMe"
-            rows={4}
-            placeholder="Write something about your self..."
-            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan resize-none"
-            maxLength={300}
-            onChange={handleAboutMeChange}
-          />
-          <p className="text-right text-sm text-gray-500">
-            {charCount}/300 Characters
-          </p>
+        <div className="flex items-start">
+          <div className="flex items-center h-5">
+            <input
+              {...register('agreeToTerms', {
+                required: 'You must agree to the terms and conditions',
+              })}
+              id="agreeToTerms"
+              type="checkbox"
+              className="w-4 h-4 accent-accent-cyan cursor-pointer"
+            />
+          </div>
+          <div className="ml-3 text-sm">
+            <label
+              htmlFor="agreeToTerms"
+              className="text-gray-400 cursor-pointer"
+            >
+              I agree to the{' '}
+              <a href="/terms" className="text-accent-cyan hover:underline">
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a href="/privacy" className="text-accent-cyan hover:underline">
+                Privacy Policy
+              </a>
+            </label>
+            {errors.agreeToTerms && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.agreeToTerms.message}
+              </p>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            {...register('agreeToTerms', {
-              required: 'You must agree to the terms and conditions',
-            })}
-            id="agreeToTerms"
-            className="rounded bg-gray-2a border-gray-600 text-accent-cyan focus:ring-accent-cyan"
-          />
-          <label htmlFor="agreeToTerms" className="text-sm text-gray-400">
-            I agree with the{' '}
-            <a href="/privacy" className="text-white underline">
-              Privacy Policy
-            </a>{' '}
-            and{' '}
-            <a href="/terms" className="text-white underline">
-              Terms & Conditions
-            </a>
-          </label>
-        </div>
-        {errors.agreeToTerms && (
-          <p className="text-sm text-red-500">{errors.agreeToTerms.message}</p>
-        )}
+        {/* Success and error messages are now handled by the Snackbar component */}
 
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+          disabled={isLoading || requiresVerification}
+          className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit
+          {isLoading ? 'Creating Account...' : 'SIGN UP'}
         </button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-700"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-gray-1a text-gray-400">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+        >
+          <FcGoogle size={20} />
+          <span>Sign up with Google</span>
+        </button>
+
+        <p className="text-center text-gray-400">
+          Already have an account?{' '}
+          <button
+            type="button"
+            onClick={onLoginClick}
+            className="text-accent-cyan hover:underline"
+          >
+            Login
+          </button>
+        </p>
       </form>
     </AuthModal>
   );
