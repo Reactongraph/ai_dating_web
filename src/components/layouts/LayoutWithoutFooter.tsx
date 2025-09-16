@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import NavBar from '@/components/navigation/NavBar';
 import Sidebar from '@/components/navigation/Sidebar';
+import ChipsBanner from '@/components/common/ChipsBanner';
 
 interface LayoutWithoutFooterProps {
   children: React.ReactNode;
@@ -17,6 +18,9 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
 
   return (
     <div className="h-screen flex flex-col bg-black text-white">
+      {/* Chips Banner - at the very top */}
+      <ChipsBanner />
+
       {/* Sidebar */}
       <Sidebar isExpanded={isSidebarExpanded} onToggle={toggleSidebar} />
 
@@ -24,7 +28,7 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
       <NavBar />
 
       {/* Main Content Area - No Footer */}
-      <main className="pt-16 pl-16 flex-grow">{children}</main>
+      <main className="pt-24 pl-16 flex-grow">{children}</main>
     </div>
   );
 };

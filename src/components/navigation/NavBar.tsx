@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import UserDropdown from './UserDropdown';
@@ -8,7 +8,25 @@ import { usePathname } from 'next/navigation';
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isBannerVisible, setIsBannerVisible] = useState(true);
   const pathname = usePathname();
+
+  // Check if banner is visible and adjust navbar position
+  useEffect(() => {
+    const checkBannerVisibility = () => {
+      // Check if banner element exists (not on homepage) and is visible
+      const banner = document.querySelector('[data-banner="chips"]');
+      setIsBannerVisible(!!banner);
+    };
+
+    checkBannerVisibility();
+
+    // Set up a mutation observer to detect when banner is removed
+    const observer = new MutationObserver(checkBannerVisibility);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [pathname]);
 
   const navLinks = [
     { href: '/girls', label: 'Girls' },
@@ -18,7 +36,9 @@ const NavBar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 right-0 left-16 h-16 bg-background-primary text-text-primary z-40">
+      <nav
+        className={`fixed ${isBannerVisible ? 'top-[40px]' : 'top-0'} right-0 left-16 h-16 bg-background-primary text-text-primary z-40 transition-all duration-300`}
+      >
         <div className="flex items-center justify-between h-full px-4">
           {/* Logo and Navigation Links */}
           <div className="flex items-center space-x-8">
