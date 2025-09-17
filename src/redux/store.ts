@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { authApi } from './services/authApi';
 import { profileApi } from './services/profileApi';
+import { googleAuthApi } from './services/googleAuthApi';
 import authReducer from './slices/authSlice';
 
 export const store = configureStore({
@@ -9,9 +10,14 @@ export const store = configureStore({
     auth: authReducer,
     [authApi.reducerPath]: authApi.reducer,
     [profileApi.reducerPath]: profileApi.reducer,
+    [googleAuthApi.reducerPath]: googleAuthApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, profileApi.middleware),
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      profileApi.middleware,
+      googleAuthApi.middleware
+    ),
 });
 
 // Enable refetchOnFocus and refetchOnReconnect

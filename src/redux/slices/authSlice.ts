@@ -1,5 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { googleAuthApi } from '../services/googleAuthApi';
 import { authApi, LoginResponse } from '../services/authApi';
+
+// Define a type for Google auth response
+interface GoogleAuthResponsePayload {
+  token?: string;
+  email?: string;
+  name?: string;
+  picture?: string;
+  googleId?: string;
+  accessToken?: string | { access_token: string };
+  user?: any;
+  statusCode?: number;
+  message?: string;
+  realtimeImage?: string[];
+}
 
 // Define the auth state interface
 interface AuthState {
@@ -67,35 +82,69 @@ const authSlice = createSlice({
         }
       }
     },
-    setCredentials: (state, action: PayloadAction<LoginResponse>) => {
-      if (
-        action.payload.statusCode === 200 &&
-        action.payload.user &&
-        action.payload.accessToken?.access_token
-      ) {
-        state.user = action.payload.user;
-        state.token = action.payload.accessToken.access_token;
+    setCredentials: (
+      state,
+      action: PayloadAction<LoginResponse | GoogleAuthResponsePayload>
+    ) => {
+      const payload = action.payload;
+
+      // Handle direct Google response format
+      if ('token' in payload && payload.token) {
+        // Create a user object from Google data
+        const user = {
+          _id: payload.googleId || '',
+          name: payload.name || '',
+          email: payload.email || '',
+          profilePicture: payload.picture || '',
+          googleId: payload.googleId || '',
+          isEmailVerified: true,
+        };
+
+        state.user = user as LoginResponse['user'];
+        state.token = payload.token;
         state.isAuthenticated = true;
         state.requiresVerification = false;
-        state.realtimeImage = action.payload.realtimeImage?.length
-          ? action.payload.realtimeImage[0]
-          : null;
         state.error = null;
 
-        // Save token to localStorage
+        // Save token and user data to localStorage
         if (typeof window !== 'undefined') {
-          localStorage.setItem(
-            'accessToken',
-            action.payload.accessToken.access_token
-          );
-          localStorage.setItem('userData', JSON.stringify(action.payload.user));
+          localStorage.setItem('accessToken', payload.token);
+          localStorage.setItem('userData', JSON.stringify(user));
+        }
+      }
+      // Handle standard API response format
+      else if (
+        'statusCode' in payload &&
+        payload.statusCode === 200 &&
+        payload.user &&
+        payload.accessToken
+      ) {
+        const accessToken =
+          typeof payload.accessToken === 'string'
+            ? payload.accessToken
+            : payload.accessToken.access_token;
+
+        state.user = payload.user;
+        state.token = accessToken;
+        state.isAuthenticated = true;
+        state.requiresVerification = false;
+        state.realtimeImage = payload.realtimeImage?.length
+          ? payload.realtimeImage[0]
+          : null;
+
+        // Save token and user data to localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('userData', JSON.stringify(payload.user));
         }
       } else if (
-        action.payload.requiresVerification ||
-        (action.payload.user && !action.payload.user.isEmailVerified)
+        ('requiresVerification' in payload && payload.requiresVerification) ||
+        (payload.user &&
+          'isEmailVerified' in payload.user &&
+          !payload.user.isEmailVerified)
       ) {
         state.requiresVerification = true;
-        state.error = action.payload.message || 'Email verification required';
+        state.error = payload.message || 'Email verification required';
       }
     },
     clearCredentials: (state) => {
@@ -127,6 +176,71 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      // Google Login success
+      .addMatcher(
+        googleAuthApi.endpoints.googleLogin.matchFulfilled,
+        (state, { payload }) => {
+          state.loading = false;
+
+          // Handle direct Google response format
+          if (payload.token) {
+            // Create a user object from Google data
+            const user = {
+              _id: payload.googleId || '',
+              name: payload.name || '',
+              email: payload.email || '',
+              profilePicture: payload.picture || '',
+              googleId: payload.googleId || '',
+              isEmailVerified: true,
+            };
+
+            state.user = user as LoginResponse['user'];
+            state.token = payload.token;
+            state.isAuthenticated = true;
+            state.requiresVerification = false;
+            state.error = null;
+
+            // Save token and user data to localStorage
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('accessToken', payload.token);
+              localStorage.setItem('userData', JSON.stringify(user));
+            }
+          }
+          // Handle standard API response format
+          else if (
+            payload.statusCode === 200 &&
+            payload.user &&
+            payload.accessToken
+          ) {
+            const accessToken =
+              typeof payload.accessToken === 'string'
+                ? payload.accessToken
+                : payload.accessToken.access_token;
+
+            state.user = payload.user;
+            state.token = accessToken;
+            state.isAuthenticated = true;
+            state.requiresVerification = false;
+            state.realtimeImage = payload.realtimeImage?.length
+              ? payload.realtimeImage[0]
+              : null;
+
+            // Save token and user data to localStorage
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('accessToken', accessToken);
+              localStorage.setItem('userData', JSON.stringify(payload.user));
+            }
+          }
+        }
+      )
+      // Google Login error
+      .addMatcher(
+        googleAuthApi.endpoints.googleLogin.matchRejected,
+        (state, { error }) => {
+          state.loading = false;
+          state.error = error.message || 'Google login failed';
+        }
+      )
       // Login success
       .addMatcher(
         authApi.endpoints.login.matchFulfilled,
@@ -208,6 +322,7 @@ const authSlice = createSlice({
         // Remove token from localStorage
         if (typeof window !== 'undefined') {
           localStorage.removeItem('accessToken');
+          localStorage.removeItem('userData');
         }
       })
       // Verify token success
@@ -230,6 +345,72 @@ const authSlice = createSlice({
               localStorage.removeItem('userData');
             }
           }
+        }
+      )
+      // Verify session success (for Google auth)
+      .addMatcher(
+        googleAuthApi.endpoints.verifySession.matchFulfilled,
+        (state, { payload }) => {
+          state.loading = false;
+
+          // Handle direct token response format
+          if (payload.token) {
+            // Create a user object from Google data
+            const user = {
+              _id: payload.googleId || '',
+              name: payload.name || '',
+              email: payload.email || '',
+              profilePicture: payload.picture || '',
+              googleId: payload.googleId || '',
+              isEmailVerified: true,
+            };
+
+            state.user = user as LoginResponse['user'];
+            state.token = payload.token;
+            state.isAuthenticated = true;
+            state.requiresVerification = false;
+            state.error = null;
+
+            // Save token and user data to localStorage
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('accessToken', payload.token);
+              localStorage.setItem('userData', JSON.stringify(user));
+            }
+          }
+          // Handle standard API response format
+          else if (
+            payload.statusCode === 200 &&
+            payload.user &&
+            payload.accessToken
+          ) {
+            const accessToken =
+              typeof payload.accessToken === 'string'
+                ? payload.accessToken
+                : payload.accessToken.access_token;
+
+            state.user = payload.user;
+            state.token = accessToken;
+            state.isAuthenticated = true;
+            state.requiresVerification = false;
+            state.realtimeImage = payload.realtimeImage?.length
+              ? payload.realtimeImage[0]
+              : null;
+
+            // Save token and user data to localStorage
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('accessToken', accessToken);
+              localStorage.setItem('userData', JSON.stringify(payload.user));
+            }
+          }
+        }
+      )
+      // Verify session error
+      .addMatcher(
+        googleAuthApi.endpoints.verifySession.matchRejected,
+        (state, { error }) => {
+          state.loading = false;
+          state.error = error.message || 'Session verification failed';
+          console.error('Session verification failed:', error);
         }
       );
   },

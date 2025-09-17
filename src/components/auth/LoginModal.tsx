@@ -4,8 +4,11 @@ import AuthModal from './AuthModal';
 import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import { FcGoogle } from 'react-icons/fc';
 import { useLoginMutation } from '@/redux/services/authApi';
-import { useAppSelector } from '@/redux/hooks';
+import { useGoogleLoginMutation } from '@/redux/services/googleAuthApi';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { useSnackbar } from '@/providers';
+import { signIn, useSession } from 'next-auth/react';
+import { setCredentials } from '@/redux/slices/authSlice';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -21,10 +24,14 @@ interface LoginFormData {
 const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
+  const [googleLogin, { isLoading: isGoogleLoading }] =
+    useGoogleLoginMutation();
   const { error, requiresVerification, isAuthenticated } = useAppSelector(
     (state) => state.auth
   );
   const { showSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
+  const { data: session } = useSession();
 
   const {
     register,
@@ -55,6 +62,44 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
       );
     }
   }, [requiresVerification, showSnackbar]);
+
+  // Handle Google session - only when modal is open
+  useEffect(() => {
+    const handleGoogleSession = async () => {
+      // Only process Google session when modal is open and user is not authenticated
+      if (isOpen && session && session.user && !isAuthenticated) {
+        try {
+          // Send the session data to our backend for verification and user creation/login
+          const response = await googleLogin({
+            token: session.accessToken || '',
+            email: session.user.email || '',
+            name: session.user.name || '',
+            picture: session.user.image || undefined,
+            googleId: session.userId || '',
+          }).unwrap();
+
+          // Handle both direct token response and standard API response
+          if (
+            response.token ||
+            (response.statusCode === 200 && response.accessToken)
+          ) {
+            // Cast to LoginResponse to satisfy type checker
+            dispatch(
+              setCredentials(
+                response as unknown as import('@/redux/services/authApi').LoginResponse
+              )
+            );
+            showSnackbar('Google login successful!', 'success');
+          }
+        } catch (err) {
+          console.error('Google login failed:', err);
+          showSnackbar('Google login failed. Please try again.', 'error');
+        }
+      }
+    };
+
+    handleGoogleSession();
+  }, [isOpen, session, dispatch, googleLogin, isAuthenticated, showSnackbar]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -183,10 +228,12 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
 
         <button
           type="button"
-          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+          onClick={() => signIn('google')}
+          disabled={isGoogleLoading}
+          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FcGoogle size={20} />
-          <span>Login with Google</span>
+          <span>{isGoogleLoading ? 'Logging in...' : 'Login with Google'}</span>
         </button>
 
         <p className="text-center text-gray-400">

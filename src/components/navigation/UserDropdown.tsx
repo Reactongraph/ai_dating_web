@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 // Removed useLogoutMutation import as we don't need to call the API
 import { clearCredentials } from '@/redux/slices/authSlice';
 import { useSnackbar } from '@/providers';
+import { signOut } from 'next-auth/react';
 
 interface DropdownOption {
   icon: React.ReactNode;
@@ -48,11 +49,26 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick }: UserDropdownProps) => {
     };
   }, [isOpen, onClose]);
 
-  const handleLogout = () => {
-    // Just clear the credentials without making an API call
-    dispatch(clearCredentials());
-    showSnackbar('Logged out successfully', 'success');
-    onClose();
+  const handleLogout = async () => {
+    try {
+      // Clear Redux credentials
+      dispatch(clearCredentials());
+
+      // Sign out from NextAuth
+      await signOut({ redirect: false });
+
+      // Show success message
+      showSnackbar('Logged out successfully', 'success');
+      onClose();
+
+      // Force a page reload to clear any remaining state
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 500);
+    } catch (error) {
+      console.error('Logout error:', error);
+      showSnackbar('Error logging out. Please try again.', 'error');
+    }
   };
 
   // Different options based on authentication status

@@ -21,7 +21,7 @@ interface SnackbarProps {
 const Snackbar = ({
   message,
   type = 'info',
-  duration = 5000,
+  duration = 3000,
   onClose,
   isVisible,
 }: SnackbarProps) => {
@@ -57,7 +57,7 @@ const Snackbar = ({
 
   const getStyles = () => {
     const baseStyles =
-      'fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 flex items-center p-4 rounded-lg shadow-lg transition-all duration-300';
+      'fixed top-4 left-1/2 transform -translate-x-1/2 z-50 flex items-center p-4 rounded-lg shadow-lg transition-all duration-300';
 
     switch (type) {
       case 'success':

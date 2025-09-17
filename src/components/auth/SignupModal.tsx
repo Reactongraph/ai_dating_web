@@ -4,8 +4,11 @@ import AuthModal from './AuthModal';
 import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import { FcGoogle } from 'react-icons/fc';
 import { useSignupMutation } from '@/redux/services/authApi';
-import { useAppSelector } from '@/redux/hooks';
+import { useGoogleLoginMutation } from '@/redux/services/googleAuthApi';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { useSnackbar } from '@/providers';
+import { signIn, useSession } from 'next-auth/react';
+import { setCredentials } from '@/redux/slices/authSlice';
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -29,8 +32,14 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [signup, { isLoading }] = useSignupMutation();
-  const { error, requiresVerification } = useAppSelector((state) => state.auth);
+  const [googleLogin, { isLoading: isGoogleLoading }] =
+    useGoogleLoginMutation();
+  const { error, requiresVerification, isAuthenticated } = useAppSelector(
+    (state) => state.auth
+  );
   const { showSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
+  const { data: session } = useSession();
 
   const {
     register,
@@ -40,6 +49,13 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
   } = useForm<SignupFormData>();
 
   const password = watch('password');
+
+  // Close modal when successfully authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      onClose();
+    }
+  }, [isAuthenticated, onClose]);
 
   // Show success message and redirect to login after successful signup
   useEffect(() => {
@@ -65,6 +81,44 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
       showSnackbar(error, 'error');
     }
   }, [error, showSnackbar]);
+
+  // Handle Google session - only when modal is open
+  useEffect(() => {
+    const handleGoogleSession = async () => {
+      // Only process Google session when modal is open and user is not authenticated
+      if (isOpen && session && session.user && !isAuthenticated) {
+        try {
+          // Send the session data to our backend for verification and user creation/login
+          const response = await googleLogin({
+            token: session.accessToken || '',
+            email: session.user.email || '',
+            name: session.user.name || '',
+            picture: session.user.image || undefined,
+            googleId: session.userId || '',
+          }).unwrap();
+
+          // Handle both direct token response and standard API response
+          if (
+            response.token ||
+            (response.statusCode === 200 && response.accessToken)
+          ) {
+            // Cast to LoginResponse to satisfy type checker
+            dispatch(
+              setCredentials(
+                response as unknown as import('@/redux/services/authApi').LoginResponse
+              )
+            );
+            showSnackbar('Google signup successful!', 'success');
+          }
+        } catch (err) {
+          console.error('Google signup failed:', err);
+          showSnackbar('Google signup failed. Please try again.', 'error');
+        }
+      }
+    };
+
+    handleGoogleSession();
+  }, [isOpen, session, dispatch, googleLogin, isAuthenticated, showSnackbar]);
 
   const onSubmit = async (data: SignupFormData) => {
     try {
@@ -340,7 +394,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
 
         <button
           type="submit"
-          disabled={isLoading || requiresVerification}
+          disabled={isLoading || isGoogleLoading || requiresVerification}
           className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Creating Account...' : 'SIGN UP'}
@@ -359,10 +413,14 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
 
         <button
           type="button"
-          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+          onClick={() => signIn('google')}
+          disabled={isGoogleLoading}
+          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FcGoogle size={20} />
-          <span>Sign up with Google</span>
+          <span>
+            {isGoogleLoading ? 'Signing up...' : 'Sign up with Google'}
+          </span>
         </button>
 
         <p className="text-center text-gray-400">

@@ -12,7 +12,6 @@ const NavBar = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const pathname = usePathname();
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
-
   // Check if banner is visible and adjust navbar position
   useEffect(() => {
     const checkBannerVisibility = () => {
@@ -39,7 +38,7 @@ const NavBar = () => {
   return (
     <>
       <nav
-        className={`fixed ${isBannerVisible ? 'top-[40px]' : 'top-0'} right-0 left-16 h-16 bg-background-primary text-text-primary z-40 transition-all duration-300`}
+        className={`fixed ${!isBannerVisible || pathname === '/' ? 'top-0' : 'top-[40px]'} right-0 left-16 h-16 bg-background-primary text-text-primary z-40 transition-all duration-300`}
       >
         <div className="flex items-center justify-between h-full px-4">
           {/* Logo and Navigation Links */}

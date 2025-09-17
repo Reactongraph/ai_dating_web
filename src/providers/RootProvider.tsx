@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import ReduxProvider from './ReduxProvider';
 import SnackbarProvider from './SnackbarProvider';
 import AuthInitializer from './AuthInitializer';
+import NextAuthProvider from './NextAuthProvider';
 
 interface RootProviderProps {
   children: ReactNode;
@@ -11,12 +12,14 @@ interface RootProviderProps {
 
 export function RootProvider({ children }: RootProviderProps) {
   return (
-    <ReduxProvider>
-      <SnackbarProvider>
-        <AuthInitializer />
-        {children}
-      </SnackbarProvider>
-    </ReduxProvider>
+    <NextAuthProvider>
+      <ReduxProvider>
+        <SnackbarProvider>
+          <AuthInitializer />
+          {children}
+        </SnackbarProvider>
+      </ReduxProvider>
+    </NextAuthProvider>
   );
 }
 
