@@ -45,7 +45,13 @@ const NavBar = () => {
           {/* Logo and Navigation Links */}
           <div className="flex items-center space-x-8">
             <Link href="/" className="text-xl font-bold">
-              True Companion
+              <Image
+                src="/assets/true_compnion_logo.png"
+                alt="Logo"
+                width={170}
+                height={50}
+                className="object-contain"
+              />
             </Link>
 
             <div className="flex space-x-6">
@@ -83,28 +89,23 @@ const NavBar = () => {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="w-[46px] h-[46px] rounded-full bg-secondary-700 flex items-center justify-center hover:opacity-90 transition-opacity overflow-hidden"
               >
-                {isAuthenticated && user ? (
-                  <div className="relative w-full h-full">
+                <div className="relative w-full h-full">
+                  {isAuthenticated && user ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-white font-bold text-lg">
-                      {(() => {
-                        // Safely extract first letter of name
-                        const name = user.name as unknown;
-                        if (typeof name === 'string' && name.length > 0) {
-                          return name.charAt(0).toUpperCase();
-                        }
-                        return 'U';
-                      })()}
+                      {typeof user.name === 'string' && user.name.length > 0
+                        ? user.name.charAt(0).toUpperCase()
+                        : 'U'}
                     </div>
-                  </div>
-                ) : (
-                  <Image
-                    src="/assets/profile.svg"
-                    alt="Profile"
-                    width={46}
-                    height={46}
-                    className="rounded-full"
-                  />
-                )}
+                  ) : (
+                    <Image
+                      src="/assets/profile.svg"
+                      alt="Profile"
+                      width={46}
+                      height={46}
+                      className="rounded-full"
+                    />
+                  )}
+                </div>
               </button>
               <UserDropdown
                 isOpen={isDropdownOpen}

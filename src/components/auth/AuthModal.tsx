@@ -20,7 +20,7 @@ const AuthModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       <div className="flex flex-col md:flex-row w-full max-w-[900px] bg-gray-1a rounded-2xl overflow-hidden">
         {/* Left Side - Image */}
         <div
@@ -37,7 +37,7 @@ const AuthModal = ({
               src="/assets/login_screen_girlboy.png"
               alt="True Companion"
               fill
-              className="object-contain object-center scale-90"
+              className="object-cover object-center "
               priority
             />
             <div className="absolute inset-0 flex flex-col justify-between p-7">

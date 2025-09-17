@@ -28,7 +28,7 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
       {/* Header */}
       <NavBar />
       {/* Main Content */}
-      <main className="pt-24 pl-16 flex-grow">{children}</main>
+      <main className="pt-17 pl-16 flex-grow">{children}</main>
       {/* Footer */}
       <Footer />
     </div>
