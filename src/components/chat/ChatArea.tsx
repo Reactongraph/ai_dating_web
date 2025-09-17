@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { Chat, QuickSuggestion } from '@/types/chat';
 

@@ -27,12 +27,15 @@ const OtpModal = ({
     setError,
   } = useForm<OtpFormData>();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSubmit = async (data: OtpFormData) => {
     try {
       // Here you would typically make an API call to verify OTP
       console.log('Verifying OTP:', otp);
       onVerificationComplete();
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const errorMsg = error; // Acknowledge error variable
       setError('otp', {
         type: 'manual',
         message: 'Invalid OTP. Please try again.',

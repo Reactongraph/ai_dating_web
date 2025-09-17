@@ -10,7 +10,7 @@ interface GoogleAuthResponsePayload {
   picture?: string;
   googleId?: string;
   accessToken?: string | { access_token: string };
-  user?: any;
+  user?: LoginResponse['user'];
   statusCode?: number;
   message?: string;
   realtimeImage?: string[];
