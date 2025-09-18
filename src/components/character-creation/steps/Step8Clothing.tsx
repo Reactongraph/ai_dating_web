@@ -22,49 +22,23 @@ const Step8Clothing: React.FC = () => {
       {/* Clothing Selection */}
       <div className="grid grid-cols-5 gap-3 max-w-5xl mx-auto">
         {clothings.map((option) => (
-          <div
+          <button
             key={option._id}
-            className={`relative cursor-pointer rounded-lg overflow-hidden transition-all ${
-              clothing === option.name.toLowerCase()
-                ? 'ring-2 ring-primary-500'
-                : ''
-            }`}
+            type="button"
             onClick={() =>
               setValue(
                 'clothing',
                 option.name.toLowerCase() as CharacterFormData['clothing']
               )
             }
+            className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+              clothing === option.name.toLowerCase()
+                ? 'bg-primary-500 text-white border-2 border-primary-500'
+                : 'bg-gray-700 text-white border-2 border-gray-600 hover:border-gray-400'
+            }`}
           >
-            <div
-              className="relative h-40 bg-cover bg-center"
-              style={{
-                backgroundImage: `url("${option.imageUrl || '/assets/clothing/default.jpg'}")`,
-              }}
-            >
-              <div className="absolute inset-0 bg-black/20" />
-              <div className="absolute bottom-2 left-0 right-0 text-center">
-                <h3 className="text-sm font-medium text-white">
-                  {option.name}
-                </h3>
-              </div>
-              {clothing === option.name.toLowerCase() && (
-                <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              )}
-            </div>
-          </div>
+            {option.name}
+          </button>
         ))}
       </div>
 

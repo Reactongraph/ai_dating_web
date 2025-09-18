@@ -32,14 +32,16 @@ const CompanionCard = ({ companion }: CompanionCardProps) => (
       <h3 className="text-2xl font-semibold text-white mb-2">
         {companion.name}, {companion.age}
       </h3>
-      <p className="text-gray-300 text-sm mb-4">{companion.description}</p>
+      <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+        {companion.description}
+      </p>
 
       {/* Tags */}
       <div className="flex gap-2">
         {companion.tags.map((tag, index) => (
           <span
             key={index}
-            className="px-3 py-1 bg-black bg-opacity-50 rounded-full text-sm text-white"
+            className="px-3 py-1 bg-black bg-opacity-50 rounded-full text-sm text-white flex items-center justify-center"
           >
             {tag}
           </span>

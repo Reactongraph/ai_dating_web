@@ -191,6 +191,25 @@ export interface GenerateAvatarResponse {
   };
 }
 
+// Bot Profile Interfaces
+export interface BotProfile {
+  _id: string;
+  name: string;
+  age: number;
+  description: string;
+  imageSrc: string;
+  tags: string[];
+  botType: 'girl' | 'boy' | 'anime';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetBotProfilesResponse {
+  success: boolean;
+  message: string;
+  data: BotProfile[];
+}
+
 export const characterAttributesApi = createApi({
   reducerPath: 'characterAttributesApi',
   baseQuery: fetchBaseQuery({
