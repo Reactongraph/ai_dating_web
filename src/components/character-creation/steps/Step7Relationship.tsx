@@ -2,28 +2,27 @@
 
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData } from '@/types/character';
+import { useCharacterAttributes } from '@/hooks/useCharacterAttributes';
 
 const Step7Relationship: React.FC = () => {
   const { register, watch, setValue } = useFormContext<CharacterFormData>();
+  const { relationships } = useCharacterAttributes();
 
   const relationship = watch('relationship');
 
-  const relationshipOptions: Array<{
-    value: CharacterFormData['relationship'];
-    label: string;
-    icon: string;
-  }> = [
-    { value: 'stranger', label: 'Stranger', icon: '🕵️' },
-    { value: 'schoolmate', label: 'School Mate', icon: '🎓' },
-    { value: 'colleague', label: 'Colleague', icon: '💼' },
-    { value: 'friend', label: 'Friend', icon: '👏' },
-    { value: 'bestfriend', label: 'Bestfriend', icon: '🤝' },
-    { value: 'girlfriend', label: 'Girlfriend', icon: '❤️' },
-    { value: 'wife', label: 'Wife', icon: '💍' },
-    { value: 'mistress', label: 'Mistress', icon: '👑' },
-    { value: 'stepsister', label: 'Stepsister', icon: '💎' },
-    { value: 'stepmom', label: 'Stepmom', icon: '🔥' },
-  ];
+  // Icon mapping for relationship types
+  const relationshipIcons: Record<string, string> = {
+    stranger: '🕵️',
+    schoolmate: '🎓',
+    colleague: '💼',
+    friend: '👏',
+    bestfriend: '🤝',
+    girlfriend: '❤️',
+    wife: '💍',
+    mistress: '👑',
+    stepsister: '💎',
+    stepmom: '🔥',
+  };
 
   return (
     <div className="space-y-8">
@@ -36,20 +35,29 @@ const Step7Relationship: React.FC = () => {
 
       {/* Relationship Selection */}
       <div className="grid grid-cols-4 gap-4 max-w-5xl mx-auto">
-        {relationshipOptions.map((option) => (
+        {relationships.map((option) => (
           <div
-            key={option.value}
+            key={option._id}
             className={`relative cursor-pointer rounded-lg overflow-hidden transition-all ${
-              relationship === option.value ? 'ring-2 ring-primary-500' : ''
+              relationship === option.name.toLowerCase()
+                ? 'ring-2 ring-primary-500'
+                : ''
             }`}
-            onClick={() => setValue('relationship', option.value)}
+            onClick={() =>
+              setValue(
+                'relationship',
+                option.name.toLowerCase() as CharacterFormData['relationship']
+              )
+            }
           >
             <div className="bg-gray-800 p-6 text-center h-full">
-              <div className="text-4xl mb-3">{option.icon}</div>
+              <div className="text-4xl mb-3">
+                {relationshipIcons[option.name.toLowerCase()] || '💫'}
+              </div>
               <h3 className="text-lg font-semibold text-white">
-                {option.label}
+                {option.name}
               </h3>
-              {relationship === option.value && (
+              {relationship === option.name.toLowerCase() && (
                 <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
                   <svg
                     className="w-3 h-3 text-white"

@@ -1,7 +1,15 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Snackbar from '@/components/common/Snackbar';
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData, FormStepProps } from '@/types/character';
+import { useAppSelector } from '@/redux/hooks';
+import {
+  useGenerateAvatarMutation,
+  GenerateAvatarRequest,
+} from '@/redux/services/characterAttributesApi';
 
 import Step1Create from './steps/Step1Create';
 import Step2Ethnicity from './steps/Step2Ethnicity';
@@ -13,7 +21,7 @@ import Step7Relationship from './steps/Step7Relationship';
 import Step8Clothing from './steps/Step8Clothing';
 import Step9Summary from './steps/Step9Summary';
 
-type CharacterCreationFormProps = FormStepProps & {
+type CharacterCreationFormProps = Omit<FormStepProps, 'onSubmit'> & {
   onClose: () => void;
 };
 
@@ -21,10 +29,14 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
   currentStep,
   onNext,
   onPrevious,
-  onSubmit,
   onClose,
 }) => {
+  const router = useRouter();
   const { handleSubmit } = useFormContext<CharacterFormData>();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const botType = useAppSelector((state) => state.characterAttributes.botType);
+  const [generateAvatar] = useGenerateAvatarMutation();
 
   const steps = [
     { step: 1, title: 'Create' },
@@ -57,11 +69,67 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
                     ? Step8Clothing
                     : Step9Summary;
 
-  const handleFormSubmit = (data: CharacterFormData) => {
+  const handleFormSubmit = async (data: CharacterFormData) => {
     if (currentStep < 9) {
       onNext();
-    } else {
-      onSubmit(data);
+      return;
+    }
+
+    // Get userId from localStorage
+    const userData = localStorage.getItem('userData');
+    const userId = userData ? JSON.parse(userData).id : null;
+
+    if (!userId) {
+      setError('User ID not found. Please log in.');
+      return;
+    }
+
+    setIsGenerating(true);
+    setError(null);
+
+    try {
+      // Convert age string to number
+      const ageNumber = parseInt(data.age.replace(/\D/g, '')) || 25;
+
+      // Prepare request data
+      const requestData: GenerateAvatarRequest = {
+        bot_type: botType as 'girl' | 'boy',
+        name: 'My AI Companion',
+        style: data.style === 'realistic' ? 'Realistic' : 'Anime',
+        ethnicity: data.ethnicity,
+        age: ageNumber,
+        eye_color: data.eyeColor,
+        hair_style: data.hairstyle,
+        hair_color: data.hairColor,
+        body_type: data.bodyType,
+        personality: data.personality,
+        occupation: data.occupation,
+        hobbies: data.hobbies || [],
+        relationship: data.relationship,
+        clothing: data.clothing,
+        ...(botType === 'girl' && {
+          breast_size: data.breastSize,
+          butt_size: data.bootySize,
+        }),
+      };
+
+      const response = await generateAvatar({
+        userId,
+        data: requestData,
+      }).unwrap();
+
+      // On successful avatar generation, navigate to collection page
+      if (response.success) {
+        router.push('/collection');
+      } else {
+        setError('Failed to generate avatar');
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to generate avatar'
+      );
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -152,14 +220,27 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
             <CurrentStepComponent />
 
             {/* Navigation Button */}
-            <div className="flex justify-center mt-8 mb-6">
+            <div className="flex flex-col items-center mt-8 mb-6">
               <button
                 type="submit"
+                disabled={currentStep === 9 && isGenerating}
                 className="px-8 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {currentStep === 9 ? 'Submit' : 'Next'}
+                {currentStep === 9
+                  ? isGenerating
+                    ? 'Creating Character...'
+                    : 'Create Character'
+                  : 'Next'}
               </button>
             </div>
+            {error && currentStep === 9 && (
+              <Snackbar
+                isVisible={!!error}
+                message={error}
+                type="error"
+                onClose={() => setError(null)}
+              />
+            )}
           </form>
         </div>
       </div>

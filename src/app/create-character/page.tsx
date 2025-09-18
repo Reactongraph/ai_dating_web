@@ -3,6 +3,9 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
+import { useAppDispatch } from '@/redux/hooks';
+import { setBotType } from '@/redux/slices/characterAttributesSlice';
+import { useCharacterAttributes } from '@/hooks/useCharacterAttributes';
 import CharacterCreationForm from '@/components/character-creation/CharacterCreationForm';
 import { CharacterFormData } from '@/types/character';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
@@ -10,10 +13,14 @@ import ConfirmationModal from '@/components/common/ConfirmationModal';
 
 const CreateCharacterPageContent = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const [showForm, setShowForm] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [showCloseModal, setShowCloseModal] = useState(false);
+
+  // Load all character attributes in parallel
+  const { isLoading } = useCharacterAttributes();
 
   const methods = useForm<CharacterFormData>({
     defaultValues: {
@@ -47,20 +54,27 @@ const CreateCharacterPageContent = () => {
 
       // Step 8: Clothing
       clothing: 'casual',
-
-      // Step 9: Summary
-      // This will be auto-generated from previous selections
     },
   });
 
+  // Watch characterType to update botType in Redux store
+  const characterType = methods.watch('characterType');
+  useEffect(() => {
+    // Map characterType to botType
+    const botType = characterType === 'girl' ? 'girl' : 'boy';
+    dispatch(setBotType(botType));
+  }, [characterType, dispatch]);
+
   // Initialize step from URL or default to 1
   useEffect(() => {
-    const step = searchParams.get('step');
-    if (step) {
-      const stepNumber = parseInt(step);
-      if (stepNumber >= 1 && stepNumber <= 9) {
-        setCurrentStep(stepNumber);
-        setShowForm(true);
+    if (searchParams) {
+      const step = searchParams.get('step');
+      if (step) {
+        const stepNumber = parseInt(step);
+        if (stepNumber >= 1 && stepNumber <= 9) {
+          setCurrentStep(stepNumber);
+          setShowForm(true);
+        }
       }
     }
   }, [searchParams]);
@@ -142,6 +156,14 @@ const CreateCharacterPageContent = () => {
   const handleCancelClose = () => {
     setShowCloseModal(false);
   };
+
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-black flex items-center justify-center text-white">
+        Loading character attributes...
+      </div>
+    );
+  }
 
   if (!showForm) {
     return (

@@ -2,45 +2,183 @@
 
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData } from '@/types/character';
+import { useCharacterAttributes } from '@/hooks/useCharacterAttributes';
+import { useAppSelector } from '@/redux/hooks';
+import ImageWithFallback from '@/components/common/ImageWithFallback';
+
+interface Attribute {
+  _id: string;
+  name: string;
+  botType?: string;
+  image?: { s3Location?: string; path?: string };
+  imageUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface SummaryItem {
+  label: string;
+  value: string;
+  category: string;
+  image?: string;
+}
 
 const Step9Summary: React.FC = () => {
   const { watch } = useFormContext<CharacterFormData>();
+  const botType = useAppSelector((state) => state.characterAttributes.botType);
+
+  const {
+    styles,
+    ethnicities,
+    eyeColors,
+    hairStyles,
+    hairColors,
+    bodyTypes,
+    breastSizes,
+    buttSizes,
+    clothings,
+    personalities,
+    occupations,
+    relationships,
+  } = useCharacterAttributes();
 
   const formData = watch();
 
-  const summaryItems = [
-    { label: 'Style', value: formData.style, category: 'Style' },
-    { label: 'Occupation', value: formData.occupation, category: 'Occupation' },
-    {
-      label: 'Hobby',
-      value: formData.hobbies?.[0] || 'None',
-      category: 'Hobbie',
-    },
-    { label: 'Eye Color', value: formData.eyeColor, category: 'Eye Color' },
-    { label: 'Clothing', value: formData.clothing, category: 'Clothing' },
-    { label: 'Age', value: formData.age, category: 'Age' },
-    { label: 'Eye Color', value: formData.eyeColor, category: 'Eye Color' },
-    { label: 'Hairstyle', value: formData.hairstyle, category: 'Hairstyle' },
-    { label: 'Hair Color', value: formData.hairColor, category: 'Hair Color' },
-    { label: 'Ethnicity', value: formData.ethnicity, category: 'Ethnicity' },
-    { label: 'Body Type', value: formData.bodyType, category: 'Body Type' },
-    {
-      label: 'Breast Size',
-      value: formData.breastSize,
-      category: 'Breast Size',
-    },
-    {
-      label: 'Personality',
-      value: formData.personality,
-      category: 'Personality',
-    },
-    { label: 'Booty Size', value: formData.bootySize, category: 'Booty Size' },
-    {
-      label: 'Relationship',
-      value: formData.relationship,
-      category: 'Relationship',
-    },
-  ];
+  // Helper function to find attribute name by value
+  const findAttributeName = (
+    value: string | undefined,
+    attributes: Array<Attribute>
+  ) => {
+    if (!value) return 'Not selected';
+    const attribute = attributes.find(
+      (a) => a.name.toLowerCase() === value.toLowerCase()
+    );
+    return attribute?.name || value;
+  };
+
+  // Create summary items based on botType
+  const getSummaryItems = (): SummaryItem[] => {
+    const baseItems: SummaryItem[] = [
+      {
+        label: 'Style',
+        value: findAttributeName(formData.style, styles),
+        category: 'Style',
+        image: styles.find(
+          (s: Attribute) => s.name.toLowerCase() === formData.style
+        )?.imageUrl,
+      },
+      {
+        label: 'Occupation',
+        value: findAttributeName(formData.occupation, occupations),
+        category: 'Occupation',
+        image: occupations.find(
+          (o: Attribute) => o.name.toLowerCase() === formData.occupation
+        )?.imageUrl,
+      },
+      {
+        label: 'Hobby',
+        value: formData.hobbies?.[0] || 'None',
+        category: 'Hobby',
+      },
+      {
+        label: 'Eye Color',
+        value: findAttributeName(formData.eyeColor, eyeColors),
+        category: 'Eye Color',
+        image: eyeColors.find(
+          (e: Attribute) => e.name.toLowerCase() === formData.eyeColor
+        )?.imageUrl,
+      },
+      {
+        label: 'Clothing',
+        value: findAttributeName(formData.clothing, clothings),
+        category: 'Clothing',
+        image: clothings.find(
+          (c: Attribute) => c.name.toLowerCase() === formData.clothing
+        )?.imageUrl,
+      },
+      {
+        label: 'Age',
+        value: formData.age,
+        category: 'Age',
+      },
+      {
+        label: 'Hairstyle',
+        value: findAttributeName(formData.hairstyle, hairStyles),
+        category: 'Hairstyle',
+        image: hairStyles.find(
+          (h: Attribute) => h.name.toLowerCase() === formData.hairstyle
+        )?.imageUrl,
+      },
+      {
+        label: 'Hair Color',
+        value: findAttributeName(formData.hairColor, hairColors),
+        category: 'Hair Color',
+        image: hairColors.find(
+          (h: Attribute) => h.name.toLowerCase() === formData.hairColor
+        )?.imageUrl,
+      },
+      {
+        label: 'Ethnicity',
+        value: findAttributeName(formData.ethnicity, ethnicities),
+        category: 'Ethnicity',
+        image: ethnicities.find(
+          (e: Attribute) => e.name.toLowerCase() === formData.ethnicity
+        )?.imageUrl,
+      },
+      {
+        label: 'Body Type',
+        value: findAttributeName(formData.bodyType, bodyTypes),
+        category: 'Body Type',
+        image: bodyTypes.find(
+          (b: Attribute) => b.name.toLowerCase() === formData.bodyType
+        )?.imageUrl,
+      },
+      {
+        label: 'Personality',
+        value: findAttributeName(formData.personality, personalities),
+        category: 'Personality',
+        image: personalities.find(
+          (p: Attribute) => p.name.toLowerCase() === formData.personality
+        )?.imageUrl,
+      },
+      {
+        label: 'Relationship',
+        value: findAttributeName(formData.relationship, relationships),
+        category: 'Relationship',
+        image: relationships.find(
+          (r: Attribute) => r.name.toLowerCase() === formData.relationship
+        )?.imageUrl,
+      },
+    ];
+
+    // Add girl-specific attributes
+    if (botType === 'girl') {
+      baseItems.splice(
+        10,
+        0,
+        {
+          label: 'Breast Size',
+          value: findAttributeName(formData.breastSize, breastSizes),
+          category: 'Breast Size',
+          image: breastSizes.find(
+            (b: Attribute) => b.name.toLowerCase() === formData.breastSize
+          )?.imageUrl,
+        },
+        {
+          label: 'Booty Size',
+          value: findAttributeName(formData.bootySize, buttSizes),
+          category: 'Booty Size',
+          image: buttSizes.find(
+            (b: Attribute) => b.name.toLowerCase() === formData.bootySize
+          )?.imageUrl,
+        }
+      );
+    }
+
+    return baseItems;
+  };
+
+  const summaryItems = getSummaryItems();
 
   return (
     <div className="space-y-8">
@@ -62,9 +200,19 @@ const Step9Summary: React.FC = () => {
           >
             {item.value && item.value !== 'None' ? (
               <>
-                {/* Image placeholder - in real app, this would show the actual selected image */}
                 <div className="h-32 bg-gray-700 flex items-center justify-center">
-                  <span className="text-gray-400 text-sm">{item.label}</span>
+                  {item.image ? (
+                    <ImageWithFallback
+                      src={item.image}
+                      alt={item.label}
+                      width={128}
+                      height={128}
+                      className="w-full h-full object-cover"
+                      fallbackSrc={`/assets/${item.category.toLowerCase()}-placeholder.jpg`}
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-sm">{item.label}</span>
+                  )}
                 </div>
                 <div className="p-3 text-center">
                   <h3 className="text-lg font-semibold text-white">
@@ -72,7 +220,6 @@ const Step9Summary: React.FC = () => {
                   </h3>
                   <p className="text-sm text-gray-400">{item.category}</p>
                 </div>
-                {/* Checkmark for selected items */}
                 <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
                   <svg
                     className="w-3 h-3 text-white"
@@ -109,7 +256,9 @@ const Step9Summary: React.FC = () => {
             </div>
             <div>
               <span className="text-gray-400">Style: </span>
-              <span className="text-white font-medium">{formData.style}</span>
+              <span className="text-white font-medium">
+                {findAttributeName(formData.style, styles)}
+              </span>
             </div>
           </div>
         </div>

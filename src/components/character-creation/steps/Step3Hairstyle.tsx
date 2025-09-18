@@ -2,51 +2,15 @@
 
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData } from '@/types/character';
+import { useCharacterAttributes } from '@/hooks/useCharacterAttributes';
 
 const Step3Hairstyle: React.FC = () => {
   const { register, watch, setValue } = useFormContext<CharacterFormData>();
+  const { hairStyles, hairColors } = useCharacterAttributes();
 
   const hairstyle = watch('hairstyle');
   const hairColor = watch('hairColor');
   const age = watch('age');
-
-  const hairstyleOptions: Array<{
-    value: CharacterFormData['hairstyle'];
-    label: string;
-    image: string;
-  }> = [
-    {
-      value: 'ponytail',
-      label: 'Ponytail',
-      image: '/assets/hairstyles/ponytail.jpg',
-    },
-    { value: 'braid', label: 'Braid', image: '/assets/hairstyles/braid.jpg' },
-    { value: 'bun', label: 'Bun', image: '/assets/hairstyles/bun.jpg' },
-    {
-      value: 'straight',
-      label: 'Straight',
-      image: '/assets/hairstyles/straight.jpg',
-    },
-    { value: 'wavy', label: 'Wavy', image: '/assets/hairstyles/wavy.jpg' },
-    { value: 'curly', label: 'Curly', image: '/assets/hairstyles/curly.jpg' },
-    { value: 'short', label: 'Short', image: '/assets/hairstyles/short.jpg' },
-  ];
-
-  const hairColorOptions: Array<{
-    value: CharacterFormData['hairColor'];
-    label: string;
-    color: string;
-  }> = [
-    { value: 'blonde', label: 'Blonde', color: '#F4D03F' },
-    { value: 'brown', label: 'Brown', color: '#8B4513' },
-    { value: 'black', label: 'Black', color: '#000000' },
-    { value: 'red', label: 'Red', color: '#DC143C' },
-    { value: 'gray', label: 'Gray', color: '#808080' },
-    { value: 'white', label: 'White', color: '#FFFFFF' },
-    { value: 'blue', label: 'Blue', color: '#0000FF' },
-    { value: 'pink', label: 'Pink', color: '#FF69B4' },
-    { value: 'purple', label: 'Purple', color: '#800080' },
-  ];
 
   const ageOptions: CharacterFormData['age'][] = [
     '18+',
@@ -65,25 +29,34 @@ const Step3Hairstyle: React.FC = () => {
           Choose hairstyle
         </h2>
         <div className="grid grid-cols-4 gap-4 max-w-5xl mx-auto">
-          {hairstyleOptions.map((option) => (
+          {hairStyles.map((option) => (
             <div
-              key={option.value}
+              key={option._id}
               className={`relative cursor-pointer rounded-lg overflow-hidden transition-all ${
-                hairstyle === option.value ? 'ring-2 ring-primary-500' : ''
+                hairstyle === option.name.toLowerCase()
+                  ? 'ring-2 ring-primary-500'
+                  : ''
               }`}
-              onClick={() => setValue('hairstyle', option.value)}
+              onClick={() =>
+                setValue(
+                  'hairstyle',
+                  option.name.toLowerCase() as CharacterFormData['hairstyle']
+                )
+              }
             >
               <div
                 className="relative h-32 bg-cover bg-center"
-                style={{ backgroundImage: `url("${option.image}")` }}
+                style={{
+                  backgroundImage: `url("${option.imageUrl || '/assets/hairstyles/default.jpg'}")`,
+                }}
               >
                 <div className="absolute inset-0 bg-black/20" />
                 <div className="absolute bottom-2 left-0 right-0 text-center">
                   <h3 className="text-sm font-medium text-white">
-                    {option.label}
+                    {option.name}
                   </h3>
                 </div>
-                {hairstyle === option.value && (
+                {hairstyle === option.name.toLowerCase() && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
                     <svg
                       className="w-3 h-3 text-white"
@@ -108,20 +81,29 @@ const Step3Hairstyle: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold text-center mb-6">Hair color</h2>
         <div className="flex justify-center flex-wrap gap-4 max-w-4xl mx-auto">
-          {hairColorOptions.map((option) => (
+          {hairColors.map((option) => (
             <div
-              key={option.value}
+              key={option._id}
               className={`relative cursor-pointer transition-all ${
-                hairColor === option.value ? 'ring-2 ring-primary-500' : ''
+                hairColor === option.name.toLowerCase()
+                  ? 'ring-2 ring-primary-500'
+                  : ''
               }`}
-              onClick={() => setValue('hairColor', option.value)}
+              onClick={() =>
+                setValue(
+                  'hairColor',
+                  option.name.toLowerCase() as CharacterFormData['hairColor']
+                )
+              }
             >
               <div
                 className="w-16 h-16 rounded-full border-2 border-gray-600"
-                style={{ backgroundColor: option.color }}
+                style={{
+                  backgroundColor: option.imageUrl || option.name.toLowerCase(),
+                }}
               />
               <div className="text-center mt-2">
-                <span className="text-sm text-white">{option.label}</span>
+                <span className="text-sm text-white">{option.name}</span>
               </div>
             </div>
           ))}

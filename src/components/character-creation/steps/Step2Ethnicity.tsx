@@ -2,51 +2,14 @@
 
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData } from '@/types/character';
+import { useCharacterAttributes } from '@/hooks/useCharacterAttributes';
 
 const Step2Ethnicity: React.FC = () => {
   const { register, watch, setValue } = useFormContext<CharacterFormData>();
+  const { ethnicities, eyeColors } = useCharacterAttributes();
 
   const ethnicity = watch('ethnicity');
   const eyeColor = watch('eyeColor');
-
-  const ethnicityOptions: Array<{
-    value: CharacterFormData['ethnicity'];
-    label: string;
-    image: string;
-  }> = [
-    {
-      value: 'caucasian',
-      label: 'Caucasian',
-      image: '/assets/ethnicity/caucasian.jpg',
-    },
-    { value: 'latina', label: 'Latina', image: '/assets/ethnicity/latina.jpg' },
-    { value: 'asian', label: 'Asian', image: '/assets/ethnicity/asian.jpg' },
-    {
-      value: 'middle-eastern',
-      label: 'Middle Eastern',
-      image: '/assets/ethnicity/middle-eastern.jpg',
-    },
-    {
-      value: 'african',
-      label: 'African',
-      image: '/assets/ethnicity/african.jpg',
-    },
-    {
-      value: 'native-american',
-      label: 'Native American',
-      image: '/assets/ethnicity/native-american.jpg',
-    },
-  ];
-
-  const eyeColorOptions: Array<{
-    value: CharacterFormData['eyeColor'];
-    label: string;
-    image: string;
-  }> = [
-    { value: 'blue', label: 'Blue', image: '/assets/eyes/blue.jpg' },
-    { value: 'green', label: 'Green', image: '/assets/eyes/green.jpg' },
-    { value: 'brown', label: 'Brown', image: '/assets/eyes/brown.jpg' },
-  ];
 
   return (
     <div className="space-y-8">
@@ -56,25 +19,34 @@ const Step2Ethnicity: React.FC = () => {
           Choose ethnicity
         </h2>
         <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {ethnicityOptions.map((option) => (
+          {ethnicities.map((option) => (
             <div
-              key={option.value}
+              key={option._id}
               className={`relative cursor-pointer rounded-lg overflow-hidden transition-all ${
-                ethnicity === option.value ? 'ring-2 ring-primary-500' : ''
+                ethnicity === option.name.toLowerCase()
+                  ? 'ring-2 ring-primary-500'
+                  : ''
               }`}
-              onClick={() => setValue('ethnicity', option.value)}
+              onClick={() =>
+                setValue(
+                  'ethnicity',
+                  option.name.toLowerCase() as CharacterFormData['ethnicity']
+                )
+              }
             >
               <div
                 className="relative h-32 bg-cover bg-center"
-                style={{ backgroundImage: `url("${option.image}")` }}
+                style={{
+                  backgroundImage: `url("${option.imageUrl || '/assets/ethnicity/default.jpg'}")`,
+                }}
               >
                 <div className="absolute inset-0 bg-black/20" />
                 <div className="absolute bottom-2 left-0 right-0 text-center">
                   <h3 className="text-sm font-medium text-white">
-                    {option.label}
+                    {option.name}
                   </h3>
                 </div>
-                {ethnicity === option.value && (
+                {ethnicity === option.name.toLowerCase() && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
                     <svg
                       className="w-3 h-3 text-white"
@@ -101,25 +73,34 @@ const Step2Ethnicity: React.FC = () => {
           Choose eye color
         </h2>
         <div className="flex justify-center space-x-6">
-          {eyeColorOptions.map((option) => (
+          {eyeColors.map((option) => (
             <div
-              key={option.value}
+              key={option._id}
               className={`relative cursor-pointer rounded-lg overflow-hidden transition-all ${
-                eyeColor === option.value ? 'ring-2 ring-primary-500' : ''
+                eyeColor === option.name.toLowerCase()
+                  ? 'ring-2 ring-primary-500'
+                  : ''
               }`}
-              onClick={() => setValue('eyeColor', option.value)}
+              onClick={() =>
+                setValue(
+                  'eyeColor',
+                  option.name.toLowerCase() as CharacterFormData['eyeColor']
+                )
+              }
             >
               <div
                 className="relative h-24 w-24 bg-cover bg-center"
-                style={{ backgroundImage: `url("${option.image}")` }}
+                style={{
+                  backgroundImage: `url("${option.imageUrl || '/assets/eyes/default.jpg'}")`,
+                }}
               >
                 <div className="absolute inset-0 bg-black/20" />
                 <div className="absolute bottom-2 left-0 right-0 text-center">
                   <h3 className="text-sm font-medium text-white">
-                    {option.label}
+                    {option.name}
                   </h3>
                 </div>
-                {eyeColor === option.value && (
+                {eyeColor === option.name.toLowerCase() && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
                     <svg
                       className="w-3 h-3 text-white"

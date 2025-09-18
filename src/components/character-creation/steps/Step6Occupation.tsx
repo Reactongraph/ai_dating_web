@@ -2,23 +2,14 @@
 
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData } from '@/types/character';
+import { useCharacterAttributes } from '@/hooks/useCharacterAttributes';
 
 const Step6Occupation: React.FC = () => {
   const { register, watch, setValue } = useFormContext<CharacterFormData>();
+  const { occupations } = useCharacterAttributes();
 
   const occupation = watch('occupation');
   const hobbies = watch('hobbies') || [];
-
-  const occupationOptions: CharacterFormData['occupation'][] = [
-    'student',
-    'teacher',
-    'doctor',
-    'engineer',
-    'artist',
-    'business',
-    'service',
-    'other',
-  ];
 
   const hobbyOptions = [
     'reading',
@@ -57,18 +48,23 @@ const Step6Occupation: React.FC = () => {
           Choose occupation
         </h2>
         <div className="grid grid-cols-5 gap-3 max-w-5xl mx-auto">
-          {occupationOptions.map((option) => (
+          {occupations.map((option) => (
             <button
-              key={option}
+              key={option._id}
               type="button"
-              onClick={() => setValue('occupation', option)}
+              onClick={() =>
+                setValue(
+                  'occupation',
+                  option.name.toLowerCase() as CharacterFormData['occupation']
+                )
+              }
               className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                occupation === option
+                occupation === option.name.toLowerCase()
                   ? 'bg-primary-500 text-white border-2 border-primary-500'
                   : 'bg-gray-700 text-white border-2 border-gray-600 hover:border-gray-400'
               }`}
             >
-              {option.charAt(0).toUpperCase() + option.slice(1)}
+              {option.name}
             </button>
           ))}
         </div>
