@@ -31,7 +31,7 @@ const mapBotProfilesToCompanions = (profiles: ApiBotProfile[]): Companion[] => {
 const tabs = [
   { id: 'girl', label: 'Girls' },
   { id: 'boy', label: 'Guys' },
-  { id: 'anime', label: 'Anime' },
+  //   { id: 'anime', label: 'Anime' },
 ];
 
 export default function ExplorePage() {
@@ -53,15 +53,15 @@ export default function ExplorePage() {
           title: 'Create your own AI Boyfriend',
           buttonText: 'Create AI Character',
           href: '/create-character?type=guy',
-          backgroundImage: '/assets/cardboy1.png',
+          backgroundImage: '/assets/boy.png',
         };
-      case 'anime':
-        return {
-          title: 'Create your own Anime Character',
-          buttonText: 'Create AI Character',
-          href: '/create-character?type=anime',
-          backgroundImage: '/assets/cardanime1.png',
-        };
+      //   case 'anime':
+      //     return {
+      //       title: 'Create your own Anime Character',
+      //       buttonText: 'Create AI Character',
+      //       href: '/create-character?type=anime',
+      //       backgroundImage: '/assets/cardanime1.png',
+      //     };
       default:
         return {
           title: 'Create your own AI Girlfriend',

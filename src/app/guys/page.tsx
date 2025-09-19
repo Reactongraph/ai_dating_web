@@ -19,7 +19,7 @@ export default function GuysPage() {
         title="Create your own AI Boyfriend"
         buttonText="Create AI Character"
         href="/create-character?type=guy"
-        backgroundImage="/assets/cardboy1.png"
+        backgroundImage="/assets/boy.png"
       />
 
       {/* Loading State */}

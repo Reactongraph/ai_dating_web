@@ -94,7 +94,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
       // Prepare request data
       const requestData: GenerateAvatarRequest = {
         bot_type: botType as 'girl' | 'boy',
-        name: 'My AI Companion',
+        name: data.name,
         style: data.style === 'realistic' ? 'Realistic' : 'Anime',
         ethnicity: data.ethnicity,
         age: ageNumber,
@@ -120,7 +120,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
 
       // On successful avatar generation, navigate to collection page
       if (response.success) {
-        router.push('/collection');
+        router.push('/my-ai');
       } else {
         setError('Failed to generate avatar');
       }

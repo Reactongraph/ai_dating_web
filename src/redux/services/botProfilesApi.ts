@@ -54,7 +54,12 @@ export const botProfilesApi = createApi({
         { type: 'BotProfiles', id: botType },
       ],
     }),
+    getUserBotProfiles: builder.query<GetBotProfilesResponse, void>({
+      query: () => '/users/bot-profiles',
+      providesTags: [{ type: 'BotProfiles', id: 'user' }],
+    }),
   }),
 });
 
-export const { useGetBotProfilesQuery } = botProfilesApi;
+export const { useGetBotProfilesQuery, useGetUserBotProfilesQuery } =
+  botProfilesApi;

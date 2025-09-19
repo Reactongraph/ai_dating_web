@@ -88,6 +88,7 @@ export interface CharacterFormData {
 
   // Step 9: Summary (auto-generated)
   summary?: string;
+  name: string;
 }
 
 export interface StepConfig {

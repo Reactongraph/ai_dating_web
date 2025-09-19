@@ -32,7 +32,7 @@ const NavBar = () => {
   const navLinks = [
     { href: '/girls', label: 'Girls' },
     { href: '/guys', label: 'Guys' },
-    { href: '/anime', label: 'Anime' },
+    // { href: '/anime', label: 'Anime' },
   ];
 
   return (

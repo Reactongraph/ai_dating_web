@@ -37,7 +37,7 @@ const AuthModal = ({
               src="/assets/login_screen_girlboy.png"
               alt="True Companion"
               fill
-              className="object-cover object-center "
+              className="!h-[423px] !bottom-[0px] w-auto !object-cover !inset-auto"
               priority
             />
             <div className="absolute inset-0 flex flex-col justify-between p-7">

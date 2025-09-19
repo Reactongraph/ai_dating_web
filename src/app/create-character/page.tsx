@@ -54,6 +54,9 @@ const CreateCharacterPageContent = () => {
 
       // Step 8: Clothing
       clothing: 'casual',
+
+      // Step 9: Summary
+      name: '',
     },
   });
 
@@ -94,12 +97,6 @@ const CreateCharacterPageContent = () => {
     if (currentStep > 1) {
       goToStep(currentStep - 1);
     }
-  };
-
-  const onSubmit = (data: CharacterFormData) => {
-    console.log('Form submitted:', data);
-    // Here you would typically send data to your API
-    alert('Character created successfully!');
   };
 
   const handleStartCreating = () => {
@@ -202,7 +199,6 @@ const CreateCharacterPageContent = () => {
         currentStep={currentStep}
         onNext={goToNextStep}
         onPrevious={goToPreviousStep}
-        onSubmit={onSubmit}
         onClose={handleClose}
       />
 

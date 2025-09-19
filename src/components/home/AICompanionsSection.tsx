@@ -72,30 +72,6 @@ const companionCategories = [
       },
     ],
   },
-  {
-    id: 'anime',
-    label: 'Anime',
-    companions: [
-      {
-        id: 'a1',
-        name: 'Sakura',
-        age: 21,
-        description:
-          'Kawaii anime character with a sweet personality and magical powers.Show morecreated at Sep',
-        imageSrc: '/assets/cardgirl2.jpg',
-        tags: ['Sakura, 21', 'Magical'],
-      },
-      {
-        id: 'a2',
-        name: 'Yuki',
-        age: 23,
-        description:
-          'Mysterious anime companion with supernatural abilities.Show morecreated at Sep',
-        imageSrc: '/assets/cardgirl3.jpg',
-        tags: ['Yuki, 23', 'Mysterious'],
-      },
-    ],
-  },
 ];
 
 const AICompanionsSection = () => {

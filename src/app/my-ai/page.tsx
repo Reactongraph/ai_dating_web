@@ -1,34 +1,35 @@
 'use client';
 
+import { useState } from 'react';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import EnhancedCompanionCard, {
   Companion,
 } from '@/components/cards/EnhancedCompanionCard';
 import Image from 'next/image';
-
-// Mock data for AI companions
-const mockCompanions: Companion[] = [
-  {
-    id: '1',
-    name: 'Fraha',
-    age: 25,
-    description:
-      'Energetic woman who travels the world to find new experiences. Show more created at Sep',
-    imageSrc: '/assets/models/girl1.jpg',
-    tags: ['Aley, 26', 'Caregiver'],
-  },
-  {
-    id: '2',
-    name: 'Aley',
-    age: 26,
-    description:
-      'Energetic woman who travels the world to find new experiences. Show more created at Sep',
-    imageSrc: '/assets/models/girl2.jpg',
-    tags: ['Aley, 26', 'Caregiver'],
-  },
-];
+import { useGetUserBotProfilesQuery } from '@/redux/services/botProfilesApi';
+import { mapBotProfilesToEnhancedCompanions } from '@/utils/mappers';
+import { useAppSelector } from '@/redux/hooks';
+import LoginModal from '@/components/auth/LoginModal';
+import SignupModal from '@/components/auth/SignupModal';
 
 export default function MyAIPage() {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
+
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
+  const {
+    data: botProfilesResponse,
+    isLoading,
+    error,
+  } = useGetUserBotProfilesQuery(undefined, {
+    skip: !isAuthenticated, // Skip the query if user is not authenticated
+  });
+
+  const companions: Companion[] = botProfilesResponse?.botProfiles
+    ? mapBotProfilesToEnhancedCompanions(botProfilesResponse.botProfiles)
+    : [];
+
   const handleIconClick = (companionId: string) => {
     console.log('Icon clicked for companion:', companionId);
     // Add your icon click logic here (e.g., show menu, options, etc.)
@@ -62,25 +63,96 @@ export default function MyAIPage() {
             title="Create your own AI Girlfriend"
           />
 
+          {/* Not Authenticated State */}
+          {!isAuthenticated && (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <div className="text-center">
+                <div className="text-gray-400 text-lg mb-4">
+                  You need to login to view your AI companions
+                </div>
+                <button
+                  onClick={() => setIsLoginModalOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200"
+                >
+                  Login
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {isAuthenticated && isLoading && (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <div className="text-white text-lg">
+                Loading your AI companions...
+              </div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {isAuthenticated && error && (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <div className="text-red-400 text-lg">
+                Failed to load your AI companions. Please try again later.
+              </div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {isAuthenticated &&
+            !isLoading &&
+            !error &&
+            companions.length === 0 && (
+              <div className="col-span-full flex justify-center items-center py-12">
+                <div className="text-gray-400 text-lg text-center">
+                  <p>You haven&apos;t created any AI companions yet.</p>
+                  <p className="mt-2">
+                    Click &quot;Create AI Character&quot; to get started!
+                  </p>
+                </div>
+              </div>
+            )}
+
           {/* Existing AI Companions */}
-          {mockCompanions.map((companion) => (
-            <EnhancedCompanionCard
-              key={companion.id}
-              companion={companion}
-              topRightIcon={
-                <Image
-                  src="/assets/ping_chat_icon.svg"
-                  alt="Chat"
-                  width={26}
-                  height={26}
-                />
-              }
-              onIconClick={() => handleIconClick(companion.id)}
-              onCardClick={() => handleCardClick(companion.id)}
-            />
-          ))}
+          {isAuthenticated &&
+            !isLoading &&
+            !error &&
+            companions.map((companion) => (
+              <EnhancedCompanionCard
+                key={companion.id}
+                companion={companion}
+                topRightIcon={
+                  <Image
+                    src="/assets/ping_chat_icon.svg"
+                    alt="Chat"
+                    width={26}
+                    height={26}
+                  />
+                }
+                onIconClick={() => handleIconClick(companion.id)}
+                onCardClick={() => handleCardClick(companion.id)}
+              />
+            ))}
         </div>
       </div>
+
+      {/* Auth Modals */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onSignupClick={() => {
+          setIsLoginModalOpen(false);
+          setIsSignupModalOpen(true);
+        }}
+      />
+      <SignupModal
+        isOpen={isSignupModalOpen}
+        onClose={() => setIsSignupModalOpen(false)}
+        onLoginClick={() => {
+          setIsSignupModalOpen(false);
+          setIsLoginModalOpen(true);
+        }}
+      />
     </div>
   );
 }

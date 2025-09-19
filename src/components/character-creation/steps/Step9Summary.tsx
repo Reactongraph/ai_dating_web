@@ -24,7 +24,11 @@ interface SummaryItem {
 }
 
 const Step9Summary: React.FC = () => {
-  const { watch } = useFormContext<CharacterFormData>();
+  const {
+    watch,
+    register,
+    formState: { errors },
+  } = useFormContext<CharacterFormData>();
   const botType = useAppSelector((state) => state.characterAttributes.botType);
 
   const {
@@ -247,6 +251,37 @@ const Step9Summary: React.FC = () => {
       <div className="text-center">
         <div className="bg-gray-800 rounded-lg p-6 max-w-2xl mx-auto">
           <h3 className="text-xl font-semibold mb-4">Character Overview</h3>
+
+          {/* Name Input Field */}
+          <div className="mb-6">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-300 mb-2"
+            >
+              Character Name *
+            </label>
+            <input
+              {...register('name', {
+                required: 'Character name is required',
+                minLength: {
+                  value: 2,
+                  message: 'Name must be at least 2 characters long',
+                },
+                maxLength: {
+                  value: 50,
+                  message: 'Name must be less than 50 characters',
+                },
+              })}
+              type="text"
+              id="name"
+              placeholder="Enter character name"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
+            )}
+          </div>
+
           <div className="grid grid-cols-2 gap-4 text-left">
             <div>
               <span className="text-gray-400">Type: </span>
