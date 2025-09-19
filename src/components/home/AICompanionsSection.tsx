@@ -4,83 +4,46 @@ import { useState } from 'react';
 import CompanionCard from '@/components/cards/CompanionCard';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import CategoryTabs from '@/components/navigation/CategoryTabs';
+import { useGetBotProfilesQuery } from '@/redux/services/botProfilesApi';
+import { mapBotProfilesToCompanions } from '@/utils/mappers';
 
 const companionCategories = [
   {
     id: 'girls',
     label: 'Girls',
-    companions: [
-      {
-        id: '1',
-        name: 'Aley',
-        age: 26,
-        description:
-          'Energetic woman who travels the world to find new experiences.Show morecreated at Sep',
-        imageSrc: '/assets/cardgirl2.jpg',
-        tags: ['Aley, 26', 'Caregiver'],
-      },
-      {
-        id: '2',
-        name: 'Fraha',
-        age: 25,
-        description:
-          'Energetic woman who travels the world to find new experiences.Show morecreated at Sep',
-        imageSrc: '/assets/cardgirl3.jpg',
-        tags: ['Aley, 26', 'Caregiver'],
-      },
-      {
-        id: '3',
-        name: 'Molley',
-        age: 28,
-        description:
-          'Energetic woman who travels the world to find new experiences.Show morecreated at Sep',
-        imageSrc: '/assets/cardgirl2.jpg',
-        tags: ['Aley, 26', 'Caregiver'],
-      },
-      {
-        id: '4',
-        name: 'Sarah',
-        age: 27,
-        description:
-          'Energetic woman who travels the world to find new experiences.Show morecreated at Sep',
-        imageSrc: '/assets/cardgirl3.jpg',
-        tags: ['Aley, 26', 'Caregiver'],
-      },
-    ],
+    botType: 'girl' as const,
   },
   {
     id: 'guys',
     label: 'Guys',
-    companions: [
-      {
-        id: 'g1',
-        name: 'Alex',
-        age: 28,
-        description:
-          'Charismatic and adventurous spirit seeking meaningful connections.Show morecreated at Sep',
-        imageSrc: '/assets/cardgirl2.jpg',
-        tags: ['Alex, 28', 'Adventurer'],
-      },
-      {
-        id: 'g2',
-        name: 'James',
-        age: 30,
-        description:
-          'Creative soul with a passion for arts and deep conversations.Show morecreated at Sep',
-        imageSrc: '/assets/cardgirl3.jpg',
-        tags: ['James, 30', 'Artist'],
-      },
-    ],
+    botType: 'boy' as const,
   },
 ];
 
 const AICompanionsSection = () => {
   const [activeCategory, setActiveCategory] = useState('girls');
 
+  // Get the current bot type based on active category
+  const currentBotType =
+    companionCategories.find((cat) => cat.id === activeCategory)?.botType ||
+    'girl';
+
+  // Fetch bot profiles for the current category
+  const {
+    data: botProfilesResponse,
+    isLoading,
+    error,
+  } = useGetBotProfilesQuery(currentBotType);
+
   const tabs = companionCategories.map((cat) => ({
     id: cat.id,
     label: cat.label,
   }));
+
+  // Transform API data to companion format
+  const companions = botProfilesResponse?.botProfiles
+    ? mapBotProfilesToCompanions(botProfilesResponse.botProfiles)
+    : [];
 
   return (
     <section>
@@ -115,12 +78,62 @@ const AICompanionsSection = () => {
 
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <CreateCompanionCard />
-            {companionCategories
-              .find((cat) => cat.id === activeCategory)
-              ?.companions.map((companion) => (
+            <CreateCompanionCard
+              backgroundImage={
+                activeCategory === 'girls'
+                  ? '/assets/cardgirl1.png'
+                  : '/assets/boy.png'
+              }
+            />
+
+            {/* Loading State */}
+            {isLoading && (
+              <>
+                {[...Array(3)].map((_, index) => (
+                  <div
+                    key={`loading-${index}`}
+                    className="bg-gray-800 rounded-lg p-4 animate-pulse"
+                  >
+                    <div className="w-full h-48 bg-gray-700 rounded-lg mb-4"></div>
+                    <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-700 rounded w-2/3"></div>
+                  </div>
+                ))}
+              </>
+            )}
+
+            {/* Error State */}
+            {error && (
+              <div className="col-span-full flex justify-center items-center py-12">
+                <div className="text-center">
+                  <p className="text-red-400 text-lg mb-4">
+                    Failed to load companions. Please try again later.
+                  </p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Companion Cards */}
+            {!isLoading &&
+              !error &&
+              companions.map((companion) => (
                 <CompanionCard key={companion.id} companion={companion} />
               ))}
+
+            {/* Empty State */}
+            {!isLoading && !error && companions.length === 0 && (
+              <div className="col-span-full flex justify-center items-center py-12">
+                <p className="text-gray-400 text-lg">
+                  No companions available for this category.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
