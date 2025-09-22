@@ -2,22 +2,41 @@
 
 import Image from 'next/image';
 import { Chat, QuickSuggestion } from '@/types/chat';
+import { useChat } from '@/hooks/useChat';
 
 interface ChatAreaProps {
   chat: Chat | null;
   quickSuggestions: QuickSuggestion[];
   privacyMessage: string;
-  onSendMessage: (message: string) => void;
-  onQuickSuggestionClick: (suggestion: string) => void;
+
+  onQuickSuggestionClick?: (suggestion: string) => void;
 }
 
 const ChatArea: React.FC<ChatAreaProps> = ({
   chat,
   quickSuggestions,
   privacyMessage,
-  onSendMessage,
+
   onQuickSuggestionClick,
 }) => {
+  // console.log('ChatArea props:', chat);
+  // Use chat hook for API integration
+  const {
+    messages,
+    isLoadingHistory,
+    isSendingMessage,
+    sendMessage,
+    testApiConnection,
+    historyError,
+  } = useChat({
+    chatId: chat?.id,
+    botId: chat?.user.id,
+    channelName: chat?.channelName,
+  });
+
+  // Use API sendMessage if no custom handler provided
+  const handleSendMessage = sendMessage;
+  const handleQuickSuggestionClick = onQuickSuggestionClick || sendMessage;
   if (!chat) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-black">
@@ -56,12 +75,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     );
   }
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const input = form.querySelector('input') as HTMLInputElement;
     if (input.value.trim()) {
-      onSendMessage(input.value.trim());
+      console.log('Sending message:', input.value.trim());
+      handleSendMessage(input.value.trim());
       input.value = '';
     }
   };
@@ -160,9 +180,33 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           </p>
         </div>
 
+        {/* Loading State */}
+        {isLoadingHistory && (
+          <div className="flex justify-center mb-6">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {historyError && (
+          <div className="flex justify-center mb-6">
+            <div className="text-center">
+              <p className="text-red-400 text-sm mb-2">
+                Failed to load chat history
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-primary-500 hover:bg-primary-600 text-white px-3 py-1 rounded text-sm transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Messages */}
         <div className="space-y-4 mb-6">
-          {chat.messages.map((message) => (
+          {messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
@@ -175,7 +219,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
-                <p className="text-xs opacity-70 mt-1">{message.timestamp}</p>
+                <p className="text-xs opacity-70 mt-1">
+                  {new Date(message.timestamp).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
               </div>
             </div>
           ))}
@@ -191,18 +240,25 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             {quickSuggestions.map((suggestion) => (
               <button
                 key={suggestion.id}
-                onClick={() => onQuickSuggestionClick(suggestion.text)}
+                onClick={() => handleQuickSuggestionClick(suggestion.text)}
                 className="bg-gray-800 hover:bg-gray-700 text-white text-sm px-3 py-2 rounded-full transition-colors"
               >
                 {suggestion.text}
               </button>
             ))}
+            {/* Debug Test Button */}
+            <button
+              onClick={testApiConnection}
+              className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-2 rounded-full transition-colors"
+            >
+              Test API
+            </button>
           </div>
         </div>
 
         {/* Message Input */}
         <form
-          onSubmit={handleSendMessage}
+          onSubmit={handleFormSubmit}
           className="flex items-center space-x-2"
         >
           <div className="flex-1 relative">
@@ -226,7 +282,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           </div>
           <button
             type="submit"
-            className="bg-primary-500 hover:bg-primary-600 text-white rounded-full p-3 transition-colors"
+            disabled={isSendingMessage}
+            className="bg-primary-500 hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-full p-3 transition-colors"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />

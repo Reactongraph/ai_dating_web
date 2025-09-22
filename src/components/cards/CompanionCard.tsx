@@ -11,10 +11,14 @@ export interface Companion {
 
 interface CompanionCardProps {
   companion: Companion;
+  onClick?: (companion: Companion) => void;
 }
 
-const CompanionCard = ({ companion }: CompanionCardProps) => (
-  <div className="relative rounded-2xl overflow-hidden group">
+const CompanionCard = ({ companion, onClick }: CompanionCardProps) => (
+  <div
+    className="relative rounded-2xl overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-300"
+    onClick={() => onClick?.(companion)}
+  >
     {/* Image */}
     <div className="relative h-[480px] w-full">
       <Image

@@ -6,6 +6,7 @@ import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import CategoryTabs from '@/components/navigation/CategoryTabs';
 import { useGetBotProfilesQuery } from '@/redux/services/botProfilesApi';
 import { mapBotProfilesToCompanions } from '@/utils/mappers';
+import { useChatInitiation } from '@/hooks/useChatInitiation';
 
 const companionCategories = [
   {
@@ -22,6 +23,7 @@ const companionCategories = [
 
 const AICompanionsSection = () => {
   const [activeCategory, setActiveCategory] = useState('girls');
+  const { startChat, isInitiating } = useChatInitiation();
 
   // Get the current bot type based on active category
   const currentBotType =
@@ -44,6 +46,11 @@ const AICompanionsSection = () => {
   const companions = botProfilesResponse?.botProfiles
     ? mapBotProfilesToCompanions(botProfilesResponse.botProfiles)
     : [];
+
+  // Handle companion card click
+  const handleCompanionClick = (companion: any) => {
+    startChat(companion.id);
+  };
 
   return (
     <section>
@@ -123,7 +130,11 @@ const AICompanionsSection = () => {
             {!isLoading &&
               !error &&
               companions.map((companion) => (
-                <CompanionCard key={companion.id} companion={companion} />
+                <CompanionCard
+                  key={companion.id}
+                  companion={companion}
+                  onClick={handleCompanionClick}
+                />
               ))}
 
             {/* Empty State */}

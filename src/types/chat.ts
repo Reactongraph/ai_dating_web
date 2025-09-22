@@ -38,6 +38,36 @@ export interface Chat {
   timestamp: string;
   unreadCount?: number;
   messages: ChatMessage[];
+  channelName: string;
+}
+
+// API Response Types for Chat List
+export interface ChatListItem {
+  chatId: string;
+  botId: string;
+  botName: string;
+  botImageURL: string;
+  lastMessage: string;
+  lastMessageTime: string;
+  unreadCount: number;
+  channelName: string;
+  createdAt: string;
+}
+
+export interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface ChatListResponse {
+  statusCode: number;
+  data: {
+    chats: ChatListItem[];
+    pagination: PaginationInfo;
+  };
 }
 
 export interface QuickSuggestion {

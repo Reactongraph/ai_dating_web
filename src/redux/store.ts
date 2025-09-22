@@ -17,6 +17,7 @@ import { profileApi } from './services/profileApi';
 import { googleAuthApi } from './services/googleAuthApi';
 import { characterAttributesApi } from './services/characterAttributesApi';
 import { botProfilesApi } from './services/botProfilesApi';
+import { chatApi } from './services/chatApi';
 
 import authReducer from './slices/authSlice';
 import characterAttributesReducer from './slices/characterAttributesSlice';
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   [googleAuthApi.reducerPath]: googleAuthApi.reducer,
   [characterAttributesApi.reducerPath]: characterAttributesApi.reducer,
   [botProfilesApi.reducerPath]: botProfilesApi.reducer,
+  [chatApi.reducerPath]: chatApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -53,7 +55,8 @@ export const store = configureStore({
       profileApi.middleware,
       googleAuthApi.middleware,
       characterAttributesApi.middleware,
-      botProfilesApi.middleware
+      botProfilesApi.middleware,
+      chatApi.middleware
     ),
 });
 

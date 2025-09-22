@@ -11,12 +11,14 @@ import { mapBotProfilesToEnhancedCompanions } from '@/utils/mappers';
 import { useAppSelector } from '@/redux/hooks';
 import LoginModal from '@/components/auth/LoginModal';
 import SignupModal from '@/components/auth/SignupModal';
+import { useChatInitiation } from '@/hooks/useChatInitiation';
 
 export default function MyAIPage() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const { startChat } = useChatInitiation();
 
   const {
     data: botProfilesResponse,
@@ -31,13 +33,11 @@ export default function MyAIPage() {
     : [];
 
   const handleIconClick = (companionId: string) => {
-    console.log('Icon clicked for companion:', companionId);
-    // Add your icon click logic here (e.g., show menu, options, etc.)
+    startChat(companionId);
   };
 
   const handleCardClick = (companionId: string) => {
-    console.log('Card clicked for companion:', companionId);
-    // Add your card click logic here (e.g., navigate to chat, companion details, etc.)
+    startChat(companionId);
   };
 
   return (

@@ -1,35 +1,69 @@
 'use client';
 
-import { useState } from 'react';
-import { mockChats, quickSuggestions, privacyMessage } from '@/data/chat';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { quickSuggestions, privacyMessage } from '@/data/chat';
 import { Chat } from '@/types/chat';
 import ChatList from '@/components/chat/ChatList';
 import ChatArea from '@/components/chat/ChatArea';
 import ProfilePanel from '@/components/chat/ProfilePanel';
+import { useGetChatListQuery } from '@/redux/services/chatApi';
+import { mapChatListItemsToChats } from '@/utils/mappers';
+import { useAppSelector } from '@/redux/hooks';
 
 export default function ChatPage() {
-  const [chats] = useState<Chat[]>(mockChats); // In real app, this would come from API
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit] = useState(20);
+  const searchParams = useSearchParams();
+
+  // Check if user is authenticated
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
+  // Fetch chat list from API
+  const {
+    data: chatListResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetChatListQuery(
+    { page: currentPage, limit },
+    {
+      skip: !isAuthenticated, // Skip the query if user is not authenticated
+    }
+  );
+
+  // Transform API data to component format
+  const chats: Chat[] = chatListResponse?.data?.chats
+    ? mapChatListItemsToChats(chatListResponse.data.chats)
+    : [];
 
   const selectedChat = chats.find((chat) => chat.id === selectedChatId) || null;
+
+  // Handle chatId from URL parameters
+  useEffect(() => {
+    const chatIdFromUrl = searchParams.get('chatId');
+    if (chatIdFromUrl) {
+      setSelectedChatId(chatIdFromUrl);
+    }
+  }, [searchParams]);
 
   const handleChatSelect = (chatId: string) => {
     setSelectedChatId(chatId);
   };
 
-  const handleSendMessage = (message: string) => {
-    console.log('Sending message:', message);
-    // TODO: Integrate with API to send message
-    // This would typically:
-    // 1. Add the user message to the chat
-    // 2. Send to API
-    // 3. Receive and display AI response
+  // Message handlers are now handled by the ChatArea component via useChat hook
+
+  const handleLoadMore = () => {
+    if (chatListResponse?.data?.pagination.hasNextPage) {
+      setCurrentPage((prev) => prev + 1);
+    }
   };
 
-  const handleQuickSuggestionClick = (suggestion: string) => {
-    handleSendMessage(suggestion);
+  const handleRetry = () => {
+    refetch();
   };
-
+  console.log(chats, 'selectedChat', selectedChat);
   return (
     <div className="h-[calc(100vh-64px)] bg-black flex overflow-hidden ">
       {/* Chat Sidebar */}
@@ -51,6 +85,12 @@ export default function ChatPage() {
           chats={chats}
           selectedChatId={selectedChatId || undefined}
           onChatSelect={handleChatSelect}
+          isLoading={isLoading}
+          error={error}
+          onRetry={handleRetry}
+          hasNextPage={chatListResponse?.data?.pagination.hasNextPage}
+          onLoadMore={handleLoadMore}
+          isAuthenticated={isAuthenticated}
         />
       </div>
 
@@ -60,8 +100,6 @@ export default function ChatPage() {
           chat={selectedChat}
           quickSuggestions={quickSuggestions}
           privacyMessage={privacyMessage}
-          onSendMessage={handleSendMessage}
-          onQuickSuggestionClick={handleQuickSuggestionClick}
         />
       </div>
 

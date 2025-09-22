@@ -5,9 +5,16 @@ import CompanionCard from '@/components/cards/CompanionCard';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import CompanionsLayout from '@/components/layouts/CompanionsLayout';
 import { mapBotProfilesToCompanions } from '@/utils/mappers';
+import { useChatInitiation } from '@/hooks/useChatInitiation';
 
 export default function GuysPage() {
   const { data: botProfiles, isLoading, error } = useGetBotProfilesQuery('boy');
+  const { startChat } = useChatInitiation();
+
+  // Handle companion card click
+  const handleCompanionClick = (companion: any) => {
+    startChat(companion.id);
+  };
 
   return (
     <CompanionsLayout
@@ -43,7 +50,11 @@ export default function GuysPage() {
         !error &&
         botProfiles?.botProfiles &&
         mapBotProfilesToCompanions(botProfiles.botProfiles).map((companion) => (
-          <CompanionCard key={companion.id} companion={companion} />
+          <CompanionCard
+            key={companion.id}
+            companion={companion}
+            onClick={handleCompanionClick}
+          />
         ))}
     </CompanionsLayout>
   );
