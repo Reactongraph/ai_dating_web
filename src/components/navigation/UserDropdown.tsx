@@ -1,6 +1,12 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { FiLogIn, FiSettings, FiLogOut, FiUser } from 'react-icons/fi';
+import {
+  FiLogIn,
+  FiSettings,
+  FiLogOut,
+  FiUser,
+  FiUserPlus,
+} from 'react-icons/fi';
 import { RiVipCrownFill } from 'react-icons/ri';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 // Removed useLogoutMutation import as we don't need to call the API
@@ -21,9 +27,15 @@ interface UserDropdownProps {
   isOpen: boolean;
   onClose: () => void;
   onLoginClick: () => void;
+  onSignupClick: () => void;
 }
 
-const UserDropdown = ({ isOpen, onClose, onLoginClick }: UserDropdownProps) => {
+const UserDropdown = ({
+  isOpen,
+  onClose,
+  onLoginClick,
+  onSignupClick,
+}: UserDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
@@ -107,6 +119,15 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick }: UserDropdownProps) => {
             onClick: () => {
               onClose();
               onLoginClick();
+            },
+          },
+          {
+            icon: <FiUserPlus className="w-5 h-5" />,
+            label: 'Sign up',
+            href: '#',
+            onClick: () => {
+              onClose();
+              onSignupClick();
             },
           },
           {

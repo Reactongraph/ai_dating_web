@@ -9,6 +9,9 @@ import { useAppSelector } from '@/redux/hooks';
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'email-login' | 'signup'>(
+    'email-login'
+  );
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const pathname = usePathname();
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
@@ -28,6 +31,16 @@ const NavBar = () => {
 
     return () => observer.disconnect();
   }, [pathname]);
+
+  const handleLoginClick = () => {
+    setAuthMode('email-login');
+    setIsAuthOpen(true);
+  };
+
+  const handleSignupClick = () => {
+    setAuthMode('signup');
+    setIsAuthOpen(true);
+  };
 
   const navLinks = [
     { href: '/girls', label: 'Girls' },
@@ -109,13 +122,18 @@ const NavBar = () => {
               <UserDropdown
                 isOpen={isDropdownOpen}
                 onClose={() => setIsDropdownOpen(false)}
-                onLoginClick={() => setIsAuthOpen(true)}
+                onLoginClick={handleLoginClick}
+                onSignupClick={handleSignupClick}
               />
             </div>
           </div>
         </div>
       </nav>
-      <Auth isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <Auth
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        initialMode={authMode}
+      />
     </>
   );
 };

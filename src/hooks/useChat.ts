@@ -26,25 +26,6 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
 
-  console.log('useChat hook initialized with:', {
-    chatId,
-    botId,
-    channelName,
-    user: user?._id,
-  });
-
-  // Debug when query parameters change
-  useEffect(() => {
-    if (channelName) {
-      console.log(
-        'Chat history query triggered for channelName:',
-        channelName,
-        'chatId:',
-        chatId
-      );
-    }
-  }, [channelName, chatId]);
-
   const [chatWithBot] = useChatWithBotMutation();
   const [markAsRead] = useMarkMessagesAsReadMutation();
 
@@ -122,25 +103,25 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   // Send a message
   const sendChatMessage = useCallback(
     async (messageContent: string) => {
-      console.log('sendChatMessage called with:', messageContent);
-      console.log('Current state:', {
-        botId,
-        userId: user?._id,
-        messageContent,
-      });
+      // console.log('sendChatMessage called with:', messageContent);
+      // console.log('Current state:', {
+      //   botId,
+      //   userId: user?._id,
+      //   messageContent,
+      // });
 
       if (!botId || !user?._id || !messageContent.trim()) {
-        console.log('Missing required data:', {
-          botId,
-          userId: user?._id,
-          messageContent,
-        });
+        // console.log('Missing required data:', {
+        //   botId,
+        //   userId: user?._id,
+        //   messageContent,
+        // });
         return;
       }
 
-      console.log('Sending message:', messageContent);
-      console.log('Bot ID:', botId);
-      console.log('User ID:', user._id);
+      // console.log('Sending message:', messageContent);
+      // console.log('Bot ID:', botId);
+      // console.log('User ID:', user._id);
 
       setIsSendingMessage(true);
 
@@ -161,8 +142,8 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         const currentMessages = messages;
         const chatHistory = convertMessagesToHistory(currentMessages);
 
-        console.log('Chat history:', chatHistory);
-        console.log('Current messages before adding new:', currentMessages);
+        // console.log('Chat history:', chatHistory);
+        // console.log('Current messages before adding new:', currentMessages);
 
         const requestData: ChatWithBotRequest = {
           question: messageContent,
@@ -171,11 +152,11 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           user_id: user._id,
         };
 
-        console.log('Request data:', requestData);
+        // console.log('Request data:', requestData);
 
         const response = await chatWithBot(requestData).unwrap();
 
-        console.log('API Response:', response);
+        // console.log('API Response:', response);
 
         if (response.success && response.data.answer) {
           // Replace temporary user message with real one
@@ -201,7 +182,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           };
 
           setMessages((prev) => [...prev, botMessage]);
-          console.log('Message sent successfully and bot response added');
+          // console.log('Message sent successfully and bot response added');
         } else {
           throw new Error('Invalid response from bot');
         }
@@ -238,10 +219,10 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   // Load chat history from API when response is available
   useEffect(() => {
     if (chatHistoryResponse?.success && chatHistoryResponse.data.messages) {
-      console.log(
-        'Loading chat history from API:',
-        chatHistoryResponse.data.messages
-      );
+      // console.log(
+      //   'Loading chat history from API:',
+      //   chatHistoryResponse.data.messages
+      // );
       const convertedMessages = convertApiMessagesToInternal(
         chatHistoryResponse.data.messages
       );
@@ -252,10 +233,10 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   // Clear messages and refetch history when chat changes
   useEffect(() => {
     if (chatId) {
-      console.log(
-        'Chat changed, clearing messages and refetching history for:',
-        chatId
-      );
+      // console.log(
+      //   'Chat changed, clearing messages and refetching history for:',
+      //   chatId
+      // );
       setMessages([]);
 
       // Invalidate all chat history cache to force fresh fetch
@@ -278,12 +259,11 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   // Test function to check if API is working
   const testApiConnection = useCallback(async () => {
     if (!botId || !user?._id) {
-      console.log('Cannot test API - missing botId or userId');
+      // console.log('Cannot test API - missing botId or userId');
       return;
     }
 
     try {
-      console.log('Testing API connection...');
       const testRequest: ChatWithBotRequest = {
         question: 'Hello',
         chat_history: [],
@@ -291,10 +271,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         user_id: user?._id || '',
       };
 
-      console.log('Test request:', testRequest);
-      console.log('Making API call to /botProfiles/chat-with-bot...');
       const response = await chatWithBot(testRequest).unwrap();
-      console.log('Test response:', response);
     } catch (error) {
       console.error('API test failed:', error);
       console.error('Error details:', error);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
 // import LoginMethodModal from './LoginMethodModal'; // Temporarily disabled
@@ -8,6 +8,7 @@ import SignupModal from './SignupModal';
 interface AuthProps {
   isOpen: boolean;
   onClose: () => void;
+  initialMode?: 'email-login' | 'signup';
 }
 
 type AuthMode =
@@ -15,9 +16,14 @@ type AuthMode =
   | 'email-login'
   | /* 'phone-login' | 'otp' | */ 'signup';
 
-const Auth = ({ isOpen, onClose }: AuthProps) => {
-  const [mode, setMode] = useState<AuthMode>('email-login'); // Changed from 'method' to 'email-login'
+const Auth = ({ isOpen, onClose, initialMode = 'email-login' }: AuthProps) => {
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   // const [phoneNumber, setPhoneNumber] = useState(''); // Temporarily disabled
+
+  // Update mode when initialMode changes
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
 
   const handleClose = () => {
     onClose();
