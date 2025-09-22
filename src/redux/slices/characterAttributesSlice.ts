@@ -67,7 +67,7 @@ const characterAttributesSlice = createSlice({
     setBotType: (state, action: PayloadAction<'girl' | 'boy'>) => {
       state.botType = action.payload;
     },
-    clearAttributes: (state) => {
+    clearAttributes: () => {
       return initialState;
     },
   },

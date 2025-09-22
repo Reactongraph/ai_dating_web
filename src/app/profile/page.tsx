@@ -201,9 +201,9 @@ export default function ProfilePage() {
                       <>
                         <button
                           type="button"
-                          onClick={() => field.onChange('Man')}
+                          onClick={() => field.onChange('man')}
                           className={`py-2 px-4 rounded-md ${
-                            field.value === 'Man'
+                            field.value === 'man'
                               ? 'bg-gray-700 text-white'
                               : 'bg-gray-900 text-white'
                           }`}
@@ -212,9 +212,9 @@ export default function ProfilePage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => field.onChange('Woman')}
+                          onClick={() => field.onChange('woman')}
                           className={`py-2 px-4 rounded-md ${
-                            field.value === 'Woman'
+                            field.value === 'woman'
                               ? 'bg-cyan-500 text-white'
                               : 'bg-gray-900 text-white'
                           }`}
@@ -223,9 +223,9 @@ export default function ProfilePage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => field.onChange('Other')}
+                          onClick={() => field.onChange('other')}
                           className={`py-2 px-4 rounded-md ${
-                            field.value === 'Other'
+                            field.value === 'other'
                               ? 'bg-gray-700 text-white'
                               : 'bg-gray-900 text-white'
                           }`}

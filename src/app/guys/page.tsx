@@ -12,7 +12,7 @@ export default function GuysPage() {
   const { startChat } = useChatInitiation();
 
   // Handle companion card click
-  const handleCompanionClick = (companion: any) => {
+  const handleCompanionClick = (companion: { id: string }) => {
     startChat(companion.id);
   };
 

@@ -1,7 +1,8 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 
-const handler = NextAuth({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handler = (NextAuth as any)({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -9,7 +10,8 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, account, profile }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, account, profile }: any) {
       // When signing in
       if (account) {
         token.accessToken = account.access_token;
@@ -25,7 +27,8 @@ const handler = NextAuth({
       // Access token has expired, try to update it
       return token;
     },
-    async session({ session, token }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: any) {
       // Send properties to the client
       session.accessToken = token.accessToken as string;
       session.provider = token.provider as string;
@@ -33,7 +36,8 @@ const handler = NextAuth({
 
       return session;
     },
-    async signIn({ user }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async signIn({ user }: any) {
       // You can implement additional validation here
       // For example, check if the user's email is verified
       if (user.email) {

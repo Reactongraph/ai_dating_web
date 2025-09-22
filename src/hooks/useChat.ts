@@ -271,7 +271,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         user_id: user?._id || '',
       };
 
-      const response = await chatWithBot(testRequest).unwrap();
+      await chatWithBot(testRequest).unwrap();
     } catch (error) {
       console.error('API test failed:', error);
       console.error('Error details:', error);

@@ -90,11 +90,11 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
         try {
           // Send the session data to our backend for verification and user creation/login
           const response = await googleLogin({
-            token: session.accessToken || '',
+            token: (session as { accessToken?: string }).accessToken || '',
             email: session.user.email || '',
             name: session.user.name || '',
             picture: session.user.image || undefined,
-            googleId: session.userId || '',
+            googleId: (session as { userId?: string }).userId || '',
           }).unwrap();
 
           // Handle both direct token response and standard API response

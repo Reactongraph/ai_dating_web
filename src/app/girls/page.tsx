@@ -17,7 +17,7 @@ export default function GirlsPage() {
   const { startChat } = useChatInitiation();
 
   // Handle companion card click
-  const handleCompanionClick = (companion: any) => {
+  const handleCompanionClick = (companion: { id: string }) => {
     startChat(companion.id);
   };
 

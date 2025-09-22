@@ -53,7 +53,7 @@ export interface BotProfile {
   relationship: string;
   clothing: string;
   imageURL: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface UserBotReference {
@@ -63,7 +63,7 @@ export interface UserBotReference {
   chatId: string;
   createdAt: string;
   updatedAt: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ChatInitiateResponse {

@@ -23,7 +23,7 @@ const companionCategories = [
 
 const AICompanionsSection = () => {
   const [activeCategory, setActiveCategory] = useState('girls');
-  const { startChat, isInitiating } = useChatInitiation();
+  const { startChat } = useChatInitiation();
 
   // Get the current bot type based on active category
   const currentBotType =
@@ -48,7 +48,7 @@ const AICompanionsSection = () => {
     : [];
 
   // Handle companion card click
-  const handleCompanionClick = (companion: any) => {
+  const handleCompanionClick = (companion: { id: string }) => {
     startChat(companion.id);
   };
 

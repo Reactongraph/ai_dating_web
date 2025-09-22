@@ -22,13 +22,14 @@ export function AuthInitializer() {
   // Verify NextAuth session with our backend
   useEffect(() => {
     const verifyNextAuthSession = async () => {
-      if (session?.accessToken) {
+      if ((session as { accessToken?: string })?.accessToken) {
         try {
           // Verify the session with our backend
           const response = await verifySession({
-            sessionToken: session.accessToken,
-            email: session.user?.email || '',
-            userId: session.userId || '',
+            sessionToken:
+              (session as { accessToken?: string }).accessToken || '',
+            email: session?.user?.email || '',
+            userId: (session as { userId?: string }).userId || '',
           }).unwrap();
 
           // If we get a successful response, update the auth state

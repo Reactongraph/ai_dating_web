@@ -82,6 +82,7 @@ export const mockChats: Chat[] = [
     lastMessage: 'Lorem ipsum dolor sit amet consecte...',
     timestamp: '15:53',
     unreadCount: 2,
+    channelName: 'chat-1',
     messages: [
       {
         id: '1',
@@ -99,6 +100,7 @@ export const mockChats: Chat[] = [
     lastMessage: 'Lorem ipsum dolor sit amet consecte...',
     timestamp: '14:01',
     unreadCount: 0,
+    channelName: 'chat-2',
     messages: [
       {
         id: '2',
@@ -115,6 +117,7 @@ export const mockChats: Chat[] = [
     lastMessage: 'Lorem ipsum dolor sit amet consecte...',
     timestamp: '12:00',
     unreadCount: 1,
+    channelName: 'chat-3',
     messages: [
       {
         id: '3',
