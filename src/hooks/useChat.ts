@@ -54,7 +54,8 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   // Convert API chat history messages to internal format
   const convertApiMessagesToInternal = useCallback(
     (apiMessages: ApiChatHistoryMessage[]): ChatMessage[] => {
-      return apiMessages.map((apiMsg) => ({
+      // Create a copy and reverse it so newest messages appear at the bottom
+      return [...apiMessages].reverse().map((apiMsg) => ({
         id: apiMsg.chatId,
         senderId: apiMsg.senderId,
         content: apiMsg.message,
@@ -106,11 +107,11 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       // console.log('sendChatMessage called with:', messageContent);
       // console.log('Current state:', {
       //   botId,
-      //   userId: user?._id,
+      //   userId: user?.id,
       //   messageContent,
       // });
 
-      if (!botId || !user?._id || !messageContent.trim()) {
+      if (!botId || !user?.id || !messageContent.trim()) {
         // console.log('Missing required data:', {
         //   botId,
         //   userId: user?._id,
@@ -128,7 +129,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       // Optimistically add user message
       const userMessage: ChatMessage = {
         id: `temp-user-${Date.now()}`,
-        senderId: user._id,
+        senderId: user.id as string,
         content: messageContent,
         timestamp: new Date().toISOString(),
         isUser: true,
@@ -149,7 +150,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           question: messageContent,
           chat_history: chatHistory,
           bot_profile_id: botId,
-          user_id: user._id,
+          user_id: user.id as string,
         };
 
         // console.log('Request data:', requestData);
@@ -197,7 +198,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
     },
     [
       botId,
-      user?._id,
+      user?.id,
       messages,
       convertMessagesToHistory,
       chatWithBot,
@@ -258,7 +259,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
   // Test function to check if API is working
   const testApiConnection = useCallback(async () => {
-    if (!botId || !user?._id) {
+    if (!botId || !user?.id) {
       // console.log('Cannot test API - missing botId or userId');
       return;
     }
@@ -268,7 +269,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         question: 'Hello',
         chat_history: [],
         bot_profile_id: botId,
-        user_id: user?._id || '',
+        user_id: (user?.id as string) || '',
       };
 
       await chatWithBot(testRequest).unwrap();
@@ -276,7 +277,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       console.error('API test failed:', error);
       console.error('Error details:', error);
     }
-  }, [botId, user?._id, chatWithBot]);
+  }, [botId, user?.id, chatWithBot]);
 
   // Make testApiConnection available globally for debugging
   if (typeof window !== 'undefined') {

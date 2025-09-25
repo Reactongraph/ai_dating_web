@@ -16,10 +16,8 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   chat,
   quickSuggestions,
   privacyMessage,
-
   onQuickSuggestionClick,
 }) => {
-  // console.log('ChatArea props:', chat);
   // Use chat hook for API integration
   const {
     messages,
@@ -80,7 +78,6 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     const form = e.target as HTMLFormElement;
     const input = form.querySelector('input') as HTMLInputElement;
     if (input.value.trim()) {
-      console.log('Sending message:', input.value.trim());
       handleSendMessage(input.value.trim());
       input.value = '';
     }

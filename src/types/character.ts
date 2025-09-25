@@ -89,6 +89,7 @@ export interface CharacterFormData {
   // Step 9: Summary (auto-generated)
   summary?: string;
   name: string;
+  model: 'lustify-sdxl' | 'flux-dev-uncensored' | 'pony-realism' | 'qwen-image' | 'venice-sd35';
 }
 
 export interface StepConfig {

@@ -132,6 +132,12 @@ export interface ReligionResponse {
 export interface GenerateAvatarRequest {
   bot_type: 'girl' | 'boy';
   name: string;
+  model:
+    | 'lustify-sdxl'
+    | 'flux-dev-uncensored'
+    | 'pony-realism'
+    | 'qwen-image'
+    | 'venice-sd35';
   style: 'Anime' | 'Realistic';
   ethnicity: string;
   age: number;

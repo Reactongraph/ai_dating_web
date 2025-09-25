@@ -63,7 +63,6 @@ export default function ChatPage() {
   const handleRetry = () => {
     refetch();
   };
-  console.log(chats, 'selectedChat', selectedChat);
   return (
     <div className="h-[calc(100vh-64px)] bg-black flex overflow-hidden ">
       {/* Chat Sidebar */}

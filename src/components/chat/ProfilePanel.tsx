@@ -3,6 +3,8 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { ChatUser } from '@/types/chat';
+import ImageGallery from '@/components/collection/ImageGallery';
+import { CharacterImage } from '@/types/collection';
 
 interface ProfilePanelProps {
   user: ChatUser | null;
@@ -13,6 +15,47 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
     'profile'
   );
   const [showFullDescription, setShowFullDescription] = useState(true);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<CharacterImage[]>([]);
+  const [initialImageIndex, setInitialImageIndex] = useState(0);
+
+  // Create gallery images from user data
+  const createGalleryImages = (): CharacterImage[] => {
+    if (!user) return [];
+
+    const images: CharacterImage[] = [];
+
+    // Add main profile image
+    images.push({
+      id: 'profile-main',
+      url: user.avatar,
+      alt: `${user.name} - Profile Image`,
+    });
+
+    // Add collection images (using the same avatar for now, but could be different images)
+    for (let i = 0; i < 6; i++) {
+      images.push({
+        id: `collection-${i}`,
+        url: user.avatar, // In real app, these would be different images
+        alt: `${user.name} - Collection ${i + 1}`,
+      });
+    }
+
+    return images;
+  };
+
+  // Handle image click to open gallery
+  const handleImageClick = (imageIndex: number) => {
+    const images = createGalleryImages();
+    setGalleryImages(images);
+    setInitialImageIndex(imageIndex);
+    setIsGalleryOpen(true);
+  };
+
+  // Close gallery
+  const closeGallery = () => {
+    setIsGalleryOpen(false);
+  };
 
   if (!user) {
     return (
@@ -63,7 +106,10 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
           <div className="p-4">
             {/* Profile Image */}
             <div className="relative mb-4">
-              <div className="w-full h-64 rounded-xl overflow-hidden">
+              <div
+                className="w-full h-64 rounded-xl overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => handleImageClick(0)}
+              >
                 <Image
                   src={user.avatar}
                   alt={user.name}
@@ -72,11 +118,11 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
                   className="object-cover w-full h-full"
                 />
               </div>
-              {user.isLimitedEdition && (
+              {/* {user.isLimitedEdition && (
                 <div className="absolute top-2 left-2 bg-gray-900/80 text-white text-xs px-2 py-1 rounded">
                   LIMITED EDITION
                 </div>
-              )}
+              )} */}
 
               {/* Navigation Arrows */}
               <button className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-2 hover:bg-black/70">
@@ -336,7 +382,8 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
-                  className="relative aspect-[3/4] rounded-lg overflow-hidden"
+                  className="relative aspect-[3/4] rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => handleImageClick(index + 1)}
                 >
                   <Image
                     src={user.avatar}
@@ -345,13 +392,21 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
                     height={200}
                     className="object-cover w-full h-full"
                   />
-                  <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors cursor-pointer" />
+                  <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors" />
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
+
+      {/* Image Gallery */}
+      <ImageGallery
+        images={galleryImages}
+        initialImageIndex={initialImageIndex}
+        isOpen={isGalleryOpen}
+        onClose={closeGallery}
+      />
     </div>
   );
 };

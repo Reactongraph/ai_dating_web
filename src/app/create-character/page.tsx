@@ -57,6 +57,7 @@ const CreateCharacterPageContent = () => {
 
       // Step 9: Summary
       name: '',
+      model: 'lustify-sdxl',
     },
   });
 

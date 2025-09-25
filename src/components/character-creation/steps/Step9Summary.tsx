@@ -252,34 +252,70 @@ const Step9Summary: React.FC = () => {
         <div className="bg-gray-800 rounded-lg p-6 max-w-2xl mx-auto">
           <h3 className="text-xl font-semibold mb-4">Character Overview</h3>
 
-          {/* Name Input Field */}
-          <div className="mb-6">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-300 mb-2"
-            >
-              Character Name *
-            </label>
-            <input
-              {...register('name', {
-                required: 'Character name is required',
-                minLength: {
-                  value: 2,
-                  message: 'Name must be at least 2 characters long',
-                },
-                maxLength: {
-                  value: 50,
-                  message: 'Name must be less than 50 characters',
-                },
-              })}
-              type="text"
-              id="name"
-              placeholder="Enter character name"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
-            )}
+          {/* Name Input Field and Model Selection */}
+          <div className="mb-6 grid grid-cols-2 gap-4">
+            {/* Character Name */}
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
+                Character Name *
+              </label>
+              <input
+                {...register('name', {
+                  required: 'Character name is required',
+                  minLength: {
+                    value: 2,
+                    message: 'Name must be at least 2 characters long',
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: 'Name must be less than 50 characters',
+                  },
+                })}
+                type="text"
+                id="name"
+                placeholder="Enter character name"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-400">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+
+            {/* Model Selection */}
+            <div>
+              <label
+                htmlFor="model"
+                className="block text-sm font-medium text-gray-300 mb-2"
+              >
+                AI Model *
+              </label>
+              <select
+                {...register('model', {
+                  required: 'AI Model is required',
+                })}
+                id="model"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="">Select AI Model</option>
+                <option value="lustify-sdxl">Lustify SDXL - Uncensored</option>
+                <option value="flux-dev-uncensored">Flux Dev Uncensored</option>
+                <option value="pony-realism">
+                  Pony Realism - Most Uncensored
+                </option>
+                <option value="qwen-image">Qwen Image - Highest Quality</option>
+                <option value="venice-sd35">Venice SD35</option>
+              </select>
+              {errors.model && (
+                <p className="mt-1 text-sm text-red-400">
+                  {errors.model.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-left">

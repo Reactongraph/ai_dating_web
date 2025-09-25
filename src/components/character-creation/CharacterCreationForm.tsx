@@ -95,6 +95,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
       const requestData: GenerateAvatarRequest = {
         bot_type: botType as 'girl' | 'boy',
         name: data.name,
+        model: data.model,
         style: data.style === 'realistic' ? 'Realistic' : 'Anime',
         ethnicity: data.ethnicity,
         age: ageNumber,
