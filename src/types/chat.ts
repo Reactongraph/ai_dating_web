@@ -41,6 +41,25 @@ export interface Chat {
   unreadCount?: number;
   messages: ChatMessage[];
   channelName: string;
+  generatedImages?: GeneratedImagesData;
+}
+
+// Generated Image Types
+export interface GeneratedImage {
+  id: string;
+  imageURL: string;
+  prompt: string;
+  context: string;
+  isPrimary: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GeneratedImagesData {
+  images: GeneratedImage[];
+  totalCount: number;
+  hasMore: boolean;
+  primaryImage: string | null;
 }
 
 // API Response Types for Chat List
@@ -55,6 +74,7 @@ export interface ChatListItem {
   channelName: string;
   createdAt: string;
   botProfile: BotProfile;
+  generatedImages: GeneratedImagesData;
 }
 
 export interface PaginationInfo {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { quickSuggestions, privacyMessage } from '@/data/chat';
+import { privacyMessage } from '@/data/chat';
 import { Chat } from '@/types/chat';
 import ChatList from '@/components/chat/ChatList';
 import ChatArea from '@/components/chat/ChatArea';
@@ -95,16 +95,15 @@ export default function ChatPage() {
 
       {/* Main Chat Area */}
       <div className="flex-1 min-w-0">
-        <ChatArea
-          chat={selectedChat}
-          quickSuggestions={quickSuggestions}
-          privacyMessage={privacyMessage}
-        />
+        <ChatArea chat={selectedChat} privacyMessage={privacyMessage} />
       </div>
 
       {/* Profile Panel - Always Visible */}
       <div className="flex-shrink-0">
-        <ProfilePanel user={selectedChat?.user || null} />
+        <ProfilePanel
+          user={selectedChat?.user || null}
+          generatedImages={selectedChat?.generatedImages?.images || []}
+        />
       </div>
     </div>
   );

@@ -2,15 +2,19 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { ChatUser } from '@/types/chat';
+import { ChatUser, GeneratedImage } from '@/types/chat';
 import ImageGallery from '@/components/collection/ImageGallery';
 import { CharacterImage } from '@/types/collection';
 
 interface ProfilePanelProps {
   user: ChatUser | null;
+  generatedImages?: GeneratedImage[];
 }
 
-const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
+const ProfilePanel: React.FC<ProfilePanelProps> = ({
+  user,
+  generatedImages = [],
+}) => {
   const [activeTab, setActiveTab] = useState<'profile' | 'collection'>(
     'profile'
   );
@@ -32,14 +36,14 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
       alt: `${user.name} - Profile Image`,
     });
 
-    // Add collection images (using the same avatar for now, but could be different images)
-    for (let i = 0; i < 6; i++) {
+    // Add generated images from the chat
+    generatedImages.forEach((img) => {
       images.push({
-        id: `collection-${i}`,
-        url: user.avatar, // In real app, these would be different images
-        alt: `${user.name} - Collection ${i + 1}`,
+        id: img.id,
+        url: img.imageURL,
+        alt: img.prompt,
       });
-    }
+    });
 
     return images;
   };
@@ -372,25 +376,46 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
         ) : (
           // Collection Tab Content
           <div className="p-4">
-            <div className="grid grid-cols-2 gap-3">
-              {/* Mock collection images */}
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="relative aspect-[3/4] rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-                  onClick={() => handleImageClick(index + 1)}
-                >
-                  <Image
-                    src={user.avatar}
-                    alt={`Collection ${index + 1}`}
-                    width={150}
-                    height={200}
-                    className="object-cover w-full h-full"
-                  />
-                  <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors" />
-                </div>
-              ))}
-            </div>
+            {generatedImages.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-gray-400 text-lg mb-2">No images yet</div>
+                <p className="text-gray-500 text-sm">
+                  Start chatting to generate images with {user.name}!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {generatedImages.map((image, index) => (
+                  <div
+                    key={image.id}
+                    className="relative aspect-[3/4] rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity group"
+                    onClick={() => handleImageClick(index + 1)}
+                  >
+                    <Image
+                      src={image.imageURL}
+                      alt={image.prompt}
+                      width={150}
+                      height={200}
+                      className="object-cover w-full h-full"
+                    />
+                    <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors" />
+
+                    {/* Image info overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                      <p
+                        className="text-white text-xs truncate"
+                        title={image.prompt}
+                      >
+                        {image.prompt}
+                      </p>
+                      <p className="text-gray-300 text-xs">
+                        {new Date(image.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

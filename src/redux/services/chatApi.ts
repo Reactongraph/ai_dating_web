@@ -29,6 +29,23 @@ export interface BotProfile {
   updatedAt: string;
 }
 
+export interface GeneratedImage {
+  id: string;
+  imageURL: string;
+  prompt: string;
+  context: string;
+  isPrimary: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GeneratedImagesData {
+  images: GeneratedImage[];
+  totalCount: number;
+  hasMore: boolean;
+  primaryImage: string | null;
+}
+
 export interface ChatListItem {
   chatId: string;
   botId: string;
@@ -40,6 +57,7 @@ export interface ChatListItem {
   channelName: string;
   createdAt: string;
   botProfile: BotProfile;
+  generatedImages: GeneratedImagesData;
 }
 
 export interface PaginationInfo {

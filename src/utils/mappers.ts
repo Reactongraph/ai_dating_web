@@ -93,6 +93,7 @@ export const mapChatListItemsToChats = (
       unreadCount: item.unreadCount,
       messages: [], // Messages will be loaded separately
       channelName: item.channelName,
+      generatedImages: item.generatedImages, // Include generated images data
     };
   });
 };
