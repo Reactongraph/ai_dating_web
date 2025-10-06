@@ -31,6 +31,7 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
   isUser: boolean;
+  type: 'TEXT' | 'IMAGE' | 'AUDIO' | 'VIDEO' | 'TEXTANDIMAGE';
 }
 
 export interface Chat {

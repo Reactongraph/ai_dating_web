@@ -115,7 +115,7 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
   isUser: boolean;
-  type: 'TEXT' | 'IMAGE' | 'AUDIO' | 'VIDEO';
+  type: 'TEXT' | 'IMAGE' | 'AUDIO' | 'VIDEO' | 'TEXTANDIMAGE';
   unreadCount?: number;
 }
 
