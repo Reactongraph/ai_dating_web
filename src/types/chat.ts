@@ -1,3 +1,5 @@
+import { BotProfile } from '@/redux/services/chatApi';
+
 export interface ChatUser {
   id: string;
   name: string;
@@ -52,6 +54,7 @@ export interface ChatListItem {
   unreadCount: number;
   channelName: string;
   createdAt: string;
+  botProfile: BotProfile;
 }
 
 export interface PaginationInfo {

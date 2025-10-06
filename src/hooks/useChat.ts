@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   useChatWithBotMutation,
   useMarkMessagesAsReadMutation,
@@ -21,13 +21,21 @@ interface UseChatProps {
 export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesRef = useRef<ChatMessage[]>([]);
+  const isProcessingRef = useRef(false);
+
+  const [chatWithBot] = useChatWithBotMutation();
+  const [markAsRead] = useMarkMessagesAsReadMutation();
 
   const user = useAppSelector((state) => state.auth.user);
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
 
-  const [chatWithBot] = useChatWithBotMutation();
-  const [markAsRead] = useMarkMessagesAsReadMutation();
+  // Update ref whenever messages change
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   // Fetch chat history when channelName is available
   const {
@@ -51,18 +59,61 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
     }
   );
 
+  // Helper function to deduplicate messages
+  const deduplicateMessages = useCallback(
+    (messages: ChatMessage[]): ChatMessage[] => {
+      const seen = new Set<string>();
+      return messages.filter((msg) => {
+        // Create a unique key based on content and approximate timestamp (within 5 seconds)
+        const timeKey = Math.floor(new Date(msg.timestamp).getTime() / 5000);
+        const key = `${msg.content}-${msg.isUser}-${timeKey}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    },
+    []
+  );
+
   // Convert API chat history messages to internal format
   const convertApiMessagesToInternal = useCallback(
     (apiMessages: ApiChatHistoryMessage[]): ChatMessage[] => {
       // Create a copy and reverse it so newest messages appear at the bottom
-      return [...apiMessages].reverse().map((apiMsg) => ({
-        id: apiMsg.chatId,
-        senderId: apiMsg.senderId,
-        content: apiMsg.message,
-        timestamp: apiMsg.timestamp,
-        isUser: apiMsg.messageType === 'USER',
-        type: apiMsg.type,
-      }));
+      return [...apiMessages].reverse().flatMap((apiMsg) => {
+        const baseMessage = {
+          id: apiMsg.chatId,
+          senderId: apiMsg.senderId,
+          timestamp: apiMsg.timestamp,
+          isUser: apiMsg.messageType === 'USER',
+        };
+
+        if (apiMsg.type === 'TEXTANDIMAGE' && apiMsg.metadata?.imageUrl) {
+          // For TEXTANDIMAGE, create two messages: one for text and one for image
+          return [
+            {
+              ...baseMessage,
+              id: `${apiMsg.chatId}-text`,
+              content: apiMsg.message,
+              type: 'TEXT',
+            },
+            {
+              ...baseMessage,
+              id: `${apiMsg.chatId}-image`,
+              content: apiMsg.metadata.imageUrl,
+              type: 'IMAGE',
+            },
+          ];
+        }
+
+        // For other types, return a single message
+        return [
+          {
+            ...baseMessage,
+            content: apiMsg.message,
+            type: apiMsg.type,
+          },
+        ];
+      });
     },
     []
   );
@@ -104,6 +155,12 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   // Send a message
   const sendChatMessage = useCallback(
     async (messageContent: string) => {
+      // Prevent multiple simultaneous calls
+      if (isProcessingRef.current) {
+        console.log('Already processing a message, ignoring duplicate call');
+        return;
+      }
+
       // console.log('sendChatMessage called with:', messageContent);
       // console.log('Current state:', {
       //   botId,
@@ -124,6 +181,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       // console.log('Bot ID:', botId);
       // console.log('User ID:', user._id);
 
+      isProcessingRef.current = true;
       setIsSendingMessage(true);
 
       // Optimistically add user message
@@ -136,11 +194,16 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         type: 'TEXT',
       };
 
-      setMessages((prev) => [...prev, userMessage]);
+      // Get current messages before adding the user message
+      const currentMessages = messagesRef.current;
+
+      setMessages((prev) => deduplicateMessages([...prev, userMessage]));
+
+      // Show typing indicator immediately
+      setIsTyping(true);
 
       try {
-        // Get current messages (excluding the just-added user message)
-        const currentMessages = messages;
+        // Use the messages we got before adding the user message
         const chatHistory = convertMessagesToHistory(currentMessages);
 
         // console.log('Chat history:', chatHistory);
@@ -155,26 +218,36 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
         // console.log('Request data:', requestData);
 
-        const response = await chatWithBot(requestData).unwrap();
+        // Start API call and minimum delay in parallel
+        const [response] = await Promise.all([
+          chatWithBot(requestData).unwrap(),
+          new Promise((resolve) => setTimeout(resolve, 2000)), // Minimum 2 second delay
+        ]);
 
         // console.log('API Response:', response);
 
         if (response.success && response.data.answer) {
           // Replace temporary user message with real one
           setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === userMessage.id
-                ? {
-                    ...msg,
-                    id: `user-${Date.now()}`,
-                  }
-                : msg
+            deduplicateMessages(
+              prev.map((msg) =>
+                msg.id === userMessage.id
+                  ? {
+                      ...msg,
+                      id: `user-${Date.now()}`,
+                    }
+                  : msg
+              )
             )
           );
 
-          // Add bot response
-          const botMessage: ChatMessage = {
-            id: `bot-${Date.now()}`,
+          // Add additional random delay (0-2 seconds) for more natural feel
+          const additionalDelay = Math.random() * 2000; // 0-2 seconds
+          await new Promise((resolve) => setTimeout(resolve, additionalDelay));
+
+          // Add text response
+          const textMessage: ChatMessage = {
+            id: `bot-text-${Date.now()}`,
             senderId: botId,
             content: response.data.answer,
             timestamp: new Date().toISOString(),
@@ -182,7 +255,21 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
             type: 'TEXT',
           };
 
-          setMessages((prev) => [...prev, botMessage]);
+          // Add image response if present
+          const messages: ChatMessage[] = [textMessage];
+          if (response.data.image) {
+            messages.push({
+              id: `bot-image-${response.data.image.id}`,
+              senderId: botId,
+              content: response.data.image.imageURL,
+              timestamp: new Date().toISOString(),
+              isUser: false,
+              type: 'IMAGE',
+            });
+          }
+
+          setMessages((prev) => deduplicateMessages([...prev, ...messages]));
+          setIsTyping(false);
           // console.log('Message sent successfully and bot response added');
         } else {
           throw new Error('Invalid response from bot');
@@ -191,18 +278,20 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         console.error('Error sending message:', error);
         // Remove the optimistic message on error
         setMessages((prev) => prev.filter((msg) => msg.id !== userMessage.id));
+        setIsTyping(false);
         showSnackbar('Failed to send message', 'error');
       } finally {
         setIsSendingMessage(false);
+        isProcessingRef.current = false;
       }
     },
     [
       botId,
       user?.id,
-      messages,
       convertMessagesToHistory,
       chatWithBot,
       showSnackbar,
+      deduplicateMessages,
     ]
   );
 
@@ -227,9 +316,9 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       const convertedMessages = convertApiMessagesToInternal(
         chatHistoryResponse.data.messages
       );
-      setMessages(convertedMessages);
+      setMessages(deduplicateMessages(convertedMessages));
     }
-  }, [chatHistoryResponse, convertApiMessagesToInternal]);
+  }, [chatHistoryResponse, convertApiMessagesToInternal, deduplicateMessages]);
 
   // Clear messages and refetch history when chat changes
   useEffect(() => {
@@ -290,6 +379,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
     messages,
     isLoadingHistory,
     isSendingMessage,
+    isTyping,
     sendMessage: sendChatMessage,
     loadChatHistory,
     markMessagesAsRead,

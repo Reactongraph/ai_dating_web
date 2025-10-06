@@ -1,4 +1,4 @@
-import { BotProfile } from '@/redux/services/botProfilesApi';
+import { BotProfile } from '@/redux/services/chatApi';
 import { Companion } from '@/components/cards/CompanionCard';
 import { Companion as EnhancedCompanion } from '@/components/cards/EnhancedCompanionCard';
 import { ChatListItem, Chat, ChatUser } from '@/types/chat';
@@ -48,28 +48,40 @@ export const mapChatListItemsToChats = (
   chatListItems: ChatListItem[]
 ): Chat[] => {
   return chatListItems.map((item) => {
-    // Create a ChatUser object from the chat list item
+    // Create a ChatUser object from the chat list item using botProfile data
     const chatUser: ChatUser = {
       id: item.botId,
-      name: item.botName,
-      age: 25, // Default age since it's not provided in API
-      avatar: item.botImageURL || '/assets/default-avatar.png',
+      name: item.botProfile.name || item.botName,
+      age: parseInt(item.botProfile.age) || 25,
+      avatar:
+        item.botProfile.imageURL ||
+        item.botImageURL ||
+        '/assets/default-avatar.png',
       isOnline: false, // Default to offline
       stats: {
         messages: '0',
         chats: '1',
       },
-      tags: ['AI Companion'],
-      description: 'AI Companion',
+      tags: [
+        item.botProfile.occupation,
+        item.botProfile.personality,
+        ...item.botProfile.hobbies.slice(0, 1),
+      ],
+      description: item.botProfile.bio || 'AI Companion',
       details: {
-        age: 25,
-        occupation: 'AI Companion',
-        gender: 'Unknown',
-        ethnicity: 'Unknown',
-        bodyType: 'Unknown',
-        relationship: 'Friend',
-        personality: 'Friendly',
-        hobby: 'Chatting',
+        age: parseInt(item.botProfile.age) || 25,
+        occupation: item.botProfile.occupation,
+        gender:
+          item.botProfile.bot_type === 'girl'
+            ? 'Female'
+            : item.botProfile.bot_type === 'boy'
+              ? 'Male'
+              : 'Unknown',
+        ethnicity: item.botProfile.ethnicity,
+        bodyType: item.botProfile.body_type,
+        relationship: item.botProfile.relationship,
+        personality: item.botProfile.personality,
+        hobby: item.botProfile.hobbies[0] || 'Chatting',
       },
     };
 

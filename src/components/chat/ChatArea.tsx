@@ -1,36 +1,60 @@
 'use client';
 
 import Image from 'next/image';
-import { Chat, QuickSuggestion } from '@/types/chat';
+import { useEffect, useRef, useState } from 'react';
+import { Chat } from '@/types/chat';
 import { useChat } from '@/hooks/useChat';
+import {
+  useGetChatSuggestionsQuery,
+  SuggestionContext,
+} from '@/redux/services/chatApi';
 
 interface ChatAreaProps {
   chat: Chat | null;
-  quickSuggestions: QuickSuggestion[];
   privacyMessage: string;
-
   onQuickSuggestionClick?: (suggestion: string) => void;
 }
 
 const ChatArea: React.FC<ChatAreaProps> = ({
   chat,
-  quickSuggestions,
   privacyMessage,
   onQuickSuggestionClick,
 }) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [suggestionContext, setSuggestionContext] =
+    useState<SuggestionContext>('greeting');
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+
   // Use chat hook for API integration
   const {
     messages,
     isLoadingHistory,
     isSendingMessage,
+    isTyping,
     sendMessage,
-    testApiConnection,
     historyError,
   } = useChat({
     chatId: chat?.id,
     botId: chat?.user.id,
     channelName: chat?.channelName,
   });
+
+  // Get suggestions based on context
+  const { data: suggestionsData, isLoading: isLoadingSuggestions } =
+    useGetChatSuggestionsQuery(
+      {
+        botId: chat?.user.id || '',
+        context: suggestionContext,
+      },
+      {
+        skip: !chat?.user.id,
+      }
+    );
+
+  // Auto-scroll to bottom when new messages arrive or typing starts/stops
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping]);
 
   // Use API sendMessage if no custom handler provided
   const handleSendMessage = sendMessage;
@@ -215,16 +239,67 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                     : 'bg-gray-800 text-white'
                 }`}
               >
-                <p className="text-sm">{message.content}</p>
-                <p className="text-xs opacity-70 mt-1">
-                  {new Date(message.timestamp).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </p>
+                {message.type === 'IMAGE' ? (
+                  <div className="space-y-2">
+                    <div
+                      className="relative w-48 h-48 cursor-pointer overflow-hidden rounded-lg"
+                      onClick={() => setFullscreenImage(message.content)}
+                    >
+                      <Image
+                        src={message.content}
+                        alt="Generated image"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <p className="text-xs opacity-70">
+                      {new Date(message.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm">{message.content}</p>
+                    <p className="text-xs opacity-70 mt-1">
+                      {new Date(message.timestamp).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           ))}
+
+          {/* Typing Indicator */}
+          {isTyping && (
+            <div className="flex justify-start">
+              <div className="bg-gray-800 text-white max-w-xs p-3 rounded-2xl">
+                <div className="flex items-center space-x-1">
+                  <span className="text-sm text-gray-300">
+                    {chat.user.name} is typing
+                  </span>
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: '0.1s' }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: '0.2s' }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Auto-scroll anchor */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
@@ -232,24 +307,64 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       <div className="p-4 border-t border-gray-800 flex-shrink-0">
         {/* Quick Suggestions */}
         <div className="mb-4">
-          <p className="text-gray-400 text-sm mb-2">Quick suggestions:</p>
-          <div className="flex flex-wrap gap-2">
-            {quickSuggestions.map((suggestion) => (
+          {/* Context Selector */}
+          <div className="flex items-center gap-2 mb-3">
+            <p className="text-gray-400 text-sm">Suggestions:</p>
+            <div className="flex gap-1">
               <button
-                key={suggestion.id}
-                onClick={() => handleQuickSuggestionClick(suggestion.text)}
-                className="bg-gray-800 hover:bg-gray-700 text-white text-sm px-3 py-2 rounded-full transition-colors"
+                onClick={() => setSuggestionContext('greeting')}
+                className={`text-xs px-2 py-1 rounded-full transition-colors ${
+                  suggestionContext === 'greeting'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
               >
-                {suggestion.text}
+                Greetings
               </button>
-            ))}
-            {/* Debug Test Button */}
-            <button
-              onClick={testApiConnection}
-              className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-2 rounded-full transition-colors"
-            >
-              Test API
-            </button>
+              <button
+                onClick={() => setSuggestionContext('casual')}
+                className={`text-xs px-2 py-1 rounded-full transition-colors ${
+                  suggestionContext === 'casual'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                Casual
+              </button>
+              <button
+                onClick={() => setSuggestionContext('flirty')}
+                className={`text-xs px-2 py-1 rounded-full transition-colors ${
+                  suggestionContext === 'flirty'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                Flirty
+              </button>
+            </div>
+          </div>
+
+          {/* Suggestions List */}
+          <div className="flex flex-wrap gap-2">
+            {isLoadingSuggestions ? (
+              <div className="text-gray-400 text-sm">
+                Loading suggestions...
+              </div>
+            ) : suggestionsData?.data.suggestions ? (
+              suggestionsData.data.suggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleQuickSuggestionClick(suggestion)}
+                  className="bg-gray-800 hover:bg-gray-700 text-white text-sm px-3 py-2 rounded-full transition-colors"
+                >
+                  {suggestion}
+                </button>
+              ))
+            ) : (
+              <div className="text-gray-400 text-sm">
+                No suggestions available
+              </div>
+            )}
           </div>
         </div>
 
@@ -288,6 +403,42 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           </button>
         </form>
       </div>
+
+      {/* Full-screen Image Modal */}
+      {fullscreenImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center"
+          onClick={() => setFullscreenImage(null)}
+        >
+          <div className="relative max-w-[90vw] max-h-[90vh]">
+            <button
+              className="absolute -top-10 right-0 text-white hover:text-gray-300"
+              onClick={() => setFullscreenImage(null)}
+            >
+              <svg
+                className="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <Image
+              src={fullscreenImage}
+              alt="Full-screen view"
+              width={1200}
+              height={800}
+              className="object-contain max-h-[90vh]"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

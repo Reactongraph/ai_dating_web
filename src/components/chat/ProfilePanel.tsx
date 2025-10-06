@@ -118,11 +118,6 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({ user }) => {
                   className="object-cover w-full h-full"
                 />
               </div>
-              {/* {user.isLimitedEdition && (
-                <div className="absolute top-2 left-2 bg-gray-900/80 text-white text-xs px-2 py-1 rounded">
-                  LIMITED EDITION
-                </div>
-              )} */}
 
               {/* Navigation Arrows */}
               <button className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-2 hover:bg-black/70">

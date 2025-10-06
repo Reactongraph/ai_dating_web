@@ -1,6 +1,34 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // API Response Types
+export interface BotProfile {
+  _id: string;
+  name: string;
+  age: string;
+  bio: string;
+  bot_type: 'girl' | 'boy' | 'anime';
+  style: string;
+  ethnicity: string;
+  eye_color: string;
+  hair_style: string;
+  hair_color: string;
+  body_type: string;
+  breast_size?: string;
+  butt_size?: string;
+  personality: string;
+  occupation: string;
+  hobbies: string[];
+  relationship: string;
+  clothing: string;
+  imageURL: string;
+  avatar_image?: {
+    s3Location?: string;
+    path?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ChatListItem {
   chatId: string;
   botId: string;
@@ -11,6 +39,7 @@ export interface ChatListItem {
   unreadCount: number;
   channelName: string;
   createdAt: string;
+  botProfile: BotProfile;
 }
 
 export interface PaginationInfo {
@@ -35,27 +64,6 @@ export interface ChatListParams {
 }
 
 // Chat Initiation Types
-export interface BotProfile {
-  _id: string;
-  name: string;
-  age: string;
-  bio: string;
-  bot_type: string;
-  style: string;
-  ethnicity: string;
-  eye_color: string;
-  hair_style: string;
-  hair_color: string;
-  body_type: string;
-  personality: string;
-  occupation: string;
-  hobbies: string[];
-  relationship: string;
-  clothing: string;
-  imageURL: string;
-  [key: string]: unknown;
-}
-
 export interface UserBotReference {
   _id: string;
   userId: string;
@@ -106,11 +114,17 @@ export interface ChatWithBotRequest {
   user_id: string;
 }
 
+export interface ChatWithBotImageResponse {
+  imageURL: string;
+  id: string;
+}
+
 export interface ChatWithBotResponse {
   success: boolean;
   message: string;
   data: {
     answer: string;
+    image?: ChatWithBotImageResponse;
   };
 }
 
@@ -139,15 +153,21 @@ export interface MarkAsReadResponse {
 }
 
 // Chat History Types
+export interface ChatHistoryMetadata {
+  imageUrl?: string;
+  [key: string]: unknown;
+}
+
 export interface ChatHistoryMessage {
   chatId: string;
   channelName: string;
   senderId: string;
   receiverId: string;
   message: string;
-  type: 'TEXT' | 'IMAGE' | 'AUDIO' | 'VIDEO';
+  type: 'TEXT' | 'IMAGE' | 'AUDIO' | 'VIDEO' | 'TEXTANDIMAGE';
   messageType: 'USER' | 'BOT';
   timestamp: string;
+  metadata?: ChatHistoryMetadata;
 }
 
 export interface ChatHistoryPagination {
@@ -170,6 +190,25 @@ export interface ChatHistoryParams {
   page?: number;
   limit?: number;
   chatId?: string; // Optional chatId to force refetch when switching chats
+}
+
+// Chat Suggestions Types
+export type SuggestionContext = 'casual' | 'flirty' | 'greeting';
+
+export interface ChatSuggestionsResponse {
+  statusCode: number;
+  message: string;
+  data: {
+    botId: string;
+    botName: string;
+    context: SuggestionContext;
+    suggestions: string[];
+  };
+}
+
+export interface ChatSuggestionsParams {
+  botId: string;
+  context: SuggestionContext;
 }
 
 export const chatApi = createApi({
@@ -245,6 +284,15 @@ export const chatApi = createApi({
         { type: 'ChatHistory', id: arg.channelName },
       ],
     }),
+    getChatSuggestions: builder.query<
+      ChatSuggestionsResponse,
+      ChatSuggestionsParams
+    >({
+      query: ({ botId, context }) => ({
+        url: `/bot-chat/suggestions/${botId}`,
+        params: { context },
+      }),
+    }),
   }),
 });
 
@@ -255,4 +303,5 @@ export const {
   useSendMessageMutation,
   useMarkMessagesAsReadMutation,
   useGetChatHistoryQuery,
+  useGetChatSuggestionsQuery,
 } = chatApi;
