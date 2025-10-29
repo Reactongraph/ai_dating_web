@@ -46,7 +46,7 @@ const faqData = {
 
 const ExperienceAndFAQ = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 md:py-16 space-y-8 sm:space-y-12 md:space-y-16">
+    <div className="max-w-7xl mx-auto px-4 sm:py-12 md:py-4 space-y-8 sm:space-y-12 md:space-y-1">
       {/* Experience Section */}
       <ExperienceSection {...experienceData} />
 

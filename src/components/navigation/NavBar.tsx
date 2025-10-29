@@ -125,7 +125,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
           <div className="flex items-center space-x-2 md:space-x-6">
             <Link
               href="/create-character"
-              className="hidden md:block bg-gradient-to-r from-primary-500 to-primary-600 text-black text-sm md:text-lg font-semibold px-2 md:px-4 py-1 md:py-2 rounded-xl hover:opacity-90 transition-colors"
+              className="hidden md:block bg-gradient-to-r from-primary-500 to-primary-600 text-white md:text-sm font-semibold px-2 md:px-4 md:py-1.5 rounded-xl hover:opacity-90 transition-colors"
             >
               Create AI Character
             </Link>

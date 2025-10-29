@@ -21,18 +21,18 @@ const FAQAccordion = ({ title, faqs }: FAQAccordionProps) => {
   };
 
   return (
-    <div className="py-8 sm:py-12 md:py-16">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-6 sm:mb-8 md:mb-12">
+    <div className="py-8 sm:py-12 md:py-0">
+      <h2 className="text-2xl sm:text-3xl md:text-2xl font-bold text-white text-center mb-6 sm:mb-8 md:mb-4">
         {title}
       </h2>
       <div className="space-y-4 max-w-3xl mx-auto">
         {faqs.map((faq, index) => (
           <div key={index} className="border-b border-gray-800 last:border-b-0">
             <button
-              className="w-full flex items-center justify-between py-4 text-left focus:outline-none"
+              className="w-full flex items-center justify-between py-2 text-left focus:outline-none"
               onClick={() => toggleAccordion(index)}
             >
-              <span className="text-base sm:text-lg text-gray-300 hover:text-white transition-colors">
+              <span className="text-base sm:text-base text-gray-300 hover:text-white transition-colors">
                 {faq.question}
               </span>
               <FaChevronDown
@@ -46,7 +46,7 @@ const FAQAccordion = ({ title, faqs }: FAQAccordionProps) => {
                 openIndex === index ? 'max-h-96 pb-4' : 'max-h-0'
               }`}
             >
-              <p className="text-gray-400 text-sm sm:text-base">{faq.answer}</p>
+              <p className="text-gray-400 text-sm sm:text-sm">{faq.answer}</p>
             </div>
           </div>
         ))}

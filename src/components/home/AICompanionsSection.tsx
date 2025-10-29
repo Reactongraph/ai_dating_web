@@ -59,8 +59,8 @@ const AICompanionsSection = () => {
         className="relative w-full bg-cover bg-center"
         style={{ backgroundImage: 'url("/assets/meetai.png")' }}
       >
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8 text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+        <div className="max-w-7xl mx-auto px-4  sm:py-2 text-center">
+          <h2 className=" sm:text-xl md:text-2xl font-bold text-white">
             Meet Your AI Companions
           </h2>
         </div>
@@ -68,14 +68,14 @@ const AICompanionsSection = () => {
 
       {/* Main Content */}
       <div className="bg-black">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-10 md:py-12">
-          <p className="text-gray-400 text-sm sm:text-base md:text-lg text-center mb-6 sm:mb-8 md:mb-12">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 sm:py-10 md:py-6">
+          <p className="text-gray-400 md:text-lg sm:text-xs text-center  sm:mb-8 md:mb-3">
             From friendly to flirty — dive into a world of personalities crafted
             just for you.
           </p>
 
           {/* Tabs Navigation */}
-          <div className="flex justify-center mb-6 sm:mb-8 md:mb-12">
+          <div className="flex justify-center sm:mb-8 md:mb-8">
             <CategoryTabs
               tabs={tabs}
               activeTab={activeCategory}

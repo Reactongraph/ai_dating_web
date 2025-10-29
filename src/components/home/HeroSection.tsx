@@ -27,7 +27,7 @@ const HeroSection = ({
   imageSrc,
 }: HeroSectionProps) => {
   return (
-    <div className="relative w-full min-h-[300px] sm:min-h-[350px] md:min-h-[400px] overflow-hidden">
+    <div className="relative w-full overflow-hidden sm:py-1">
       {/* Background Image */}
       <div
         className="absolute inset-0  bg-no-repeat"
@@ -35,10 +35,10 @@ const HeroSection = ({
       />
 
       {/* Content */}
-      <div className="relative mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-0 flex flex-col lg:flex-row items-center">
+      <div className="relative mx-auto px-4 sm:px-6 md:px-8  md:py-0 flex flex-col lg:flex-row items-center">
         {/* Text Content */}
-        <div className="flex-1 lg:ml-10 space-y-4 md:space-y-6 z-10 text-center lg:text-left">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white space-y-1 md:space-y-2">
+        <div className="flex-1 lg:ml-10 space-y-2 z-10 text-center lg:text-left">
+          <h1 className="md:text-3xl sm:text-xl font-bold text-white">
             <span className="block">{title.main}</span>
             <span className="block">
               <span className={title.highlight.color}>
@@ -47,21 +47,19 @@ const HeroSection = ({
               {title.rest}
             </span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-300">
-            {subtitle}
-          </p>
+          <p className="sm:text-xs md:text-sm text-gray-300">{subtitle}</p>
           <Link
             href="/create-character"
-            className="inline-flex bg-gradient-to-r from-primary-500 to-primary-600 text-white px-5 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-lg text-sm sm:text-base md:text-lg font-medium items-center space-x-2 hover:opacity-90 transition-opacity"
+            className="inline-flex bg-gradient-to-r from-primary-500 to-primary-600 text-white px-2 sm:py-0 md:py-1  rounded-lg text-xs sm:text-base  font-medium items-center space-x-2 hover:opacity-90 transition-opacity"
           >
-            <FaWandMagicSparkles className="w-5 h-5" />
+            <FaWandMagicSparkles className="w-4 h-4" />
             <span>{buttonText}</span>
           </Link>
         </div>
 
         {/* Image - Only visible on large screens */}
         <div className="hidden lg:block flex-1 mt-0">
-          <div className="relative w-full h-[400px]">
+          <div className="relative w-full h-[200px]">
             <Image
               src={imageSrc}
               alt="AI Characters"

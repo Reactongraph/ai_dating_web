@@ -11,7 +11,7 @@ const StepCard = ({ iconSrc, title, description }: StepCardProps) => (
     {/* Main Card */}
     <div className="relative bg-background-card rounded-[16px] sm:rounded-[20px] md:rounded-[24px] p-6 sm:p-8 md:p-12 flex flex-col items-center text-center shadow-[2px_2px_0px_#232223] sm:shadow-[3px_3px_0px_#232223] md:shadow-[4px_4px_0px_#232223] h-[100%]">
       {/* Icon Container */}
-      <div className="relative w-[50px] h-[50px] sm:w-[60px] sm:h-[60px] md:w-[72px] md:h-[72px] mb-4 sm:mb-6 md:mb-8">
+      <div className="relative sm:w-[30px] sm:h-[30px]  md:h-[40px]  mb-4">
         <Image
           src={iconSrc}
           alt={title}
@@ -21,12 +21,12 @@ const StepCard = ({ iconSrc, title, description }: StepCardProps) => (
       </div>
 
       {/* Title */}
-      <h3 className="text-text-primary text-lg sm:text-xl md:text-2xl font-semibold mb-2 sm:mb-3 md:mb-4">
+      <h3 className="text-text-primary  sm:text-xl md:text-lg font-semibold  sm:mb-2">
         {title}
       </h3>
 
       {/* Description */}
-      <p className="text-text-muted text-sm sm:text-base leading-relaxed">
+      <p className="text-text-muted sm:text-base leading-relaxed">
         {description}
       </p>
     </div>
@@ -56,10 +56,10 @@ const HowToCreate = () => {
   ];
 
   return (
-    <section className="relative py-10 sm:py-14 md:py-20 px-4 overflow-hidden">
+    <section className="relative py-10 sm:py-14 md:py-3 px-4 overflow-hidden">
       {/* Content */}
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl md:text-[42px] font-bold text-center mb-8 sm:mb-12 md:mb-20">
+        <h2 className="text-2xl sm:text-3xl md:text-2xl font-bold text-center  sm:mb-12 md:mb-4">
           How to{' '}
           <span className="text-primary-500">create your perfect AI</span>{' '}
           Girlfriend?
