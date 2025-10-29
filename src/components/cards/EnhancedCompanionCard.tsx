@@ -62,7 +62,7 @@ const EnhancedCompanionCard = ({
       <p className="text-gray-300 text-sm mb-4">{companion.description}</p>
 
       {/* Tags */}
-      <div className="flex gap-2 flex-wrap">
+      {/* <div className="flex gap-2 flex-wrap">
         {companion.tags.map((tag, index) => (
           <span
             key={index}
@@ -71,7 +71,7 @@ const EnhancedCompanionCard = ({
             {tag}
           </span>
         ))}
-      </div>
+      </div> */}
     </div>
   </div>
 );

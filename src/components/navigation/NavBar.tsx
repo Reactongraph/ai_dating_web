@@ -6,7 +6,12 @@ import Auth from '../auth/Auth';
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '@/redux/hooks';
 
-const NavBar = () => {
+interface NavBarProps {
+  onToggleSidebar: () => void;
+  isMobileOpen: boolean;
+}
+
+const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'email-login' | 'signup'>(
@@ -51,27 +56,55 @@ const NavBar = () => {
   return (
     <>
       <nav
-        className={`fixed ${!isBannerVisible || pathname === '/' ? 'top-0' : 'top-[40px]'} right-0 left-16 h-16 bg-background-primary text-text-primary z-40 transition-all duration-300`}
+        className={`fixed ${!isBannerVisible || pathname === '/' ? 'top-0' : 'top-[40px]'} right-0 left-0 md:left-16 h-16 bg-background-primary text-text-primary z-40 transition-all duration-300`}
       >
-        <div className="flex items-center justify-between h-full px-4">
+        <div className="flex items-center justify-between h-full px-2 md:px-4">
           {/* Logo and Navigation Links */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-2 md:space-x-8">
+            {/* Mobile menu toggle */}
+            <button
+              onClick={onToggleSidebar}
+              className="md:hidden p-2 rounded-lg text-text-secondary hover:text-white hover:bg-white-1a transition-colors"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {isMobileOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
             <Link href="/" className="text-xl font-bold">
               <Image
                 src="/assets/true_compnion_logo.png"
                 alt="Logo"
                 width={170}
                 height={50}
-                className="object-contain"
+                className="object-contain w-auto h-8 md:h-auto"
               />
             </Link>
 
-            <div className="flex space-x-6">
+            <div className="hidden md:flex space-x-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative h-16 flex items-center text-lg
+                  className={`relative h-16 flex items-center text-md
                     ${pathname === link.href ? 'text-accent-blue' : 'text-text-secondary hover:text-white'}
                     transition-colors
                   `}
@@ -89,10 +122,10 @@ const NavBar = () => {
           </div>
 
           {/* Right Side - Create AI Character Button and Profile */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-2 md:space-x-6">
             <Link
               href="/create-character"
-              className="bg-gradient-to-r from-primary-500 to-primary-600 text-black text-lg font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition-colors"
+              className="hidden md:block bg-gradient-to-r from-primary-500 to-primary-600 text-black text-sm md:text-lg font-semibold px-2 md:px-4 py-1 md:py-2 rounded-xl hover:opacity-90 transition-colors"
             >
               Create AI Character
             </Link>

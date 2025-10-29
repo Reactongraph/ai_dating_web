@@ -74,11 +74,11 @@ export default function ExplorePage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
         {/* Category Tabs */}
-        <div className="flex flex-col items-center justify-center mb-12">
-          <div className="max-w-7xl mx-auto px-4 text-center">
-            <h1 className="text-5xl font-bold text-white mb-4">
+        <div className="flex flex-col items-center justify-center mb-6 sm:mb-8 md:mb-12">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-3 md:mb-4">
               Discover AI Companions
             </h1>
           </div>
@@ -90,21 +90,21 @@ export default function ExplorePage() {
         </div>
 
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
           {/* Create Companion Card */}
           <CreateCompanionCard {...getCreateCompanionProps()} />
 
           {/* Loading State */}
           {isLoading && (
-            <div className="col-span-3 flex justify-center items-center h-[480px]">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+            <div className="col-span-3 flex justify-center items-center h-[300px] sm:h-[380px] md:h-[480px]">
+              <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 border-t-2 border-b-2 border-primary-500"></div>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className="col-span-3 flex justify-center items-center h-[480px]">
-              <p className="text-red-500">
+            <div className="col-span-3 flex justify-center items-center h-[300px] sm:h-[380px] md:h-[480px]">
+              <p className="text-red-500 text-sm sm:text-base md:text-lg text-center px-4">
                 Failed to load companions. Please try again later.
               </p>
             </div>

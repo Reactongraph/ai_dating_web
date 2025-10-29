@@ -36,15 +36,15 @@ export default function GirlsPage() {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="col-span-3 flex justify-center items-center h-[480px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+        <div className="col-span-3 flex justify-center items-center h-[300px] sm:h-[380px] md:h-[480px]">
+          <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 border-t-2 border-b-2 border-primary-500"></div>
         </div>
       )}
 
       {/* Error State */}
       {error && (
-        <div className="col-span-3 flex justify-center items-center h-[480px]">
-          <p className="text-red-500">
+        <div className="col-span-3 flex justify-center items-center h-[300px] sm:h-[380px] md:h-[480px]">
+          <p className="text-red-500 text-sm sm:text-base md:text-lg text-center px-4">
             Failed to load companions. Please try again later.
           </p>
         </div>

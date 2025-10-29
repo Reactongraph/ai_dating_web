@@ -41,16 +41,16 @@ const CompanionCard = ({ companion, onClick }: CompanionCardProps) => (
       </p>
 
       {/* Tags */}
-      <div className="flex gap-2">
+      {/* <div className="flex gap-2 flex-wrap">
         {companion.tags.map((tag, index) => (
           <span
             key={index}
-            className="px-3 py-1 bg-black bg-opacity-50 rounded-full text-sm text-white flex items-center justify-center"
+            className=" whitespace-nowrap px-3 py-1 bg-[rgba(0,0,0,0.5)] rounded-full text-sm text-white flex items-center justify-center"
           >
             {tag}
           </span>
         ))}
-      </div>
+      </div> */}
     </div>
   </div>
 );

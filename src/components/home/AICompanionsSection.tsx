@@ -59,8 +59,8 @@ const AICompanionsSection = () => {
         className="relative w-full bg-cover bg-center"
         style={{ backgroundImage: 'url("/assets/meetai.png")' }}
       >
-        <div className="max-w-7xl mx-auto px-4 py-8 text-center">
-          <h2 className="text-5xl font-bold text-white">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8 text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">
             Meet Your AI Companions
           </h2>
         </div>
@@ -68,14 +68,14 @@ const AICompanionsSection = () => {
 
       {/* Main Content */}
       <div className="bg-black">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <p className="text-gray-400 text-lg text-center mb-12">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-10 md:py-12">
+          <p className="text-gray-400 text-sm sm:text-base md:text-lg text-center mb-6 sm:mb-8 md:mb-12">
             From friendly to flirty — dive into a world of personalities crafted
             just for you.
           </p>
 
           {/* Tabs Navigation */}
-          <div className="flex justify-center mb-12">
+          <div className="flex justify-center mb-6 sm:mb-8 md:mb-12">
             <CategoryTabs
               tabs={tabs}
               activeTab={activeCategory}
@@ -84,7 +84,7 @@ const AICompanionsSection = () => {
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
             <CreateCompanionCard
               backgroundImage={
                 activeCategory === 'girls'
@@ -113,7 +113,7 @@ const AICompanionsSection = () => {
             {error && (
               <div className="col-span-full flex justify-center items-center py-12">
                 <div className="text-center">
-                  <p className="text-red-400 text-lg mb-4">
+                  <p className="text-red-400 text-sm sm:text-base md:text-lg mb-4">
                     Failed to load companions. Please try again later.
                   </p>
                   <button
@@ -140,7 +140,7 @@ const AICompanionsSection = () => {
             {/* Empty State */}
             {!isLoading && !error && companions.length === 0 && (
               <div className="col-span-full flex justify-center items-center py-12">
-                <p className="text-gray-400 text-lg">
+                <p className="text-gray-400 text-sm sm:text-base md:text-lg">
                   No companions available for this category.
                 </p>
               </div>

@@ -107,13 +107,15 @@ export default function ProfilePage() {
 
   return (
     <LayoutWithoutFooter>
-      <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">My Account</h1>
+      <div className="container mx-auto py-4 sm:py-6 md:py-8 px-3 sm:px-4 md:px-6">
+        <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 text-center">
+          My Account
+        </h1>
 
-        <div className="flex flex-col md:flex-row max-w-3xl mx-auto">
+        <div className="flex flex-col md:flex-row max-w-3xl mx-auto space-y-6 md:space-y-0">
           {/* Left Side - Profile Picture */}
-          <div className="md:w-1/3 flex flex-col items-center mb-8">
-            <div className="relative w-40 h-40 mb-4 bg-gray-500 rounded-full overflow-hidden">
+          <div className="md:w-1/3 flex flex-col items-center mb-4 sm:mb-6 md:mb-0">
+            <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 mb-3 sm:mb-4 bg-gray-500 rounded-full overflow-hidden">
               {previewUrl || (user && user.profilePicture) ? (
                 <Image
                   src={
@@ -139,7 +141,7 @@ export default function ProfilePage() {
 
             <button
               onClick={() => document.getElementById('profile-upload')?.click()}
-              className="mt-2 px-4 py-2 bg-black border border-gray-600 rounded-md text-white hover:bg-gray-900 transition-colors"
+              className="mt-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black border border-gray-600 rounded-md text-white text-sm sm:text-base hover:bg-gray-900 transition-colors"
             >
               Upload Photo
             </button>
@@ -153,10 +155,10 @@ export default function ProfilePage() {
           </div>
 
           {/* Right Side - Form Fields */}
-          <div className="md:w-2/3">
+          <div className="md:w-2/3 md:pl-6">
             <form onSubmit={handleSubmit(onSubmit)}>
               {/* Full Name */}
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 <label
                   htmlFor="name"
                   className="block text-xs text-gray-400 mb-1"
@@ -167,12 +169,12 @@ export default function ProfilePage() {
                   {...register('name')}
                   type="text"
                   id="name"
-                  className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:outline-none"
+                  className="w-full bg-gray-900 text-white px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-md focus:outline-none"
                 />
               </div>
 
               {/* Email */}
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 <label
                   htmlFor="email"
                   className="block text-xs text-gray-400 mb-1"
@@ -189,11 +191,11 @@ export default function ProfilePage() {
               </div>
 
               {/* Gender Selection */}
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 <label className="block text-xs text-gray-400 mb-1">
                   Select Gender
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-1 sm:gap-2">
                   <Controller
                     name="gender"
                     control={control}
@@ -202,7 +204,7 @@ export default function ProfilePage() {
                         <button
                           type="button"
                           onClick={() => field.onChange('man')}
-                          className={`py-2 px-4 rounded-md ${
+                          className={`py-1.5 sm:py-2 px-2 sm:px-4 text-xs sm:text-sm rounded-md ${
                             field.value === 'man'
                               ? 'bg-gray-700 text-white'
                               : 'bg-gray-900 text-white'
@@ -213,7 +215,7 @@ export default function ProfilePage() {
                         <button
                           type="button"
                           onClick={() => field.onChange('woman')}
-                          className={`py-2 px-4 rounded-md ${
+                          className={`py-1.5 sm:py-2 px-2 sm:px-4 text-xs sm:text-sm rounded-md ${
                             field.value === 'woman'
                               ? 'bg-cyan-500 text-white'
                               : 'bg-gray-900 text-white'
@@ -224,7 +226,7 @@ export default function ProfilePage() {
                         <button
                           type="button"
                           onClick={() => field.onChange('other')}
-                          className={`py-2 px-4 rounded-md ${
+                          className={`py-1.5 sm:py-2 px-2 sm:px-4 text-xs sm:text-sm rounded-md ${
                             field.value === 'other'
                               ? 'bg-gray-700 text-white'
                               : 'bg-gray-900 text-white'
@@ -239,7 +241,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Date of Birth */}
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 <label
                   htmlFor="dateOfBirth"
                   className="block text-xs text-gray-400 mb-1"
@@ -287,7 +289,7 @@ export default function ProfilePage() {
                   {...register('aboutMe')}
                   id="aboutMe"
                   rows={4}
-                  className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:outline-none"
+                  className="w-full bg-gray-900 text-white px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-md focus:outline-none"
                   placeholder="Tell us about yourself..."
                   defaultValue="Born into royalty in a realm where winter reigned eternal, she was fated to command the endless frost."
                 ></textarea>
@@ -299,15 +301,17 @@ export default function ProfilePage() {
               </div>
 
               {/* Subscription Plan */}
-              <div className="mb-6 bg-gray-900 p-4 rounded-md border border-gray-800">
+              <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h3 className="text-base font-medium">Current Plan</h3>
+                    <h3 className="text-sm sm:text-base font-medium">
+                      Current Plan
+                    </h3>
                     <p className="text-cyan-400">Free</p>
                   </div>
                   <button
                     type="button"
-                    className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-black px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
+                    className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-black px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded-md hover:opacity-90 transition-opacity"
                   >
                     Upgrade to Premium
                   </button>
@@ -315,7 +319,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Language Selection */}
-              <div className="mb-6 bg-gray-900 p-4 rounded-md border border-gray-800">
+              <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <label className="block text-xs text-gray-400 mb-2">
                   Language
                 </label>
@@ -347,7 +351,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Language Section (second one for Notifications) */}
-              <div className="mb-6 bg-gray-900 p-4 rounded-md border border-gray-800">
+              <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <label className="block text-xs text-gray-400 mb-2">
                   Language
                 </label>
@@ -365,15 +369,15 @@ export default function ProfilePage() {
               </div>
 
               {/* Delete Account */}
-              <div className="mb-6 bg-gray-900 p-4 rounded-md border border-gray-800">
+              <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <div className="flex justify-between items-center">
-                  <p className="text-xs text-gray-400">
+                  <p className="text-gray-400 text-xs sm:text-sm">
                     If you no longer wish to use this account, you can delete it
                     along with all saved data. Please proceed with caution.
                   </p>
                   <button
                     type="button"
-                    className="text-red-500 hover:text-red-400 transition-colors text-sm"
+                    className="text-red-500 hover:text-red-400 transition-colors text-xs sm:text-sm"
                   >
                     Delete Account
                   </button>
@@ -385,7 +389,7 @@ export default function ProfilePage() {
                 <button
                   type="submit"
                   disabled={isUpdating || isUploading}
-                  className="bg-black text-white px-8 py-2 rounded-md border border-gray-800 hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-black text-white px-6 sm:px-8 py-1.5 sm:py-2 text-sm sm:text-base rounded-md border border-gray-800 hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isUpdating || isUploading ? 'Updating...' : 'Update'}
                 </button>
