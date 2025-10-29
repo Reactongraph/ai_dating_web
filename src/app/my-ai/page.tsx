@@ -45,8 +45,10 @@ export default function MyAIPage() {
       {/* Header Section */}
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold text-white mb-4">My AI</h1>
-          <p className="text-gray-400 text-xl">
+          <h1 className="sm:text-xl md:text-2xl font-bold text-white mb-4">
+            My AI
+          </h1>
+          <p className="text-gray-400 text-lg">
             Your characters come to life here — created by you, ready to chat
             anytime.
           </p>
@@ -54,7 +56,7 @@ export default function MyAIPage() {
       </div>
 
       {/* Cards Grid */}
-      <div className="max-w-7xl mx-auto px-4 pb-12">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Create AI Character Card */}
           <CreateCompanionCard

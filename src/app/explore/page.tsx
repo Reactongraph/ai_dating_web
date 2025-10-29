@@ -74,11 +74,11 @@ export default function ExplorePage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4  sm:py-8 md:pt-12">
         {/* Category Tabs */}
         <div className="flex flex-col items-center justify-center mb-6 sm:mb-8 md:mb-12">
-          <div className="max-w-7xl mx-auto px-3 sm:px-4 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-3 md:mb-4">
+          <div className="max-w-7xl mx-auto  sm:px-3 text-center">
+            <h1 className=" sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3 md:mb-4">
               Discover AI Companions
             </h1>
           </div>

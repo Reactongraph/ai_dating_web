@@ -40,7 +40,7 @@ const CategoryTabs = ({ tabs, activeTab, onTabChange }: CategoryTabsProps) => {
               tabsRef.current[index] = el;
             }}
             onClick={() => onTabChange(tab.id)}
-            className={`relative py-2 text-[18px] transition-colors duration-200 ${
+            className={`relative py-2  sm:text-base md:text-lg transition-colors duration-200 ${
               activeTab === tab.id
                 ? 'text-white'
                 : 'text-gray-666 hover:text-gray-300'
