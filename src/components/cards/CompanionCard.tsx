@@ -20,7 +20,7 @@ const CompanionCard = ({ companion, onClick }: CompanionCardProps) => (
     onClick={() => onClick?.(companion)}
   >
     {/* Image */}
-    <div className="relative h-[480px] w-full">
+    <div className="relative sm:h-[300px] lg:h-[400px]  w-full">
       <Image
         src={companion.imageSrc}
         alt={companion.name}

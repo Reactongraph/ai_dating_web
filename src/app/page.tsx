@@ -9,12 +9,12 @@ export default function Home() {
   return (
     <GlobalLayout>
       {/* Ad Banner */}
-      <AdBanner
+      {/* <AdBanner
         text="Exclusive Discount on Premium New Users"
         discount="-70%"
         buttonText="Get Premium"
         buttonHref="/premium"
-      />
+      /> */}
 
       {/* Hero Section */}
       <HeroSection

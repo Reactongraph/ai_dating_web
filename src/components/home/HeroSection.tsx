@@ -27,7 +27,7 @@ const HeroSection = ({
   imageSrc,
 }: HeroSectionProps) => {
   return (
-    <div className="relative w-full overflow-hidden sm:py-1">
+    <div className="relative w-full overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0  bg-no-repeat"
@@ -37,8 +37,8 @@ const HeroSection = ({
       {/* Content */}
       <div className="relative mx-auto px-4 sm:px-6 md:px-8  md:py-0 flex flex-col lg:flex-row items-center">
         {/* Text Content */}
-        <div className="flex-1 lg:ml-10 space-y-2 z-10 text-center lg:text-left">
-          <h1 className="md:text-3xl sm:text-xl font-bold text-white">
+        <div className="flex-1 lg:ml-10 space-y-5 z-10 text-center lg:text-left">
+          <h1 className="md:text-5xl sm:text-xl font-bold text-white">
             <span className="block">{title.main}</span>
             <span className="block">
               <span className={title.highlight.color}>
@@ -59,7 +59,7 @@ const HeroSection = ({
 
         {/* Image - Only visible on large screens */}
         <div className="hidden lg:block flex-1 mt-0">
-          <div className="relative w-full h-[200px]">
+          <div className="relative w-full h-[350px]">
             <Image
               src={imageSrc}
               alt="AI Characters"

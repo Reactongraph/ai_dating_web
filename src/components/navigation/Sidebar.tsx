@@ -32,8 +32,19 @@ const Sidebar = ({
     >
       {/* Top Section with Toggle */}
       <div
-        className={`flex ${isExpanded || isMobileView ? 'justify-end px-4' : 'justify-center'} mb-6 text-white`}
+        className={`flex ${isExpanded || isMobileView ? 'justify-between px-4 items-center' : 'justify-center'} mb-6 text-white`}
       >
+        {isExpanded && (
+          <Link href="/" className="text-xl font-bold">
+            <Image
+              src="/assets/true_compnion_logo.png"
+              alt="Logo"
+              width={170}
+              height={50}
+              className="object-contain w-auto h-8 md:h-auto"
+            />
+          </Link>
+        )}
         {isExpanded || isMobileView ? (
           <button
             onClick={onToggle}
@@ -105,50 +116,50 @@ const Sidebar = ({
         </Link>
 
         {/* Girls - Mobile Only */}
-        {isMobileView && (
-          <Link
-            href="/girls"
-            className={`flex items-center ${isActive('/girls') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors mx-3 px-3 py-2 hover:bg-white-1a pl-8`}
-          >
-            <svg
-              className="w-5 h-5 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span className="ml-2 text-sm">Girls</span>
-          </Link>
-        )}
+        {isMobileView ||
+          (isExpanded && (
+            <>
+              <Link
+                href="/girls"
+                className={`flex items-center ${isActive('/girls') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors mx-3 px-3 py-2 hover:bg-white-1a pl-8`}
+              >
+                <svg
+                  className="w-5 h-5 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span className="ml-2 text-sm">Girls</span>
+              </Link>
 
-        {/* Guys - Mobile Only */}
-        {isMobileView && (
-          <Link
-            href="/guys"
-            className={`flex items-center ${isActive('/guys') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors mx-3 px-3 py-2 hover:bg-white-1a pl-8`}
-          >
-            <svg
-              className="w-5 h-5 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span className="ml-2 text-sm">Guys</span>
-          </Link>
-        )}
+              <Link
+                href="/guys"
+                className={`flex items-center ${isActive('/guys') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors mx-3 px-3 py-2 hover:bg-white-1a pl-8`}
+              >
+                <svg
+                  className="w-5 h-5 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span className="ml-2 text-sm">Guys</span>
+              </Link>
+            </>
+          ))}
 
         {/* Collection */}
         <Link

@@ -68,7 +68,7 @@ const AICompanionsSection = () => {
 
       {/* Main Content */}
       <div className="bg-black">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 sm:py-10 md:py-6">
+        <div className="max-w-7xl mx-auto sm:py-10 md:py-6">
           <p className="text-gray-400 md:text-lg sm:text-xs text-center  sm:mb-8 md:mb-3">
             From friendly to flirty — dive into a world of personalities crafted
             just for you.
@@ -84,7 +84,7 @@ const AICompanionsSection = () => {
           </div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 lg:grid-cols-4 sm:gap-5 md:gap-2 md:px-2">
             <CreateCompanionCard
               backgroundImage={
                 activeCategory === 'girls'

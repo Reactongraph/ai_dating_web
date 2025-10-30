@@ -5,7 +5,7 @@ import { IoLanguage } from 'react-icons/io5';
 const Footer = () => {
   return (
     <footer className="bg-black text-text-secondary sm:px-2 md:px-0  sm:py-6 md:py-4 mt-auto md:ml-16">
-      <div className="max-w-7xl mx-auto sm:px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="max-w-7xl  md:mx-auto sm:px-4 md:px-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Logo and Description */}
         <div className="md:space-y-2 sm:space-y-6">
           <Link

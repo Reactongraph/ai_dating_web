@@ -10,7 +10,7 @@ interface ProfilePanelProps {
   user: ChatUser | null;
   generatedImages?: GeneratedImage[];
 }
-
+ 
 const ProfilePanel: React.FC<ProfilePanelProps> = ({
   user,
   generatedImages = [],
