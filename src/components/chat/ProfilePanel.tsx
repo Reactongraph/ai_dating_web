@@ -10,7 +10,7 @@ interface ProfilePanelProps {
   user: ChatUser | null;
   generatedImages?: GeneratedImage[];
 }
- 
+
 const ProfilePanel: React.FC<ProfilePanelProps> = ({
   user,
   generatedImages = [],
@@ -63,27 +63,29 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
   if (!user) {
     return (
-      <div className="w-80 bg-black border-l border-gray-800 flex flex-col h-full">
-        {/* Empty header space to align with chat header */}
-        <div className="h-[73px] border-b border-gray-800"></div>
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-gray-400">Select a chat to view profile</p>
+      <div className="w-full lg:w-80 bg-black border-l border-gray-800 flex flex-col h-full">
+        {/* Empty header space to align with chat header - Only on desktop */}
+        <div className="hidden lg:block h-[73px] border-b border-gray-800"></div>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <p className="text-gray-400 text-sm md:text-base text-center">
+            Select a chat to view profile
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-80 bg-black border-l border-gray-800 flex flex-col h-full">
-      {/* Empty header space to align with chat header */}
-      <div className="h-[73px] border-b border-gray-800"></div>
+    <div className="w-full lg:w-80 bg-black border-l border-gray-800 flex flex-col h-full">
+      {/* Empty header space to align with chat header - Only on desktop */}
+      <div className="hidden lg:block h-[73px] border-b border-gray-800"></div>
 
       {/* Header with Tabs */}
-      <div className="p-4 border-b border-gray-800 flex-shrink-0">
-        <div className="flex space-x-6">
+      <div className="p-3 md:p-4 border-b border-gray-800 flex-shrink-0">
+        <div className="flex space-x-6 justify-center lg:justify-start">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`text-lg font-medium pb-2 border-b-2 transition-colors ${
+            className={`text-base md:text-lg font-medium pb-2 border-b-2 transition-colors ${
               activeTab === 'profile'
                 ? 'text-white border-white'
                 : 'text-gray-400 border-transparent hover:text-white'
@@ -93,7 +95,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('collection')}
-            className={`text-lg font-medium pb-2 border-b-2 transition-colors ${
+            className={`text-base md:text-lg font-medium pb-2 border-b-2 transition-colors ${
               activeTab === 'collection'
                 ? 'text-white border-white'
                 : 'text-gray-400 border-transparent hover:text-white'
@@ -109,9 +111,9 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
         {activeTab === 'profile' ? (
           <div className="p-4">
             {/* Profile Image */}
-            <div className="relative mb-4">
+            <div className="relative mb-3 md:mb-4">
               <div
-                className="w-full h-64 rounded-xl overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                className="w-full h-48 md:h-64 rounded-xl overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={() => handleImageClick(0)}
               >
                 <Image
@@ -124,9 +126,9 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
               </div>
 
               {/* Navigation Arrows */}
-              <button className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-2 hover:bg-black/70">
+              <button className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-1.5 md:p-2 hover:bg-black/70">
                 <svg
-                  className="w-4 h-4"
+                  className="w-3 h-3 md:w-4 md:h-4"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -137,9 +139,9 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   />
                 </svg>
               </button>
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-2 hover:bg-black/70">
+              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-1.5 md:p-2 hover:bg-black/70">
                 <svg
-                  className="w-4 h-4"
+                  className="w-3 h-3 md:w-4 md:h-4"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -153,25 +155,31 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
             </div>
 
             {/* Profile Info */}
-            <div className="text-center mb-6">
-              <h2 className="text-white font-bold text-xl mb-2">
+            <div className="text-left mb-4 md:mb-6">
+              <h2 className="text-white font-bold text-lg md:text-xl mb-2">
                 {user.name}, {user.age}
               </h2>
 
-              <div className="flex justify-center space-x-4 mb-4">
-                <div className="text-center">
-                  <div className="text-white font-bold">
-                    {user.stats.messages}
+              <div className="flex items-center mb-3 md:mb-4 mt-3">
+                <div className="flex-1">
+                  <div className="flex items-baseline">
+                    <span className="text-white font-bold text-xl md:text-2xl mr-1">
+                      {user.stats.messages}
+                    </span>
+                    <span className="text-gray-500 text-sm">messages</span>
                   </div>
-                  <div className="text-gray-400 text-xs">messages</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-white font-bold">{user.stats.chats}</div>
-                  <div className="text-gray-400 text-xs">chats</div>
+                <div className="flex-1">
+                  <div className="flex items-baseline">
+                    <span className="text-white font-bold text-xl md:text-2xl mr-1">
+                      {user.stats.chats}
+                    </span>
+                    <span className="text-gray-500 text-sm">chats</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-center space-x-2 mb-4">
+              {/* <div className="flex flex-wrap justify-center gap-2 mb-3 md:mb-4">
                 {user.tags.map((tag, index) => (
                   <span
                     key={index}
@@ -180,9 +188,11 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     {tag}
                   </span>
                 ))}
-              </div>
+              </div> */}
 
-              <p className="text-gray-300 text-sm mb-4">{user.description}</p>
+              <p className="text-gray-300 text-xs md:text-sm mb-3 md:mb-4">
+                {user.description}
+              </p>
 
               {/* Show Less/More Button */}
               <button
@@ -195,7 +205,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
             {/* Details - Collapsible */}
             {showFullDescription && (
-              <div className="space-y-3 animate-in slide-in-from-top duration-300">
+              <div className="space-y-3 animate-in slide-in-from-top duration-300 border-1 bg-[#1d1d1d] border-[#1d1d1d] rounded-lg p-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <svg
@@ -211,7 +221,9 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     </svg>
                     <span className="text-gray-400 text-sm">Age</span>
                   </div>
-                  <span className="text-white text-sm">{user.details.age}</span>
+                  <span className="text-white text-sm capitalize">
+                    {user.details.age}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -229,7 +241,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     </svg>
                     <span className="text-gray-400 text-sm">Occupation</span>
                   </div>
-                  <span className="text-white text-sm">
+                  <span className="text-white text-sm capitalize">
                     {user.details.occupation}
                   </span>
                 </div>
@@ -249,7 +261,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     </svg>
                     <span className="text-gray-400 text-sm">Gender</span>
                   </div>
-                  <span className="text-white text-sm">
+                  <span className="text-white text-sm capitalize">
                     {user.details.gender}
                   </span>
                 </div>
@@ -269,7 +281,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     </svg>
                     <span className="text-gray-400 text-sm">Ethnicity</span>
                   </div>
-                  <span className="text-white text-sm">
+                  <span className="text-white text-sm capitalize">
                     {user.details.ethnicity}
                   </span>
                 </div>
@@ -289,7 +301,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     </svg>
                     <span className="text-gray-400 text-sm">Body type</span>
                   </div>
-                  <span className="text-white text-sm">
+                  <span className="text-white text-sm capitalize">
                     {user.details.bodyType}
                   </span>
                 </div>
@@ -309,7 +321,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     </svg>
                     <span className="text-gray-400 text-sm">Relationship</span>
                   </div>
-                  <span className="text-white text-sm">
+                  <span className="text-white text-sm capitalize">
                     {user.details.relationship}
                   </span>
                 </div>
@@ -329,7 +341,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     </svg>
                     <span className="text-gray-400 text-sm">Personality</span>
                   </div>
-                  <span className="text-white text-sm">
+                  <span className="text-white text-sm capitalize">
                     {user.details.personality}
                   </span>
                 </div>
@@ -349,7 +361,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                     </svg>
                     <span className="text-gray-400 text-sm">Hobby</span>
                   </div>
-                  <span className="text-white text-sm">
+                  <span className="text-white text-sm capitalize">
                     {user.details.hobby}
                   </span>
                 </div>
@@ -357,7 +369,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                 {/* Create AI Character Button */}
               </div>
             )}
-            <div className="mt-8 pt-4 border-t border-gray-800">
+            {/* <div className="mt-8 pt-4 border-t border-gray-800">
               <button className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-xl font-medium transition-colors">
                 <span className="flex items-center justify-center gap-2">
                   {' '}
@@ -371,7 +383,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
                   Create AI Character{' '}
                 </span>
               </button>
-            </div>
+            </div> */}
           </div>
         ) : (
           // Collection Tab Content

@@ -136,17 +136,17 @@ const ChatArea: React.FC<ChatAreaProps> = ({
       </div>
 
       {/* Chat Messages - Scrollable */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col">
+      <div className="flex-1 overflow-y-auto p-2 flex flex-col">
         {/* Character Card - Smaller Size */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-gray-800 rounded-2xl p-3 w-64">
-            <div className="relative mb-3">
-              <div className="w-full h-40 rounded-xl overflow-hidden">
+        <div className="flex items-center justify-center">
+          <div className="w-64 flex items-center flex-col">
+            <div className="relative mb-1">
+              <div className="w-32 h-32 rounded-xl overflow-hidden">
                 <Image
                   src={chat.user.avatar}
                   alt={chat.user.name}
-                  width={200}
-                  height={160}
+                  width={120}
+                  height={120}
                   className="object-cover w-full h-full"
                 />
               </div>
@@ -157,11 +157,11 @@ const ChatArea: React.FC<ChatAreaProps> = ({
               )}
             </div>
 
-            <h4 className="text-white font-bold text-base text-center mb-2">
+            <h4 className="text-white font-bold text-sm text-center mb-2">
               {chat.user.name}, {chat.user.age}
             </h4>
 
-            <div className="flex justify-center space-x-4 text-center mb-2">
+            {/* <div className="flex justify-center space-x-4 text-center mb-2">
               <div>
                 <div className="text-white font-bold text-sm">
                   {chat.user.stats.messages}
@@ -174,9 +174,9 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                 </div>
                 <div className="text-gray-400 text-xs">chats</div>
               </div>
-            </div>
+            </div> */}
 
-            <div className="flex justify-center space-x-1 mb-2">
+            {/* <div className="flex justify-center space-x-1 mb-2">
               {chat.user.tags.map((tag, index) => (
                 <span
                   key={index}
@@ -189,14 +189,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
             <p className="text-gray-300 text-xs text-center leading-relaxed">
               {chat.user.description}
-            </p>
+            </p> */}
           </div>
         </div>
 
         {/* Privacy Message */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-2">
           <p className="text-gray-500 text-xs">Today</p>
-          <p className="text-gray-400 text-sm mt-2 max-w-md mx-auto">
+          <p className="text-gray-400 text-xs mt-1 max-w-md mx-auto">
             {privacyMessage}
           </p>
         </div>
@@ -344,27 +344,29 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             </div>
           </div>
 
-          {/* Suggestions List */}
-          <div className="flex flex-wrap gap-2">
-            {isLoadingSuggestions ? (
-              <div className="text-gray-400 text-sm">
-                Loading suggestions...
-              </div>
-            ) : suggestionsData?.data.suggestions ? (
-              suggestionsData.data.suggestions.map((suggestion, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleQuickSuggestionClick(suggestion)}
-                  className="bg-gray-800 hover:bg-gray-700 text-white text-sm px-3 py-2 rounded-full transition-colors"
-                >
-                  {suggestion}
-                </button>
-              ))
-            ) : (
-              <div className="text-gray-400 text-sm">
-                No suggestions available
-              </div>
-            )}
+          {/* Suggestions List - Horizontally Scrollable */}
+          <div className="overflow-x-auto pb-2 -mx-4 px-4">
+            <div className="flex gap-2 min-w-min">
+              {isLoadingSuggestions ? (
+                <div className="text-gray-400 text-sm whitespace-nowrap">
+                  Loading suggestions...
+                </div>
+              ) : suggestionsData?.data.suggestions ? (
+                suggestionsData.data.suggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleQuickSuggestionClick(suggestion)}
+                    className="bg-gray-800 hover:bg-gray-700 text-white text-xs px-3 py-1 rounded-full transition-colors whitespace-nowrap flex-shrink-0"
+                  >
+                    {suggestion}
+                  </button>
+                ))
+              ) : (
+                <div className="text-gray-400 text-sm whitespace-nowrap">
+                  No suggestions available
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

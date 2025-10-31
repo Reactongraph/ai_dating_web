@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { Chat } from '@/types/chat';
+import { formatChatTime } from '@/utils/dateUtils';
 
 interface ChatListProps {
   chats: Chat[];
@@ -130,22 +131,24 @@ const ChatList: React.FC<ChatListProps> = ({
           {/* Chat Info */}
           <div className="flex-1 ml-3 min-w-0">
             <div className="flex items-center justify-between">
-              <h4 className="text-white font-medium truncate">
+              <h4 className="text-white font-medium truncate text-sm">
                 {chat.user.name}
               </h4>
-              <span className="text-gray-400 text-sm">{chat.timestamp}</span>
+              <span className="text-gray-400 text-xs">
+                {formatChatTime(chat.timestamp)}
+              </span>
             </div>
-            <p className="text-gray-400 text-sm truncate mt-1">
+            <p className="text-gray-400 text-xs truncate mt-1">
               {chat.lastMessage}
             </p>
           </div>
 
           {/* Unread Count */}
-          {chat.unreadCount && chat.unreadCount > 0 && (
+          {/* {chat.unreadCount && chat.unreadCount > 0 && (
             <div className="ml-2 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
               {chat.unreadCount}
             </div>
-          )}
+          )} */}
         </div>
       ))}
 

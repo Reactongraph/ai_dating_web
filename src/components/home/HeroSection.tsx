@@ -50,7 +50,7 @@ const HeroSection = ({
           <p className="sm:text-xs md:text-sm text-gray-300">{subtitle}</p>
           <Link
             href="/create-character"
-            className="inline-flex bg-gradient-to-r from-primary-500 to-primary-600 text-white px-2 sm:py-0 md:py-1  rounded-lg text-xs sm:text-base  font-medium items-center space-x-2 hover:opacity-90 transition-opacity"
+            className="inline-flex bg-gradient-to-r from-primary-500 to-primary-600 text-white mb-2 sm:mb-2 lg:mb-0 px-2 sm:py-0 md:py-1  rounded-lg text-xs sm:text-base  font-medium items-center space-x-2 hover:opacity-90 transition-opacity"
           >
             <FaWandMagicSparkles className="w-4 h-4" />
             <span>{buttonText}</span>
