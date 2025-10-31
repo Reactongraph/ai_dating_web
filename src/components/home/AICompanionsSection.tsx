@@ -60,7 +60,7 @@ const AICompanionsSection = () => {
         style={{ backgroundImage: 'url("/assets/meetai.png")' }}
       >
         <div className="max-w-7xl mx-auto px-4  sm:py-2 text-center">
-          <h2 className=" sm:text-xl md:text-2xl font-bold text-white">
+          <h2 className="text-xl sm:text-xl md:text-2xl font-bold text-white">
             Meet Your AI Companions
           </h2>
         </div>

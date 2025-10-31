@@ -95,7 +95,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                 alt="Logo"
                 width={170}
                 height={50}
-                className="object-contain w-auto h-8 md:h-auto"
+                className="object-contain w-auto h-5 sm:h-auto"
               />
             </Link>
 
