@@ -226,7 +226,10 @@ export interface ChatSuggestionsResponse {
 
 export interface ChatSuggestionsParams {
   botId: string;
+  chatId?: string;
   context: SuggestionContext;
+  clickedSuggestion?: string;
+  currentSuggestions?: string[];
 }
 
 export const chatApi = createApi({
@@ -306,9 +309,14 @@ export const chatApi = createApi({
       ChatSuggestionsResponse,
       ChatSuggestionsParams
     >({
-      query: ({ botId, context }) => ({
+      query: ({ botId, chatId, context, clickedSuggestion, currentSuggestions }) => ({
         url: `/bot-chat/suggestions/${botId}`,
-        params: { context },
+        params: { 
+          chatId,
+          context,
+          clickedSuggestion,
+          currentSuggestions: currentSuggestions ? JSON.stringify(currentSuggestions) : undefined
+        },
       }),
     }),
   }),

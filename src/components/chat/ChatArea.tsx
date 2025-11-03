@@ -24,6 +24,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   const [suggestionContext, setSuggestionContext] =
     useState<SuggestionContext>('greeting');
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
+  const [clickedSuggestion, setClickedSuggestion] = useState<
+    string | undefined
+  >();
 
   const {
     messages,
@@ -38,13 +42,34 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     channelName: chat?.channelName,
   });
 
+  // Track if initial load is complete
+  const initialLoadDoneRef = useRef<boolean>(false);
+  // Track the clicked suggestion for API call
+  const pendingClickedSuggestionRef = useRef<string | undefined>(undefined);
+  // State to control when to fetch suggestions
+  const [shouldFetchSuggestions, setShouldFetchSuggestions] = useState(false);
+
   const { data: suggestionsData, isLoading: isLoadingSuggestions } =
     useGetChatSuggestionsQuery(
       {
         botId: chat?.user.id || '',
+        chatId: chat?.id,
         context: suggestionContext,
+        clickedSuggestion: pendingClickedSuggestionRef.current,
+        currentSuggestions:
+          pendingClickedSuggestionRef.current && currentSuggestions.length > 0
+            ? currentSuggestions
+            : undefined,
       },
-      { skip: !chat?.user.id }
+      {
+        // Only skip when we don't have chat ID or when we don't want to fetch
+        skip: !chat?.user.id || !shouldFetchSuggestions,
+        // Disable automatic refetching
+        refetchOnMountOrArgChange: false,
+        refetchOnFocus: false,
+        refetchOnReconnect: false,
+        pollingInterval: 0,
+      }
     );
 
   useEffect(() => {
@@ -52,8 +77,86 @@ const ChatArea: React.FC<ChatAreaProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
+  // Initial load - trigger fetch when chat is available
+  useEffect(() => {
+    if (chat?.user.id && !initialLoadDoneRef.current) {
+      // Clear any pending clicked suggestion for initial load
+      pendingClickedSuggestionRef.current = undefined;
+      // Enable fetching to trigger the query
+      setShouldFetchSuggestions(true);
+      initialLoadDoneRef.current = true;
+    }
+  }, [chat?.user.id]);
+
+  // Handle context change - fetch new suggestions for new context
+  const previousContextRef = useRef<SuggestionContext>(suggestionContext);
+  useEffect(() => {
+    if (
+      chat?.user.id &&
+      initialLoadDoneRef.current &&
+      suggestionContext !== previousContextRef.current
+    ) {
+      previousContextRef.current = suggestionContext;
+      // Clear clicked suggestion for context change
+      pendingClickedSuggestionRef.current = undefined;
+      // Trigger fetch by toggling the state
+      setShouldFetchSuggestions(false);
+      setTimeout(() => setShouldFetchSuggestions(true), 0);
+    }
+  }, [chat?.user.id, suggestionContext]);
+
+  // Handle clicked suggestion - fetch new suggestion to replace clicked one
+  useEffect(() => {
+    if (
+      clickedSuggestion &&
+      initialLoadDoneRef.current &&
+      clickedSuggestion !== pendingClickedSuggestionRef.current
+    ) {
+      // Set the clicked suggestion for the API call
+      pendingClickedSuggestionRef.current = clickedSuggestion;
+      // Trigger fetch by toggling the state
+      setShouldFetchSuggestions(false);
+      setTimeout(() => setShouldFetchSuggestions(true), 0);
+    }
+  }, [clickedSuggestion]);
+
+  // We no longer need this effect as the initial query runs automatically
+  // The query will run when the component mounts if chat?.user.id is available
+
+  // Update current suggestions when API response changes
+  useEffect(() => {
+    if (suggestionsData?.data?.suggestions) {
+      // Update suggestions with new data
+      setCurrentSuggestions(suggestionsData.data.suggestions);
+
+      // Clear the pending clicked suggestion after processing
+      pendingClickedSuggestionRef.current = undefined;
+
+      // Reset clicked suggestion state (used only to trigger the effect)
+      setClickedSuggestion(undefined);
+
+      // Turn off fetching after receiving data to prevent continuous calls
+      setShouldFetchSuggestions(false);
+    }
+  }, [suggestionsData]);
+
   const handleSendMessage = sendMessage;
-  const handleQuickSuggestionClick = onQuickSuggestionClick || sendMessage;
+
+  // Enhanced suggestion click handler that both sends the message and triggers a refresh
+  const handleQuickSuggestionClick = (suggestion: string) => {
+    // Send the message
+    if (onQuickSuggestionClick) {
+      onQuickSuggestionClick(suggestion);
+    } else {
+      sendMessage(suggestion);
+    }
+
+    // Only trigger if we're not already processing this suggestion
+    if (clickedSuggestion !== suggestion) {
+      // Set the clicked suggestion to trigger the refetch effect
+      setClickedSuggestion(suggestion);
+    }
+  };
 
   if (!chat) {
     return (
@@ -272,7 +375,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                 (ctx) => (
                   <button
                     key={ctx}
-                    onClick={() => setSuggestionContext(ctx)}
+                    onClick={() => {
+                      setSuggestionContext(ctx);
+                      // Reset suggestions when changing context
+                      setCurrentSuggestions([]);
+                      // Clear any pending clicked suggestion when changing context
+                      setClickedSuggestion(undefined);
+                      // The effect will handle the refetch when context changes
+                    }}
                     className={`text-xs px-2 py-1 rounded-full transition-colors ${
                       suggestionContext === ctx
                         ? 'bg-primary-500 text-white'
@@ -293,13 +403,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                   Loading suggestions...
                 </div>
               ) : suggestionsData?.data.suggestions?.length ? (
-                suggestionsData.data.suggestions.map((s, i) => (
+                suggestionsData.data.suggestions.map((suggestion, i) => (
                   <button
                     key={i}
-                    onClick={() => handleQuickSuggestionClick(s)}
+                    onClick={() => handleQuickSuggestionClick(suggestion)}
                     className="bg-gray-800 hover:bg-gray-700 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap"
                   >
-                    {s}
+                    {suggestion}
                   </button>
                 ))
               ) : (
