@@ -20,6 +20,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   privacyMessage,
   onQuickSuggestionClick,
 }) => {
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [suggestionContext, setSuggestionContext] =
     useState<SuggestionContext>('greeting');

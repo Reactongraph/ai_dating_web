@@ -36,7 +36,7 @@ const CompanionCard = ({ companion, onClick }: CompanionCardProps) => (
       <h3 className="text-2xl font-semibold text-white mb-2">
         {companion.name}, {companion.age}
       </h3>
-      <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+      <p className="text-gray-300 text-sm mb-4 line-clamp-4">
         {companion.description}
       </p>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { privacyMessage } from '@/data/chat';
 import { Chat } from '@/types/chat';
@@ -35,11 +35,20 @@ export default function ChatPage() {
     }
   );
 
-  const chats: Chat[] = chatListResponse?.data?.chats
-    ? mapChatListItemsToChats(chatListResponse.data.chats)
-    : [];
+  // Memoize chats array to avoid recreating on every render
+  const chats: Chat[] = useMemo(
+    () =>
+      chatListResponse?.data?.chats
+        ? mapChatListItemsToChats(chatListResponse.data.chats)
+        : [],
+    [chatListResponse?.data?.chats]
+  );
 
-  const selectedChat = chats.find((chat) => chat.id === selectedChatId) || null;
+  // Memoize selected chat to avoid recalculation
+  const selectedChat = useMemo(
+    () => chats.find((chat) => chat.id === selectedChatId) || null,
+    [chats, selectedChatId]
+  );
 
   // Handle chatId from URL parameters
   useEffect(() => {
@@ -71,23 +80,36 @@ export default function ChatPage() {
     if (selectedChatId) setActiveTab('chat');
   }, [selectedChatId]);
 
-  const handleChatSelect = (chatId: string) => setSelectedChatId(chatId);
-  const handleLoadMore = () => {
+  // Memoize handlers to prevent recreation on every render
+  const handleChatSelect = useCallback((chatId: string) => {
+    setSelectedChatId(chatId);
+  }, []);
+
+  const handleLoadMore = useCallback(() => {
     if (chatListResponse?.data?.pagination.hasNextPage) {
       setCurrentPage((p) => p + 1);
     }
-  };
-  const handleRetry = () => refetch();
-  const handleBackToList = () => setSelectedChatId(null);
+  }, [chatListResponse?.data?.pagination.hasNextPage]);
 
-  const showOnlyChatList =
-    (screenSize !== 'xl' && !selectedChatId) ||
-    (screenSize === 'lg' && !selectedChatId);
+  const handleRetry = useCallback(() => refetch(), [refetch]);
+  
+  const handleBackToList = useCallback(() => setSelectedChatId(null), []);
 
-  const showChatArea =
-    (screenSize === 'sm' && selectedChatId && activeTab === 'chat') ||
-    (screenSize === 'lg' && selectedChatId) ||
-    screenSize === 'xl';
+  // Memoize computed values
+  const showOnlyChatList = useMemo(
+    () =>
+      (screenSize !== 'xl' && !selectedChatId) ||
+      (screenSize === 'lg' && !selectedChatId),
+    [screenSize, selectedChatId]
+  );
+
+  const showChatArea = useMemo(
+    () =>
+      (screenSize === 'sm' && selectedChatId && activeTab === 'chat') ||
+      (screenSize === 'lg' && selectedChatId) ||
+      screenSize === 'xl',
+    [screenSize, selectedChatId, activeTab]
+  );
 
   return (
     // Outer wrapper: full available height (you used calc(100vh-64px) previously)
@@ -202,6 +224,7 @@ export default function ChatPage() {
                     generatedImages={
                       selectedChat?.generatedImages?.images || []
                     }
+                    onRefetchImages={refetch}
                   />
                 </div>
               )}
@@ -214,6 +237,7 @@ export default function ChatPage() {
             <ProfilePanel
               user={selectedChat?.user || null}
               generatedImages={selectedChat?.generatedImages?.images || []}
+              onRefetchImages={refetch}
             />
           </div>
         )}

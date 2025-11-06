@@ -1,7 +1,8 @@
 'use client';
 
+import React from 'react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { ChatUser, GeneratedImage } from '@/types/chat';
 import ImageGallery from '@/components/collection/ImageGallery';
 import { CharacterImage } from '@/types/collection';
@@ -9,11 +10,13 @@ import { CharacterImage } from '@/types/collection';
 interface ProfilePanelProps {
   user: ChatUser | null;
   generatedImages?: GeneratedImage[];
+  onRefetchImages?: () => void;
 }
 
 const ProfilePanel: React.FC<ProfilePanelProps> = ({
   user,
   generatedImages = [],
+  onRefetchImages,
 }) => {
   const [activeTab, setActiveTab] = useState<'profile' | 'collection'>(
     'profile'
@@ -22,6 +25,85 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [galleryImages, setGalleryImages] = useState<CharacterImage[]>([]);
   const [initialImageIndex, setInitialImageIndex] = useState(0);
+  // Track current image index in profile tab (0 = profile image, 1+ = collection images)
+  const [currentProfileImageIndex, setCurrentProfileImageIndex] = useState(0);
+
+  // Sort images by createdAt descending (latest first)
+  const sortedImages = useMemo(() => {
+    return [...generatedImages].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA; // Descending order (newest first)
+    });
+  }, [generatedImages]);
+
+  // Track if we've already fetched for this user
+  const lastFetchedUserRef = useRef<string | null>(null);
+  const refetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Refetch images when Collection tab is clicked - with debouncing
+  useEffect(() => {
+    // Clear any pending refetch
+    if (refetchTimeoutRef.current) {
+      clearTimeout(refetchTimeoutRef.current);
+    }
+
+    if (activeTab === 'collection' && onRefetchImages && user?.id) {
+      // Only refetch if we haven't fetched for this user yet
+      if (lastFetchedUserRef.current !== user.id) {
+        // Debounce to avoid multiple rapid calls
+        refetchTimeoutRef.current = setTimeout(() => {
+          onRefetchImages();
+          lastFetchedUserRef.current = user.id;
+        }, 100); // Small delay to batch rapid switches
+      }
+    }
+
+    return () => {
+      if (refetchTimeoutRef.current) {
+        clearTimeout(refetchTimeoutRef.current);
+      }
+    };
+  }, [activeTab, onRefetchImages, user?.id]);
+
+  // Reset to profile image when user changes or switching to profile tab
+  useEffect(() => {
+    setCurrentProfileImageIndex(0);
+  }, [user?.id, activeTab]);
+
+  // Navigation handlers for profile image arrows - memoized
+  const handlePreviousImage = useCallback(() => {
+    setCurrentProfileImageIndex((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  const handleNextImage = useCallback(() => {
+    setCurrentProfileImageIndex((prev) => 
+      Math.min(sortedImages.length, prev + 1)
+    );
+  }, [sortedImages.length]);
+
+  // Determine if arrows should be disabled - memoized
+  const canGoLeft = useMemo(() => currentProfileImageIndex > 0, [currentProfileImageIndex]);
+  const canGoRight = useMemo(() => currentProfileImageIndex < sortedImages.length, [currentProfileImageIndex, sortedImages.length]);
+
+  // Get current image to display - memoized
+  const currentDisplayImage = useMemo(() => {
+    if (currentProfileImageIndex === 0) {
+      return user?.avatar || '';
+    }
+    // Index 1+ means collection images (subtract 1 to get sortedImages index)
+    const collectionIndex = currentProfileImageIndex - 1;
+    return sortedImages[collectionIndex]?.imageURL || user?.avatar || '';
+  }, [currentProfileImageIndex, sortedImages, user?.avatar]);
+
+  // Get current image alt text - memoized
+  const currentImageAlt = useMemo(() => {
+    if (currentProfileImageIndex === 0) {
+      return user?.name || 'Profile';
+    }
+    const collectionIndex = currentProfileImageIndex - 1;
+    return sortedImages[collectionIndex]?.prompt || user?.name || 'Generated image';
+  }, [currentProfileImageIndex, sortedImages, user?.name]);
 
   // Create gallery images from user data
   const createGalleryImages = (): CharacterImage[] => {
@@ -36,8 +118,8 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
       alt: `${user.name} - Profile Image`,
     });
 
-    // Add generated images from the chat
-    generatedImages.forEach((img) => {
+    // Add generated images from the chat (sorted by latest first)
+    sortedImages.forEach((img) => {
       images.push({
         id: img.id,
         url: img.imageURL,
@@ -48,18 +130,26 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
     return images;
   };
 
-  // Handle image click to open gallery
-  const handleImageClick = (imageIndex: number) => {
+  // Handle image click to open gallery - memoized
+  const handleImageClick = useCallback((imageIndex: number) => {
     const images = createGalleryImages();
     setGalleryImages(images);
     setInitialImageIndex(imageIndex);
     setIsGalleryOpen(true);
-  };
+  }, [sortedImages, user]);
 
-  // Close gallery
-  const closeGallery = () => {
+  // Close gallery - memoized
+  const closeGallery = useCallback(() => {
     setIsGalleryOpen(false);
-  };
+  }, []);
+
+  // Handle profile image click - memoized
+  const handleProfileImageClick = useCallback(() => {
+    const images = createGalleryImages();
+    setGalleryImages(images);
+    setInitialImageIndex(currentProfileImageIndex);
+    setIsGalleryOpen(true);
+  }, [currentProfileImageIndex, sortedImages, user]);
 
   if (!user) {
     return (
@@ -114,44 +204,65 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
             <div className="relative mb-3 md:mb-4">
               <div
                 className="w-full h-48 md:h-64 rounded-xl overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => handleImageClick(0)}
+                onClick={handleProfileImageClick}
               >
                 <Image
-                  src={user.avatar}
-                  alt={user.name}
+                  src={currentDisplayImage}
+                  alt={currentImageAlt}
                   width={300}
                   height={400}
                   className="object-cover w-full h-full"
+                  priority={currentProfileImageIndex === 0}
                 />
               </div>
 
-              {/* Navigation Arrows */}
-              <button className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-1.5 md:p-2 hover:bg-black/70">
-                <svg
-                  className="w-3 h-3 md:w-4 md:h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-1.5 md:p-2 hover:bg-black/70">
-                <svg
-                  className="w-3 h-3 md:w-4 md:h-4"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
+              {/* Navigation Arrows - Only show if there are collection images */}
+              {sortedImages.length > 0 && (
+                <>
+                  <button
+                    onClick={handlePreviousImage}
+                    disabled={!canGoLeft}
+                    className={`absolute left-2 top-1/2 transform -translate-y-1/2 rounded-full p-1.5 md:p-2 transition-all ${
+                      canGoLeft
+                        ? 'bg-black/50 text-white hover:bg-black/70 cursor-pointer'
+                        : 'bg-black/20 text-gray-500 cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    <svg
+                      className="w-3 h-3 md:w-4 md:h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    disabled={!canGoRight}
+                    className={`absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full p-1.5 md:p-2 transition-all ${
+                      canGoRight
+                        ? 'bg-black/50 text-white hover:bg-black/70 cursor-pointer'
+                        : 'bg-black/20 text-gray-500 cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    <svg
+                      className="w-3 h-3 md:w-4 md:h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Profile Info */}
@@ -388,7 +499,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
         ) : (
           // Collection Tab Content
           <div className="p-4">
-            {generatedImages.length === 0 ? (
+            {sortedImages.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-gray-400 text-lg mb-2">No images yet</div>
                 <p className="text-gray-500 text-sm">
@@ -397,7 +508,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
-                {generatedImages.map((image, index) => (
+                {sortedImages.map((image, index) => (
                   <div
                     key={image.id}
                     className="relative aspect-[3/4] rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity group"
@@ -443,4 +554,5 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
   );
 };
 
-export default ProfilePanel;
+// Memoize ProfilePanel to prevent unnecessary re-renders
+export default React.memo(ProfilePanel);

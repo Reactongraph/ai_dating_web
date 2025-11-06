@@ -276,7 +276,13 @@ export const chatApi = createApi({
         method: 'POST',
         body: requestData,
       }),
-      invalidatesTags: ['ChatHistory'], // Invalidate chat history when sending messages
+      invalidatesTags: (result) => {
+        // If an image was generated, also invalidate ChatList to refresh generated images
+        if (result?.data?.image) {
+          return ['ChatHistory', 'ChatList'];
+        }
+        return ['ChatHistory'];
+      },
     }),
     sendMessage: builder.mutation<
       SendMessageResponse,

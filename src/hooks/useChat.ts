@@ -266,6 +266,8 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
               isUser: false,
               type: 'IMAGE',
             });
+            // Invalidate ChatList cache to refresh generated images
+            dispatch(chatApi.util.invalidateTags(['ChatList']));
           }
 
           setMessages((prev) => deduplicateMessages([...prev, ...messages]));
