@@ -44,6 +44,11 @@ export const botProfilesApi = createApi({
       }
       return headers;
     },
+    validateStatus: (response, body) => {
+      // Treat 304 Not Modified as successful (cached data is still valid)
+      // Also treat any 2xx status as successful
+      return (response.status >= 200 && response.status < 300) || response.status === 304;
+    },
   }),
   tagTypes: ['BotProfiles'],
   endpoints: (builder) => ({

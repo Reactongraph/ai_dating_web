@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Snackbar from '@/components/common/Snackbar';
+import { useSnackbar } from '@/providers';
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData, FormStepProps } from '@/types/character';
 import { useAppSelector } from '@/redux/hooks';
@@ -34,9 +34,9 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
   const router = useRouter();
   const { handleSubmit } = useFormContext<CharacterFormData>();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const botType = useAppSelector((state) => state.characterAttributes.botType);
   const [generateAvatar] = useGenerateAvatarMutation();
+  const { showSnackbar } = useSnackbar();
 
   const steps = [
     { step: 1, title: 'Create' },
@@ -80,12 +80,11 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
     const userId = userData ? JSON.parse(userData).id : null;
 
     if (!userId) {
-      setError('User ID not found. Please log in.');
+      showSnackbar('User ID not found. Please log in.', 'error');
       return;
     }
 
     setIsGenerating(true);
-    setError(null);
 
     try {
       // Convert age string to number
@@ -123,11 +122,12 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
       if (response.success) {
         router.push('/my-ai');
       } else {
-        setError('Failed to generate avatar');
+        showSnackbar('Failed to generate avatar', 'error');
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to generate avatar'
+      showSnackbar(
+        err instanceof Error ? err.message : 'Failed to generate avatar',
+        'error'
       );
     } finally {
       setIsGenerating(false);
@@ -234,14 +234,6 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
                   : 'Next'}
               </button>
             </div>
-            {error && currentStep === 9 && (
-              <Snackbar
-                isVisible={!!error}
-                message={error}
-                type="error"
-                onClose={() => setError(null)}
-              />
-            )}
           </form>
         </div>
       </div>

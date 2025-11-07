@@ -58,6 +58,10 @@ export const googleAuthApi = createApi({
   reducerPath: 'googleAuthApi',
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000',
+    validateStatus: (response, body) => {
+      // Treat 304 Not Modified as successful (cached data is still valid)
+      return (response.status >= 200 && response.status < 300) || response.status === 304;
+    },
   }),
   endpoints: (builder) => ({
     googleLogin: builder.mutation<GoogleAuthResponse, GoogleAuthRequest>({

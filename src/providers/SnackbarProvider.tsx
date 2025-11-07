@@ -3,11 +3,13 @@
 import React, {
   createContext,
   useContext,
-  useState,
   ReactNode,
   useCallback,
 } from 'react';
-import Snackbar, { SnackbarType } from '@/components/common/Snackbar';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+export type SnackbarType = 'success' | 'error' | 'info' | 'warning';
 
 interface SnackbarContextType {
   showSnackbar: (
@@ -22,54 +24,84 @@ const SnackbarContext = createContext<SnackbarContextType | undefined>(
   undefined
 );
 
-export const useSnackbar = () => {
+export const useCustomSnackbar = () => {
   const context = useContext(SnackbarContext);
   if (!context) {
-    throw new Error('useSnackbar must be used within a SnackbarProvider');
+    throw new Error(
+      'useCustomSnackbar must be used within a CustomSnackbarProvider'
+    );
   }
   return context;
 };
 
-interface SnackbarProviderProps {
+interface CustomSnackbarProviderProps {
   children: ReactNode;
 }
 
-export function SnackbarProvider({ children }: SnackbarProviderProps) {
-  const [snackbarState, setSnackbarState] = useState({
-    message: '',
-    type: 'info' as SnackbarType,
-    isVisible: false,
-    duration: 5000,
-  });
-
+function SnackbarWrapper({ children }: { children: ReactNode }) {
   const showSnackbar = useCallback(
     (message: string, type: SnackbarType = 'info', duration = 5000) => {
-      setSnackbarState({
-        message,
-        type,
-        isVisible: true,
-        duration,
-      });
+      const options = {
+        position: 'top-right' as const,
+        autoClose: duration,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      };
+
+      switch (type) {
+        case 'success':
+          toast.success(message, options);
+          break;
+        case 'error':
+          toast.error(message, options);
+          break;
+        case 'warning':
+          toast.warning(message, options);
+          break;
+        case 'info':
+        default:
+          toast.info(message, options);
+          break;
+      }
     },
     []
   );
 
   const hideSnackbar = useCallback(() => {
-    setSnackbarState((prev) => ({ ...prev, isVisible: false }));
+    toast.dismiss();
   }, []);
 
   return (
     <SnackbarContext.Provider value={{ showSnackbar, hideSnackbar }}>
       {children}
-      <Snackbar
-        message={snackbarState.message}
-        type={snackbarState.type}
-        isVisible={snackbarState.isVisible}
-        duration={snackbarState.duration}
-        onClose={hideSnackbar}
-      />
     </SnackbarContext.Provider>
   );
 }
 
-export default SnackbarProvider;
+export function CustomSnackbarProvider({
+  children,
+}: CustomSnackbarProviderProps) {
+  return (
+    <>
+      {/* {console.log('CustomSnackbarProvider')} */}
+      <SnackbarWrapper>{children}</SnackbarWrapper>
+      {/* <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        style={{ marginTop: '70px' }}
+      /> */}
+    </>
+  );
+}
+
+export default CustomSnackbarProvider;

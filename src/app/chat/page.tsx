@@ -39,7 +39,7 @@ export default function ChatPage() {
   const chats: Chat[] = useMemo(
     () =>
       chatListResponse?.data?.chats
-        ? mapChatListItemsToChats(chatListResponse.data.chats)
+    ? mapChatListItemsToChats(chatListResponse.data.chats)
         : [],
     [chatListResponse?.data?.chats]
   );
@@ -98,15 +98,15 @@ export default function ChatPage() {
   // Memoize computed values
   const showOnlyChatList = useMemo(
     () =>
-      (screenSize !== 'xl' && !selectedChatId) ||
+    (screenSize !== 'xl' && !selectedChatId) ||
       (screenSize === 'lg' && !selectedChatId),
     [screenSize, selectedChatId]
   );
 
   const showChatArea = useMemo(
     () =>
-      (screenSize === 'sm' && selectedChatId && activeTab === 'chat') ||
-      (screenSize === 'lg' && selectedChatId) ||
+    (screenSize === 'sm' && selectedChatId && activeTab === 'chat') ||
+    (screenSize === 'lg' && selectedChatId) ||
       screenSize === 'xl',
     [screenSize, selectedChatId, activeTab]
   );

@@ -21,6 +21,7 @@ import { chatApi } from './services/chatApi';
 
 import authReducer from './slices/authSlice';
 import characterAttributesReducer from './slices/characterAttributesSlice';
+import { rtkQueryErrorLogger } from './middleware/rtkQueryErrorLogger';
 
 // Configure Redux Persist
 const persistConfig = {
@@ -51,6 +52,7 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat(
+      rtkQueryErrorLogger, // Add error logger first to catch all errors
       authApi.middleware,
       profileApi.middleware,
       googleAuthApi.middleware,

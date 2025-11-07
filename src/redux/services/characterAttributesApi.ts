@@ -228,6 +228,10 @@ export const characterAttributesApi = createApi({
       }
       return headers;
     },
+    validateStatus: (response, body) => {
+      // Treat 304 Not Modified as successful (cached data is still valid)
+      return (response.status >= 200 && response.status < 300) || response.status === 304;
+    },
   }),
   endpoints: (builder) => ({
     getStyles: builder.query<StyleResponse, string>({
