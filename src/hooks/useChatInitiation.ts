@@ -12,6 +12,7 @@ export const useChatInitiation = () => {
   const { showSnackbar } = useSnackbar();
 
   const startChat = async (botId: string) => {
+    console.log('botId ---->',botId)
     if (!isAuthenticated) {
       showSnackbar('Please login to start a chat', 'warning');
       return;

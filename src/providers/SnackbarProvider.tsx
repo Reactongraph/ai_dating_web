@@ -87,7 +87,7 @@ export function CustomSnackbarProvider({
     <>
       {/* {console.log('CustomSnackbarProvider')} */}
       <SnackbarWrapper>{children}</SnackbarWrapper>
-      {/* <ToastContainer
+      <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -99,7 +99,7 @@ export function CustomSnackbarProvider({
         pauseOnHover
         theme="dark"
         style={{ marginTop: '70px' }}
-      /> */}
+      />
     </>
   );
 }

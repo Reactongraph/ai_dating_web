@@ -77,8 +77,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
 
     // Get userId from localStorage
     const userData = localStorage.getItem('userData');
-    const userId = userData ? JSON.parse(userData).id : null;
-
+    const userId = userData ? JSON.parse(userData).id ? JSON.parse(userData).id: JSON.parse(userData)._id : null;
     if (!userId) {
       showSnackbar('User ID not found. Please log in.', 'error');
       return;
@@ -112,7 +111,6 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
           butt_size: data.bootySize,
         }),
       };
-
       const response = await generateAvatar({
         userId,
         data: requestData,

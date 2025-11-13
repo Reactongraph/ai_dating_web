@@ -133,7 +133,7 @@ const AICompanionsSection = () => {
                 <CompanionCard
                   key={companion.id}
                   companion={companion}
-                  onClick={handleCompanionClick}
+                  handleCardClick={handleCompanionClick}
                 />
               ))}
 

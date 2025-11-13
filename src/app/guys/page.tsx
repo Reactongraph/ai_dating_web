@@ -53,7 +53,7 @@ export default function GuysPage() {
           <CompanionCard
             key={companion.id}
             companion={companion}
-            onClick={handleCompanionClick}
+            handleCardClick={handleCompanionClick}
           />
         ))}
     </CompanionsLayout>

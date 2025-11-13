@@ -9,6 +9,7 @@ import {
   BotProfile as ApiBotProfile,
 } from '@/redux/services/botProfilesApi';
 import { Companion } from '@/components/cards/CompanionCard';
+import { useChatInitiation } from '@/hooks/useChatInitiation';
 
 const mapBotProfilesToCompanions = (profiles: ApiBotProfile[]): Companion[] => {
   return profiles.map((profile) => ({
@@ -41,6 +42,14 @@ export default function ExplorePage() {
     isLoading,
     error,
   } = useGetBotProfilesQuery(activeTab);
+  const { startChat } = useChatInitiation();
+
+  // Handle companion card click
+  const handleCompanionClick = (companion: { id: string }) => {
+    console.log("companion ---->",companion)  
+    startChat(companion.id);
+  };
+
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
@@ -116,7 +125,8 @@ export default function ExplorePage() {
             botProfiles?.botProfiles &&
             mapBotProfilesToCompanions(botProfiles.botProfiles).map(
               (companion) => (
-                <CompanionCard key={companion.id} companion={companion} />
+                <CompanionCard key={companion.id} companion={companion}
+                handleCardClick={handleCompanionClick} />
               )
             )}
         </div>

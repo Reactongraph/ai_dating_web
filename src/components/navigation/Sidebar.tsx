@@ -285,8 +285,8 @@ const Sidebar = ({
       </div>
 
       {/* Bottom Section */}
-      <div className="mt-auto flex flex-col space-y-2">
-        {/* Premium */}
+      {/* <div className="mt-auto flex flex-col space-y-2">
+        
         <Link
           href="/premium"
           className={`flex items-center ${isActive('/premium') ? 'text-yellow-400 bg-white-1a' : 'text-yellow-500'} hover:text-yellow-400 group rounded-xl transition-colors ${
@@ -310,7 +310,7 @@ const Sidebar = ({
           )}
         </Link>
 
-        {/* Privacy & Terms */}
+        
         <Link
           href="/privacy-terms"
           className={`flex items-center ${isActive('/privacy-terms') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors ${
@@ -337,7 +337,7 @@ const Sidebar = ({
           )}
         </Link>
 
-        {/* Help Center */}
+        
         <Link
           href="/help"
           className={`flex items-center ${isActive('/help') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors ${
@@ -363,7 +363,7 @@ const Sidebar = ({
             <span className="ml-2 text-sm">Help Center</span>
           )}
         </Link>
-      </div>
+      </div> */}
     </aside>
   );
 };

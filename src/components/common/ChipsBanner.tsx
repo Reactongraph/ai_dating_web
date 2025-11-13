@@ -13,7 +13,7 @@ interface ChipsBannerProps {
 const ChipsBanner = ({
   text = 'Unlock more free Chips',
   buttonText = 'Get Premium',
-  buttonHref = '/premium',
+  buttonHref = "/" // '/premium',
 }: ChipsBannerProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const pathname = usePathname();

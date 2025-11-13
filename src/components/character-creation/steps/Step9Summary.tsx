@@ -302,13 +302,10 @@ const Step9Summary: React.FC = () => {
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               >
                 <option value="">Select AI Model</option>
-                <option value="lustify-sdxl">Lustify SDXL - Uncensored</option>
-                <option value="flux-dev-uncensored">Flux Dev Uncensored</option>
-                <option value="pony-realism">
-                  Pony Realism - Most Uncensored
-                </option>
-                <option value="qwen-image">Qwen Image - Highest Quality</option>
-                <option value="venice-sd35">Venice SD35</option>
+                <option value="qwen-image">SFW Image</option>
+                <option value="lustify-sdxl">NSFW Level 1</option>
+                <option value="pony-realism">NSFW Level 2</option>
+                <option value="venice-sd35">NSFW Level 3</option>
               </select>
               {errors.model && (
                 <p className="mt-1 text-sm text-red-400">
