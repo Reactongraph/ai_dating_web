@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { REHYDRATE } from 'redux-persist';
 import { googleAuthApi } from '../services/googleAuthApi';
 import { authApi, LoginResponse } from '../services/authApi';
 
@@ -81,6 +82,10 @@ const authSlice = createSlice({
           }
         }
       }
+      // Always clear transient fields on initialization to prevent stale snackbars
+      state.loading = false;
+      state.requiresVerification = false;
+      state.error = null;
     },
     setCredentials: (
       state,
@@ -171,6 +176,13 @@ const authSlice = createSlice({
   // Add extra reducers to handle API responses
   extraReducers: (builder) => {
     builder
+      // Clear transient fields when Redux rehydrates from persistence
+      .addCase(REHYDRATE, (state) => {
+        // Clear transient fields that shouldn't persist across page reloads
+        state.loading = false;
+        state.requiresVerification = false;
+        state.error = null;
+      })
       // Login pending
       .addMatcher(authApi.endpoints.login.matchPending, (state) => {
         state.loading = true;
@@ -295,10 +307,13 @@ const authSlice = createSlice({
         (state, { payload }) => {
           state.loading = false;
 
-          if (payload.success) {
+          // Handle signup response - check for statusCode 201 (success) or success flag
+          if (payload.statusCode === 201 || payload.success) {
             // For signup, we don't set the user/token yet as it requires email verification
             state.requiresVerification = payload.emailSent || false;
+            state.error = null; // Clear any previous errors
           } else {
+            // Only set error if signup actually failed
             state.error = payload.message || 'Signup failed';
           }
         }
@@ -306,9 +321,11 @@ const authSlice = createSlice({
       // Signup error
       .addMatcher(
         authApi.endpoints.signup.matchRejected,
-        (state, { error }) => {
+        (state) => {
           state.loading = false;
-          state.error = error.message || 'Signup failed';
+          // Don't set error state for signup - we handle errors in SignupModal component
+          // This prevents duplicate error snackbars
+          state.error = null;
         }
       )
       // Logout success

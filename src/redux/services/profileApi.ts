@@ -3,17 +3,64 @@ import { LoginResponse } from './authApi';
 
 export interface UpdateProfileRequest {
   name?: string;
+  email?: string;
+  phone?: number;
+  countryCode?: number;
+  birthDate?: string; // ISO date string or Date
   gender?: 'man' | 'woman' | 'other';
-  dateOfBirth?: string;
   aboutMe?: string;
-  profilePicture?: File | string; // For file uploads
+  university?: string;
+  city?: string;
+  height?: number;
+  sexualOrientation?: number[];
+  showMe?: boolean;
+  sexualInterest?: number;
+  interest?: number[];
+  zodiac?: number;
+  location?: {
+    type: 'Point';
+    coordinates: [number, number]; // [longitude, latitude]
+  };
+  maxDistance?: {
+    distance: number;
+  };
+  ageRange?: {
+    minAge: number;
+    maxAge: number;
+  };
+}
+
+export interface ProfileImage {
+  fieldname?: string;
+  originalname?: string;
+  encoding?: string;
+  mimetype?: string;
+  destination?: string;
+  filename?: string;
+  path?: string;
+  size?: number;
+  s3Location?: string; // Full S3 URL
+  s3Key?: string; // S3 key
+  url?: string; // Alternative field name for URL
 }
 
 export interface UpdateProfileResponse {
-  statusCode?: number;
-  message?: string;
-  success?: boolean;
-  user?: LoginResponse['user'];
+  statusCode: number;
+  message: string;
+  user: LoginResponse['user'] & {
+    profileImageUrl?: string;
+  };
+  realtimeImage?: unknown;
+  profileImage?: ProfileImage;
+}
+
+export interface GetProfileResponse {
+  statusCode: number;
+  message: string;
+  user: LoginResponse['user'] & {
+    profileImage?: ProfileImage;
+    profileImageUrl?: string;
+  };
 }
 
 export const profileApi = createApi({
@@ -35,58 +82,47 @@ export const profileApi = createApi({
 
       return headers;
     },
-    validateStatus: (response, body) => {
+    validateStatus: (response) => {
       // Treat 304 Not Modified as successful (cached data is still valid)
       return (response.status >= 200 && response.status < 300) || response.status === 304;
     },
   }),
   tagTypes: ['Profile'],
   endpoints: (builder) => ({
-    getProfile: builder.query<LoginResponse['user'], void>({
-      query: () => '/users/profile',
+    getProfile: builder.query<GetProfileResponse, string>({
+      query: (userId) => `/users/get/${userId}`,
       providesTags: ['Profile'],
+      transformResponse: (response: GetProfileResponse) => {
+        // Return the response as-is since it already has the correct structure
+        return response;
+      },
     }),
 
     updateProfile: builder.mutation<
       UpdateProfileResponse,
-      UpdateProfileRequest
+      { userId: string; data: UpdateProfileRequest }
     >({
-      query: (profileData) => {
-        // Handle file uploads with FormData if needed
-        const formData = new FormData();
-
-        Object.entries(profileData).forEach(([key, value]) => {
-          if (value !== undefined) {
-            if (key === 'profilePicture' && value instanceof File) {
-              formData.append('profilePicture', value);
-            } else {
-              formData.append(key, String(value));
-            }
-          }
-        });
-
+      query: ({ userId, data }) => {
         return {
-          url: '/users/profile',
-          method: 'PUT',
-          body: formData,
-          // Don't set Content-Type header when using FormData
-          // It will be set automatically with the correct boundary
+          url: `/users/update/${userId}`,
+          method: 'PATCH',
+          body: data,
         };
       },
       invalidatesTags: ['Profile'],
     }),
 
     uploadProfilePicture: builder.mutation<
-      { success: boolean; url: string; message: string },
-      File
+      UpdateProfileResponse,
+      { userId: string; file: File }
     >({
-      query: (file) => {
+      query: ({ userId, file }) => {
         const formData = new FormData();
-        formData.append('profilePicture', file);
+        formData.append('profileImage', file);
 
         return {
-          url: '/users/profile-picture',
-          method: 'POST',
+          url: `/users/update-profile-image/${userId}`,
+          method: 'PATCH',
           body: formData,
         };
       },

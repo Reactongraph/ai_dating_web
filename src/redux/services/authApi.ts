@@ -49,13 +49,18 @@ export interface SignupRequest {
   firstName: string;
   email: string;
   password: string;
+  phone?: number;
+  countryCode?: number;
+  birthDate?: string;
+  gender?: 'man' | 'woman' | 'other';
 }
 
 export interface SignupResponse {
-  success: boolean;
-  userId?: string;
-  message?: string;
+  statusCode: number;
+  message: string;
   emailSent?: boolean;
+  userId?: string;
+  success?: boolean; // For backward compatibility
 }
 
 export const authApi = createApi({

@@ -23,17 +23,23 @@ import authReducer from './slices/authSlice';
 import characterAttributesReducer from './slices/characterAttributesSlice';
 import { rtkQueryErrorLogger } from './middleware/rtkQueryErrorLogger';
 
-// Configure Redux Persist
-const persistConfig = {
-  key: 'root',
-  version: 1,
+// Configure auth reducer persistence - exclude transient fields
+const authPersistConfig = {
+  key: 'auth',
   storage,
-  whitelist: ['auth', 'characterAttributes'], // Only persist these reducers
+  whitelist: ['user', 'token', 'isAuthenticated', 'realtimeImage'], // Only persist these fields
+  // Exclude: loading, requiresVerification, error (these are transient)
+};
+
+// Configure characterAttributes persistence
+const characterAttributesPersistConfig = {
+  key: 'characterAttributes',
+  storage,
 };
 
 const rootReducer = combineReducers({
-  auth: authReducer,
-  characterAttributes: characterAttributesReducer,
+  auth: persistReducer(authPersistConfig, authReducer),
+  characterAttributes: persistReducer(characterAttributesPersistConfig, characterAttributesReducer),
   [authApi.reducerPath]: authApi.reducer,
   [profileApi.reducerPath]: profileApi.reducer,
   [googleAuthApi.reducerPath]: googleAuthApi.reducer,
@@ -42,10 +48,8 @@ const rootReducer = combineReducers({
   [chatApi.reducerPath]: chatApi.reducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

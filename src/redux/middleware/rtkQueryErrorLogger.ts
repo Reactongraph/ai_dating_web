@@ -96,8 +96,23 @@ export const rtkQueryErrorLogger: Middleware =
       ];
 
       // Check if this endpoint should be silent
-      const endpointName = action.meta?.arg?.endpointName;
-      const shouldShowToast = !silentEndpoints.includes(endpointName);
+      // RTK Query stores endpoint name in different places depending on the action type
+      const endpointName =
+        action.meta?.arg?.endpointName ||
+        action.meta?.arg?.type ||
+        action.type?.split('/')?.[0]?.replace('executeQuery', '') ||
+        action.type?.split('/')?.[0]?.replace('executeMutation', '');
+      
+      // Also check the action type pattern (e.g., "authApi/executeMutation/rejected")
+      const actionTypeParts = action.type?.split('/') || [];
+      const actionType = action.type || '';
+      const isSignup =
+        endpointName === 'signup' ||
+        actionTypeParts.some((part) => part.toLowerCase().includes('signup')) ||
+        actionType.toLowerCase().includes('signup');
+      
+      const shouldShowToast =
+        !silentEndpoints.includes(endpointName) && !isSignup;
 
       // Show toast notification for errors (except for endpoints that handle their own errors)
       if (shouldShowToast) {

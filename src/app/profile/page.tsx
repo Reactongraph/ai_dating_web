@@ -15,18 +15,33 @@ import Image from 'next/image';
 interface ProfileFormData {
   name: string;
   email: string;
+  countryCode: string;
+  phone: string;
   gender: 'man' | 'woman' | 'other';
   dateOfBirth: string;
   aboutMe: string;
 }
 
 export default function ProfilePage() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const { showSnackbar } = useSnackbar();
   const { user } = useAppSelector((state) => state.auth);
 
-  const { data: profileData } = useGetProfileQuery();
+  // Get userId from auth state
+  const userId = user?._id || '';
+
+  const {
+    data: profileResponse,
+    isLoading: isLoadingProfile,
+    refetch: refetchProfile,
+  } = useGetProfileQuery(userId, {
+    skip: !userId, // Skip query if userId is not available
+  });
+
+  // Extract user data from response
+  const profileData = profileResponse?.user;
+
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
   const [uploadProfilePicture, { isLoading: isUploading }] =
     useUploadProfilePictureMutation();
@@ -36,6 +51,7 @@ export default function ProfilePage() {
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: {
       /* errors */
     },
@@ -43,6 +59,8 @@ export default function ProfilePage() {
     defaultValues: {
       name: '',
       email: '',
+      countryCode: '+91',
+      phone: '',
       gender: 'other',
       dateOfBirth: '',
       aboutMe: '',
@@ -56,18 +74,61 @@ export default function ProfilePage() {
       if (userData) {
         setValue('name', userData.name || '');
         setValue('email', userData.email || '');
-        setValue('gender', userData.gender as 'man' | 'woman' | 'other');
-        setValue('dateOfBirth', (userData.dateOfBirth as string) || '');
+        // Handle countryCode - backend stores as number, convert to string with + prefix for dropdown
+        const countryCodeValue =
+          (userData as { countryCode?: number }).countryCode;
+        // Format country code: backend sends number (e.g., 1), convert to string with + prefix (e.g., "+1")
+        const formattedCountryCode =
+          countryCodeValue !== undefined && countryCodeValue !== null
+            ? `+${countryCodeValue}`
+            : '+1'; // Default to +1 (US)
+        setValue('countryCode', formattedCountryCode);
+        // Handle phone - convert number to string for input field
+        const phoneValue =
+          (userData as { phone?: number | string }).phone !== undefined
+            ? String((userData as { phone?: number | string }).phone || '')
+            : '';
+        setValue('phone', phoneValue);
+        // Backend uses 'man' | 'woman' | 'other' directly, so no mapping needed
+        const genderValue =
+          ((userData.gender as 'man' | 'woman' | 'other') || 'other') as
+            | 'man'
+            | 'woman'
+            | 'other';
+        setValue('gender', genderValue);
+        // Handle dateOfBirth - API uses birthDate, convert ISO date to YYYY-MM-DD format
+        const birthDateValue =
+          ((userData as { birthDate?: string | Date }).birthDate as
+            | string
+            | Date) ||
+          ((userData as { dateOfBirth?: string | Date }).dateOfBirth as
+            | string
+            | Date) ||
+          '';
+        
+        // Convert ISO date string (e.g., "1988-01-01T00:00:00.000Z") to YYYY-MM-DD format
+        let formattedDate = '';
+        if (birthDateValue) {
+          try {
+            const date = new Date(birthDateValue);
+            if (!isNaN(date.getTime())) {
+              // Format as YYYY-MM-DD for date input
+              formattedDate = date.toISOString().split('T')[0];
+            }
+          } catch (error) {
+            console.error('Error parsing birthDate:', error);
+          }
+        }
+        setValue('dateOfBirth', formattedDate);
         setValue('aboutMe', userData.aboutMe || '');
       }
     }
   }, [profileData, user, setValue]);
 
   // Handle file selection for profile picture
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedFile(file);
 
       // Create preview URL
       const fileReader = new FileReader();
@@ -77,31 +138,111 @@ export default function ProfilePage() {
         }
       };
       fileReader.readAsDataURL(file);
+
+      // Immediately upload the image when file is selected
+      if (!userId) {
+        showSnackbar('User ID not found. Please login again.', 'error');
+        return;
+      }
+
+      setIsUploadingImage(true);
+      try {
+        const imageResponse = await uploadProfilePicture({
+          userId,
+          file: file,
+        }).unwrap();
+
+        if (imageResponse.statusCode === 200) {
+          showSnackbar(
+            imageResponse.message || 'Profile image updated successfully!',
+            'success'
+          );
+          // Update preview with the new profile image URL if available
+          if (imageResponse.profileImage?.s3Location) {
+            setPreviewUrl(imageResponse.profileImage.s3Location);
+          } else if (imageResponse.profileImage?.url) {
+            setPreviewUrl(imageResponse.profileImage.url);
+          } else if (imageResponse.user?.profileImageUrl) {
+            setPreviewUrl(imageResponse.user.profileImageUrl);
+          } else if (
+            (imageResponse.user as { profileImage?: { s3Location?: string } })
+              ?.profileImage?.s3Location
+          ) {
+            setPreviewUrl(
+              (imageResponse.user as {
+                profileImage?: { s3Location?: string };
+              }).profileImage?.s3Location as string
+            );
+          }
+          // Refetch profile data to get updated user information
+          refetchProfile();
+        }
+      } catch (error) {
+        console.error('Failed to upload profile image:', error);
+        const errorMessage =
+          typeof error === 'object' &&
+          error !== null &&
+          'data' in error &&
+          typeof error.data === 'object' &&
+          error.data !== null &&
+          'message' in error.data
+            ? (error.data.message as string)
+            : 'Failed to upload profile image. Please try again.';
+        showSnackbar(errorMessage, 'error');
+        // Reset preview on error
+        setPreviewUrl(null);
+        // Reset file input
+        if (e.target) {
+          e.target.value = '';
+        }
+      } finally {
+        setIsUploadingImage(false);
+      }
     }
   };
 
   // Handle profile update
   const onSubmit = async (data: ProfileFormData) => {
-    try {
-      // First upload profile picture if selected
-      if (selectedFile) {
-        await uploadProfilePicture(selectedFile).unwrap();
-      }
+    if (!userId) {
+      showSnackbar('User ID not found. Please login again.', 'error');
+      return;
+    }
 
-      // Then update profile data
+    try {
+      // Update profile data (image is already uploaded when file is selected)
+      // Backend uses 'man' | 'woman' | 'other' directly, so no mapping needed
       const response = await updateProfile({
-        name: data.name,
-        gender: data.gender,
-        dateOfBirth: data.dateOfBirth,
-        aboutMe: data.aboutMe,
+        userId,
+        data: {
+          name: data.name,
+          phone: data.phone ? Number(data.phone) : undefined,
+          countryCode: data.countryCode
+            ? Number(data.countryCode) // Convert "+1" to 1 for API
+            : undefined,
+          gender: data.gender as 'man' | 'woman' | 'other',
+          birthDate: data.dateOfBirth,
+          aboutMe: data.aboutMe,
+        },
       }).unwrap();
 
-      if (response.success || response.statusCode === 200) {
-        showSnackbar('Profile updated successfully!', 'success');
+      if (response.statusCode === 200) {
+        showSnackbar(
+          response.message || 'Profile updated successfully!',
+          'success'
+        );
       }
     } catch (error) {
       console.error('Failed to update profile:', error);
-      showSnackbar('Failed to update profile. Please try again.', 'error');
+      const errorMessage =
+        typeof error === 'object' &&
+        error !== null &&
+        'data' in error &&
+        typeof error.data === 'object' &&
+        error.data !== null &&
+        'message' in error.data
+          ? (error.data.message as string)
+          : 'Failed to update profile. Please try again.';
+      showSnackbar(errorMessage, 'error');
     }
   };
 
@@ -116,34 +257,58 @@ export default function ProfilePage() {
           {/* Left Side - Profile Picture */}
           <div className="md:w-1/3 flex flex-col items-center mb-4 sm:mb-6 md:mb-0">
             <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 mb-3 sm:mb-4 bg-gray-500 rounded-full overflow-hidden">
-              {previewUrl || (user && user.profilePicture) ? (
-                <Image
-                  src={
-                    previewUrl ||
-                    (user?.profilePicture as string) ||
-                    '/assets/default-avatar.png'
-                  }
-                  alt="Profile"
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
+              {(() => {
+                // Get profile image URL with priority order
+                const profileImageUrl =
+                  previewUrl ||
+                  (profileData &&
+                    (profileData as { profileImage?: { s3Location?: string } })
+                      ?.profileImage?.s3Location) ||
+                  (profileData &&
+                    (profileData as { profileImage?: { url?: string } })
+                      ?.profileImage?.url) ||
+                  (profileData &&
+                    (profileData as { profileImageUrl?: string })
+                      ?.profileImageUrl) ||
+                  (profileData?.photoUrl &&
+                  Array.isArray(profileData.photoUrl) &&
+                  profileData.photoUrl.length > 0
+                    ? (profileData.photoUrl[0] as string)
+                    : '') ||
+                  (user &&
+                    (user as { profileImage?: { s3Location?: string } })
+                      ?.profileImage?.s3Location) ||
+                  (user &&
+                    (user as { profileImageUrl?: string })?.profileImageUrl) ||
+                  (user?.profilePicture as string) ||
+                  '';
+
+                return profileImageUrl ? (
                   <Image
-                    src="/assets/profile.svg"
-                    alt="Default Avatar"
-                    width={100}
-                    height={100}
+                    src={profileImageUrl || '/assets/default-avatar.png'}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
                   />
-                </div>
-              )}
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Image
+                      src="/assets/profile.svg"
+                      alt="Default Avatar"
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                );
+              })()}
             </div>
 
             <button
               onClick={() => document.getElementById('profile-upload')?.click()}
-              className="mt-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black border border-gray-600 rounded-md text-white text-sm sm:text-base hover:bg-gray-900 transition-colors"
+              disabled={isUploadingImage || isUploading}
+              className="mt-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black border border-gray-600 rounded-md text-white text-sm sm:text-base hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Upload Photo
+              {isUploadingImage ? 'Uploading...' : 'Upload Photo'}
             </button>
             <input
               id="profile-upload"
@@ -188,6 +353,72 @@ export default function ProfilePage() {
                   disabled
                   className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:outline-none opacity-70 cursor-not-allowed"
                 />
+              </div>
+
+              {/* Phone Number with Country Code */}
+              <div className="mb-3 sm:mb-4">
+                <label
+                  htmlFor="phone"
+                  className="block text-xs text-gray-400 mb-1"
+                >
+                  Phone Number
+                </label>
+                <div className="flex gap-2">
+                  {/* Country Code Dropdown */}
+                  <div className="relative w-24 sm:w-28">
+                    <select
+                      {...register('countryCode')}
+                      id="countryCode"
+                      className="w-full bg-gray-900 text-white px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 appearance-none pr-8"
+                    >
+                      <option value="1">+1 (US)</option>
+                      <option value="44">+44 (UK)</option>
+                      <option value="91">+91 (IN)</option>
+                      <option value="86">+86 (CN)</option>
+                      <option value="81">+81 (JP)</option>
+                      <option value="49">+49 (DE)</option>
+                      <option value="33">+33 (FR)</option>
+                      <option value="39">+39 (IT)</option>
+                      <option value="34">+34 (ES)</option>
+                      <option value="61">+61 (AU)</option>
+                      <option value="55">+55 (BR)</option>
+                      <option value="52">+52 (MX)</option>
+                      <option value="7">+7 (RU)</option>
+                      <option value="82">+82 (KR)</option>
+                      <option value="65">+65 (SG)</option>
+                      <option value="971">+971 (AE)</option>
+                      <option value="966">+966 (SA)</option>
+                      <option value="27">+27 (ZA)</option>
+                      <option value="234">+234 (NG)</option>
+                      <option value="20">+20 (EG)</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                      <svg
+                        className="w-4 h-4 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  {/* Phone Number Input */}
+                  <div className="flex-1">
+                    <input
+                      {...register('phone')}
+                      type="tel"
+                      id="phone"
+                      placeholder="Enter your phone number"
+                      className="w-full bg-gray-900 text-white px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Gender Selection */}
@@ -248,30 +479,19 @@ export default function ProfilePage() {
                 >
                   Date of Birth
                 </label>
-                <div className="relative">
-                  <select
-                    {...register('dateOfBirth')}
-                    id="dateOfBirth"
-                    className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:outline-none appearance-none"
-                  >
-                    <option value="10/03/1998">10/03/1998</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg
-                      className="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
+                <input
+                  {...register('dateOfBirth')}
+                  type="date"
+                  id="dateOfBirth"
+                  max={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 18)
+                    )
+                      .toISOString()
+                      .split('T')[0]
+                  }
+                  className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                />
                 <p className="mt-1 text-xs text-gray-500">
                   Your age cannot be changed later
                 </p>
@@ -289,13 +509,13 @@ export default function ProfilePage() {
                   {...register('aboutMe')}
                   id="aboutMe"
                   rows={4}
+                  maxLength={300}
                   className="w-full bg-gray-900 text-white px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-md focus:outline-none"
                   placeholder="Tell us about yourself..."
-                  defaultValue="Born into royalty in a realm where winter reigned eternal, she was fated to command the endless frost."
                 ></textarea>
                 <div className="flex justify-end mt-1">
                   <span className="text-xs text-gray-500">
-                    153/300 Characters
+                    {(watch('aboutMe') as string)?.length || 0}/300 Characters
                   </span>
                 </div>
               </div>
@@ -307,7 +527,13 @@ export default function ProfilePage() {
                     <h3 className="text-sm sm:text-base font-medium">
                       Current Plan
                     </h3>
-                    <p className="text-cyan-400">Free</p>
+                    <p className="text-cyan-400">
+                      {profileData?.subscriber?.isPremiumSubscriber
+                        ? 'Premium'
+                        : profileData?.subscriber?.isPlusSubscriber
+                          ? 'Plus'
+                          : 'Free'}
+                    </p>
                   </div>
                   <button
                     type="button"
@@ -388,10 +614,14 @@ export default function ProfilePage() {
               <div className="flex justify-center mb-6">
                 <button
                   type="submit"
-                  disabled={isUpdating || isUploading}
+                  disabled={isUpdating || isUploading || isLoadingProfile}
                   className="bg-black text-white px-6 sm:px-8 py-1.5 sm:py-2 text-sm sm:text-base rounded-md border border-gray-800 hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isUpdating || isUploading ? 'Updating...' : 'Update'}
+                  {isUpdating || isUploading
+                    ? 'Updating...'
+                    : isLoadingProfile
+                      ? 'Loading...'
+                      : 'Update'}
                 </button>
               </div>
             </form>

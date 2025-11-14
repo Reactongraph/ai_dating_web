@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import AuthModal from './AuthModal';
 import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
@@ -22,6 +22,7 @@ interface SignupFormData {
   email: string;
   password: string;
   confirmPassword: string;
+  countryCode: string;
   phoneNumber: string;
   dateOfBirth: string;
   gender: string;
@@ -34,19 +35,31 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
   const [signup, { isLoading }] = useSignupMutation();
   const [googleLogin, { isLoading: isGoogleLoading }] =
     useGoogleLoginMutation();
-  const { error, requiresVerification, isAuthenticated } = useAppSelector(
-    (state) => state.auth
-  );
+  const authState = useAppSelector((state) => state.auth);
+  const error = (authState as { error?: string | null })?.error ?? null;
+  const requiresVerification =
+    (authState as { requiresVerification?: boolean })?.requiresVerification ??
+    false;
+  const isAuthenticated =
+    (authState as { isAuthenticated?: boolean })?.isAuthenticated ?? false;
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
+  const hasShownSuccessRef = useRef(false);
+  const previousErrorRef = useRef<string | null>(null);
+  const hasShownErrorInSubmitRef = useRef(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
-  } = useForm<SignupFormData>();
+  } = useForm<SignupFormData>({
+    defaultValues: {
+      countryCode: '+1', // Default to US country code
+    },
+  });
 
   const password = watch('password');
 
@@ -58,29 +71,49 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
   }, [isAuthenticated, onClose]);
 
   // Show success message and redirect to login after successful signup
+  // Note: This is handled in onSubmit now, so we only use this as a fallback
   useEffect(() => {
-    if (requiresVerification) {
-      showSnackbar(
-        'Account created successfully! Please check your email to verify your account before logging in.',
-        'success',
-        8000
-      );
-
-      // Wait a bit before redirecting to login
+    if (requiresVerification && isOpen) {
+      // Only show if modal is still open (to avoid duplicate messages)
       const timer = setTimeout(() => {
         onLoginClick();
       }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [requiresVerification, onLoginClick, showSnackbar]);
+  }, [requiresVerification, onLoginClick, isOpen]);
 
-  // Show error message if there is an error
+  // Show error message if there is an error (only show actual error strings)
+  // Skip if we just successfully signed up (requiresVerification is true means success)
   useEffect(() => {
-    if (error) {
+    // Reset refs when modal opens
+    if (isOpen) {
+      hasShownSuccessRef.current = false;
+      previousErrorRef.current = null;
+      hasShownErrorInSubmitRef.current = false;
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    // Skip showing error from Redux state for signup - we handle it in onSubmit
+    // Only show if it's a meaningful error message (not generic RTK Query messages)
+    if (
+      error &&
+      typeof error === 'string' &&
+      error.trim() !== '' &&
+      error !== 'rejected' &&
+      error !== 'Rejected' &&
+      !error.includes('executeMutation') &&
+      isOpen &&
+      !requiresVerification && // Don't show error if signup was successful
+      error !== previousErrorRef.current && // Don't show same error twice
+      !hasShownSuccessRef.current && // Don't show error if we just showed success
+      !hasShownErrorInSubmitRef.current // Don't show error if we already showed it in onSubmit
+    ) {
+      previousErrorRef.current = error;
       showSnackbar(error, 'error');
     }
-  }, [error, showSnackbar]);
+  }, [error, showSnackbar, isOpen, requiresVerification]);
 
   // Handle Google session - only when modal is open
   useEffect(() => {
@@ -128,29 +161,66 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
         firstName: `${data.firstName} ${data.lastName}`.trim(), // Combine as fullName
         email: data.email,
         password: data.password,
+        phone: data.phoneNumber ? Number(data.phoneNumber) : undefined,
+        countryCode: data.countryCode
+          ? Number(data.countryCode) // Convert "+1" to 1 for API
+          : undefined,
+        birthDate: data.dateOfBirth,
+        gender: data.gender as 'man' | 'woman' | 'other',
       };
 
       // The signup mutation will automatically update the Redux store
       const response = await signup(signupData).unwrap();
 
-      // Handle successful signup response manually for better control
-      if (response.success) {
+      // Handle successful signup response with statusCode 201
+      if (response.statusCode === 201) {
+        // Mark that we've shown success to prevent duplicate snackbars
+        hasShownSuccessRef.current = true;
+        
+        // Show success message from response (only once)
         showSnackbar(
-          'Account created successfully! Please check your email to verify your account before logging in.',
+          response.message ||
+            'Account created successfully! Please check your email to verify your account before logging in.',
           'success',
           8000
         );
+
+        // Reset form state
+        reset();
+
+        // Wait a bit before closing and redirecting to login
+        setTimeout(() => {
+          onClose();
+          onLoginClick();
+        }, 2000);
       }
     } catch (err: unknown) {
       console.error('Signup failed:', err);
+      // Mark that we've shown error in submit to prevent duplicate snackbars
+      hasShownErrorInSubmitRef.current = true;
+      
       // Show error message
       const errorMessage =
-        typeof err === 'object' && err !== null && 'data' in err
-          ? (err.data as { message?: string })?.message
+        typeof err === 'object' &&
+        err !== null &&
+        'data' in err &&
+        typeof err.data === 'object' &&
+        err.data !== null &&
+        'message' in err.data
+          ? (err.data.message as string)
           : typeof err === 'object' && err !== null && 'message' in err
             ? (err as Error).message
             : 'Signup failed. Please try again.';
-      showSnackbar(errorMessage || 'Signup failed. Please try again.', 'error');
+      
+      if (errorMessage) {
+        previousErrorRef.current = errorMessage;
+        showSnackbar(errorMessage, 'error');
+        
+        // Clear the error ref after a delay to allow for new errors
+        setTimeout(() => {
+          hasShownErrorInSubmitRef.current = false;
+        }, 1000);
+      }
     }
   };
 
@@ -229,37 +299,86 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm text-gray-400 mb-2"
-            >
-              Phone Number (Optional)
-            </label>
-            <input
-              {...register('phoneNumber')}
-              type="tel"
-              id="phoneNumber"
-              placeholder="Enter your phone number"
-              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
-            />
+        {/* Phone Number */}
+        <div>
+          <label
+            htmlFor="phoneNumber"
+            className="block text-sm text-gray-400 mb-2"
+          >
+            Phone Number (Optional)
+          </label>
+          <div className="flex gap-2">
+            {/* Country Code Dropdown */}
+            <div className="relative w-24 sm:w-28">
+              <select
+                {...register('countryCode')}
+                id="countryCode"
+                className="w-full bg-gray-2a text-white px-2 sm:px-3 py-3 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan appearance-none pr-8"
+              >
+                <option value="+1">+1 (US)</option>
+                <option value="+44">+44 (UK)</option>
+                <option value="+91">+91 (IN)</option>
+                <option value="+86">+86 (CN)</option>
+                <option value="+81">+81 (JP)</option>
+                <option value="+49">+49 (DE)</option>
+                <option value="+33">+33 (FR)</option>
+                <option value="+39">+39 (IT)</option>
+                <option value="+34">+34 (ES)</option>
+                <option value="+61">+61 (AU)</option>
+                <option value="+55">+55 (BR)</option>
+                <option value="+52">+52 (MX)</option>
+                <option value="+7">+7 (RU)</option>
+                <option value="+82">+82 (KR)</option>
+                <option value="+65">+65 (SG)</option>
+                <option value="+971">+971 (AE)</option>
+                <option value="+966">+966 (SA)</option>
+                <option value="+27">+27 (ZA)</option>
+                <option value="+234">+234 (NG)</option>
+                <option value="+20">+20 (EG)</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+            {/* Phone Number Input */}
+            <div className="flex-1">
+              <input
+                {...register('phoneNumber')}
+                type="tel"
+                id="phoneNumber"
+                placeholder="Enter your phone number"
+                className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+              />
+            </div>
           </div>
+        </div>
 
-          <div>
-            <label
-              htmlFor="dateOfBirth"
-              className="block text-sm text-gray-400 mb-2"
-            >
-              Date of Birth (Optional)
-            </label>
-            <input
-              {...register('dateOfBirth')}
-              type="date"
-              id="dateOfBirth"
-              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
-            />
-          </div>
+        {/* Date of Birth */}
+        <div>
+          <label
+            htmlFor="dateOfBirth"
+            className="block text-sm text-gray-400 mb-2"
+          >
+            Date of Birth (Optional)
+          </label>
+          <input
+            {...register('dateOfBirth')}
+            type="date"
+            id="dateOfBirth"
+            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+          />
         </div>
 
         <div>
@@ -272,10 +391,9 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
             className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
           >
             <option value="">Select gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-            <option value="prefer-not-to-say">Prefer not to say</option>
+            <option value="man">Male</option>
+            <option value="woman">Female</option>
+            <option value="other">Other</option>  
           </select>
         </div>
 
