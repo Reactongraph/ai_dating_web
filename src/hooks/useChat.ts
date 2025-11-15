@@ -162,14 +162,13 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       console.log('Current state:', {
         botId,
         userId: user?.id,
-        user_Id: user._id,
         messageContent,
       });
 
-      if (!botId || !user?.id || !messageContent.trim() || !user._id) {
+      if (!botId || !user?.id || !messageContent.trim()) {
         // console.log('Missing required data:', {
         //   botId,
-        //   userId: user?._id,
+        //   userId: user?.id,
         //   messageContent,
         // });
         return;
@@ -177,7 +176,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
       // console.log('Sending message:', messageContent);
       // console.log('Bot ID:', botId);
-      // console.log('User ID:', user._id);
+      // console.log('User ID:', user.id);
 
       isProcessingRef.current = true;
       setIsSendingMessage(true);
@@ -285,7 +284,15 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         isProcessingRef.current = false;
       }
     },
-    [botId, user?.id, convertMessagesToHistory, chatWithBot, showSnackbar, deduplicateMessages],
+    [
+      botId,
+      user?.id,
+      convertMessagesToHistory,
+      chatWithBot,
+      showSnackbar,
+      deduplicateMessages,
+      dispatch,
+    ],
   );
 
   // Mark messages as read

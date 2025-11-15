@@ -14,6 +14,7 @@ export interface LoginResponse {
   };
   user?: {
     _id: string;
+    id?: string; // Normalized field - always set to same value as _id
     name: string;
     email: string;
     onlineStatus?: string;

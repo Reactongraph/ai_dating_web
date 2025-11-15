@@ -28,13 +28,34 @@ interface AuthState {
   error: string | null;
 }
 
+// Normalize user object to ensure both id and _id are set consistently
+const normalizeUser = (user: LoginResponse['user'] | null): LoginResponse['user'] | null => {
+  if (!user) return null;
+  
+  // Determine the actual ID value - prefer _id if it exists, otherwise use id
+  const userId = (user as { _id?: string; id?: string })._id || (user as { _id?: string; id?: string }).id;
+  
+  if (!userId) {
+    console.warn('User object missing both id and _id fields');
+    return user;
+  }
+  
+  // Create normalized user object with both id and _id set to the same value
+  return {
+    ...user,
+    _id: userId,
+    id: userId,
+  } as LoginResponse['user'];
+};
+
 // Get user data from localStorage if available
 const getUserFromLocalStorage = (): LoginResponse['user'] | null => {
   if (typeof window !== 'undefined') {
     const userData = localStorage.getItem('userData');
     if (userData) {
       try {
-        return JSON.parse(userData);
+        const parsed = JSON.parse(userData);
+        return normalizeUser(parsed);
       } catch (e) {
         console.error('Error parsing user data from localStorage:', e);
       }
@@ -68,7 +89,7 @@ const authSlice = createSlice({
         if (token && userDataStr) {
           try {
             const userData = JSON.parse(userDataStr);
-            state.user = userData;
+            state.user = normalizeUser(userData);
             state.token = token;
             state.isAuthenticated = true;
           } catch (e) {
@@ -92,6 +113,7 @@ const authSlice = createSlice({
         // Create a user object from Google data
         const user = {
           _id: payload.googleId || '',
+          id: payload.googleId || '',
           name: payload.name || '',
           email: payload.email || '',
           profilePicture: payload.picture || '',
@@ -99,7 +121,8 @@ const authSlice = createSlice({
           isEmailVerified: true,
         };
 
-        state.user = user as LoginResponse['user'];
+        const normalizedUser = normalizeUser(user as LoginResponse['user']);
+        state.user = normalizedUser;
         state.token = payload.token;
         state.isAuthenticated = true;
         state.requiresVerification = false;
@@ -108,7 +131,7 @@ const authSlice = createSlice({
         // Save token and user data to localStorage
         if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', payload.token);
-          localStorage.setItem('userData', JSON.stringify(user));
+          localStorage.setItem('userData', JSON.stringify(normalizedUser));
         }
       }
       // Handle standard API response format
@@ -123,7 +146,8 @@ const authSlice = createSlice({
             ? payload.accessToken
             : payload.accessToken.access_token;
 
-        state.user = payload.user;
+        const normalizedUser = normalizeUser(payload.user);
+        state.user = normalizedUser;
         state.token = accessToken;
         state.isAuthenticated = true;
         state.requiresVerification = false;
@@ -132,7 +156,7 @@ const authSlice = createSlice({
         // Save token and user data to localStorage
         if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('userData', JSON.stringify(payload.user));
+          localStorage.setItem('userData', JSON.stringify(normalizedUser));
         }
       } else if (
         ('requiresVerification' in payload && payload.requiresVerification) ||
@@ -187,6 +211,7 @@ const authSlice = createSlice({
           // Create a user object from Google data
           const user = {
             _id: payload.googleId || '',
+            id: payload.googleId || '',
             name: payload.name || '',
             email: payload.email || '',
             profilePicture: payload.picture || '',
@@ -194,7 +219,8 @@ const authSlice = createSlice({
             isEmailVerified: true,
           };
 
-          state.user = user as LoginResponse['user'];
+          const normalizedUser = normalizeUser(user as LoginResponse['user']);
+          state.user = normalizedUser;
           state.token = payload.token;
           state.isAuthenticated = true;
           state.requiresVerification = false;
@@ -203,7 +229,7 @@ const authSlice = createSlice({
           // Save token and user data to localStorage
           if (typeof window !== 'undefined') {
             localStorage.setItem('accessToken', payload.token);
-            localStorage.setItem('userData', JSON.stringify(user));
+            localStorage.setItem('userData', JSON.stringify(normalizedUser));
           }
         }
         // Handle standard API response format
@@ -213,7 +239,8 @@ const authSlice = createSlice({
               ? payload.accessToken
               : payload.accessToken.access_token;
 
-          state.user = payload.user;
+          const normalizedUser = normalizeUser(payload.user);
+          state.user = normalizedUser;
           state.token = accessToken;
           state.isAuthenticated = true;
           state.requiresVerification = false;
@@ -222,7 +249,7 @@ const authSlice = createSlice({
           // Save token and user data to localStorage
           if (typeof window !== 'undefined') {
             localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('userData', JSON.stringify(payload.user));
+            localStorage.setItem('userData', JSON.stringify(normalizedUser));
           }
         }
       })
@@ -236,7 +263,8 @@ const authSlice = createSlice({
         state.loading = false;
 
         if (payload.statusCode === 200 && payload.user && payload.accessToken?.access_token) {
-          state.user = payload.user;
+          const normalizedUser = normalizeUser(payload.user);
+          state.user = normalizedUser;
           state.token = payload.accessToken.access_token;
           state.isAuthenticated = true;
           state.requiresVerification = false;
@@ -245,7 +273,7 @@ const authSlice = createSlice({
           // Save token and user data to localStorage
           if (typeof window !== 'undefined') {
             localStorage.setItem('accessToken', payload.accessToken.access_token);
-            localStorage.setItem('userData', JSON.stringify(payload.user));
+            localStorage.setItem('userData', JSON.stringify(normalizedUser));
           }
         } else if (
           payload.requiresVerification ||
@@ -307,8 +335,14 @@ const authSlice = createSlice({
         state.loading = false;
 
         if (payload.valid && payload.user) {
-          state.user = payload.user;
+          const normalizedUser = normalizeUser(payload.user);
+          state.user = normalizedUser;
           state.isAuthenticated = true;
+          
+          // Update localStorage with normalized user data
+          if (typeof window !== 'undefined' && normalizedUser) {
+            localStorage.setItem('userData', JSON.stringify(normalizedUser));
+          }
         } else {
           state.user = null;
           state.token = null;
@@ -330,6 +364,7 @@ const authSlice = createSlice({
           // Create a user object from Google data
           const user = {
             _id: payload.googleId || '',
+            id: payload.googleId || '',
             name: payload.name || '',
             email: payload.email || '',
             profilePicture: payload.picture || '',
@@ -337,7 +372,8 @@ const authSlice = createSlice({
             isEmailVerified: true,
           };
 
-          state.user = user as LoginResponse['user'];
+          const normalizedUser = normalizeUser(user as LoginResponse['user']);
+          state.user = normalizedUser;
           state.token = payload.token;
           state.isAuthenticated = true;
           state.requiresVerification = false;
@@ -346,7 +382,7 @@ const authSlice = createSlice({
           // Save token and user data to localStorage
           if (typeof window !== 'undefined') {
             localStorage.setItem('accessToken', payload.token);
-            localStorage.setItem('userData', JSON.stringify(user));
+            localStorage.setItem('userData', JSON.stringify(normalizedUser));
           }
         }
         // Handle standard API response format
@@ -356,7 +392,8 @@ const authSlice = createSlice({
               ? payload.accessToken
               : payload.accessToken.access_token;
 
-          state.user = payload.user;
+          const normalizedUser = normalizeUser(payload.user);
+          state.user = normalizedUser;
           state.token = accessToken;
           state.isAuthenticated = true;
           state.requiresVerification = false;
@@ -365,7 +402,7 @@ const authSlice = createSlice({
           // Save token and user data to localStorage
           if (typeof window !== 'undefined') {
             localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('userData', JSON.stringify(payload.user));
+            localStorage.setItem('userData', JSON.stringify(normalizedUser));
           }
         }
       })
