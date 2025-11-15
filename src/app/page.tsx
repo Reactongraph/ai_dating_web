@@ -1,4 +1,4 @@
-import AdBanner from '@/components/home/AdBanner';
+// import AdBanner from '@/components/home/AdBanner';
 import HeroSection from '@/components/home/HeroSection';
 import AICompanionsSection from '@/components/home/AICompanionsSection';
 import HowToCreate from '@/components/home/HowToCreate';

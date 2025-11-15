@@ -1,16 +1,37 @@
 import { isRejectedWithValue } from '@reduxjs/toolkit';
-import type { Middleware } from '@reduxjs/toolkit';
+import type { Middleware, AnyAction } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
+
+/**
+ * RTK Query error payload type
+ */
+interface RTKQueryErrorPayload {
+  status?: number | string;
+  data?: {
+    message?: string;
+    error?: string;
+  };
+  error?: string;
+  name?: string;
+}
+
+/**
+ * RTK Query meta arg type
+ */
+interface RTKQueryMetaArg {
+  endpointName?: string;
+  type?: string;
+}
 
 /**
  * RTK Query error logging middleware
  * Catches all RTK Query errors and displays toast notifications
  */
 export const rtkQueryErrorLogger: Middleware =
-  () => (next) => (action: any) => {
+  () => (next) => (action: AnyAction) => {
     // Check if this is a rejected action from RTK Query
     if (isRejectedWithValue(action)) {
-      const { payload } = action;
+      const payload = action.payload as RTKQueryErrorPayload | undefined;
 
       // Log the full action for debugging
       console.log('RTK Query Rejection Details:', {
@@ -40,8 +61,9 @@ export const rtkQueryErrorLogger: Middleware =
 
       if (shouldIgnore) {
         // Log for debugging but don't show toast
+        const metaArg = action.meta?.arg as RTKQueryMetaArg | undefined;
         console.log('RTK Query - Ignored rejection:', {
-          endpoint: action.meta?.arg?.endpointName,
+          endpoint: metaArg?.endpointName,
           reason: 'Query cancelled, aborted, or skipped',
           status,
           error,
@@ -97,9 +119,10 @@ export const rtkQueryErrorLogger: Middleware =
 
       // Check if this endpoint should be silent
       // RTK Query stores endpoint name in different places depending on the action type
+      const metaArg = action.meta?.arg as RTKQueryMetaArg | undefined;
       const endpointName =
-        action.meta?.arg?.endpointName ||
-        action.meta?.arg?.type ||
+        metaArg?.endpointName ||
+        metaArg?.type ||
         action.type?.split('/')?.[0]?.replace('executeQuery', '') ||
         action.type?.split('/')?.[0]?.replace('executeMutation', '');
       
