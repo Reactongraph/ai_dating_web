@@ -14,12 +14,7 @@ interface OtpFormData {
   otp: string;
 }
 
-const OtpModal = ({
-  isOpen,
-  onClose,
-  phoneNumber,
-  onVerificationComplete,
-}: OtpModalProps) => {
+const OtpModal = ({ isOpen, onClose, phoneNumber, onVerificationComplete }: OtpModalProps) => {
   const [otp, setOtp] = useState('');
   const {
     handleSubmit,
@@ -31,7 +26,6 @@ const OtpModal = ({
   const onSubmit = async (data: OtpFormData) => {
     try {
       // Here you would typically make an API call to verify OTP
-      console.log('Verifying OTP:', otp);
       onVerificationComplete();
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,7 +50,7 @@ const OtpModal = ({
             value={otp}
             onChange={setOtp}
             numInputs={6}
-            renderInput={(props) => (
+            renderInput={props => (
               <input
                 {...props}
                 className="!w-12 !h-12 !bg-gray-2a text-white border-0 rounded-lg mx-1 text-center text-xl"
@@ -65,9 +59,7 @@ const OtpModal = ({
             containerStyle="justify-center"
           />
           {errors.otp && (
-            <p className="mt-2 text-sm text-red-500 text-center">
-              {errors.otp.message}
-            </p>
+            <p className="mt-2 text-sm text-red-500 text-center">{errors.otp.message}</p>
           )}
         </div>
 

@@ -9,7 +9,7 @@ export default function ProfileLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector(state => state.auth);
   const router = useRouter();
 
   // Redirect to login if not authenticated

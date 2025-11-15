@@ -6,10 +6,6 @@ export const metadata: Metadata = {
   description: 'Browse and manage your AI companion collection',
 };
 
-export default function CollectionLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function CollectionLayout({ children }: { children: React.ReactNode }) {
   return <GlobalLayout>{children}</GlobalLayout>;
 }

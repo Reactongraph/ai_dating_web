@@ -20,7 +20,7 @@ export default function ChatPage() {
   const searchParams = useSearchParams();
 
   // Check if user is authenticated
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
 
   // Fetch chat list from API
   const {
@@ -32,22 +32,20 @@ export default function ChatPage() {
     { page: currentPage, limit },
     {
       skip: !isAuthenticated,
-    }
+    },
   );
 
   // Memoize chats array to avoid recreating on every render
   const chats: Chat[] = useMemo(
     () =>
-      chatListResponse?.data?.chats
-    ? mapChatListItemsToChats(chatListResponse.data.chats)
-        : [],
-    [chatListResponse?.data?.chats]
+      chatListResponse?.data?.chats ? mapChatListItemsToChats(chatListResponse.data.chats) : [],
+    [chatListResponse?.data?.chats],
   );
 
   // Memoize selected chat to avoid recalculation
   const selectedChat = useMemo(
-    () => chats.find((chat) => chat.id === selectedChatId) || null,
-    [chats, selectedChatId]
+    () => chats.find(chat => chat.id === selectedChatId) || null,
+    [chats, selectedChatId],
   );
 
   // Handle chatId from URL parameters
@@ -87,28 +85,26 @@ export default function ChatPage() {
 
   const handleLoadMore = useCallback(() => {
     if (chatListResponse?.data?.pagination.hasNextPage) {
-      setCurrentPage((p) => p + 1);
+      setCurrentPage(p => p + 1);
     }
   }, [chatListResponse?.data?.pagination.hasNextPage]);
 
   const handleRetry = useCallback(() => refetch(), [refetch]);
-  
+
   const handleBackToList = useCallback(() => setSelectedChatId(null), []);
 
   // Memoize computed values
   const showOnlyChatList = useMemo(
-    () =>
-    (screenSize !== 'xl' && !selectedChatId) ||
-      (screenSize === 'lg' && !selectedChatId),
-    [screenSize, selectedChatId]
+    () => (screenSize !== 'xl' && !selectedChatId) || (screenSize === 'lg' && !selectedChatId),
+    [screenSize, selectedChatId],
   );
 
   const showChatArea = useMemo(
     () =>
-    (screenSize === 'sm' && selectedChatId && activeTab === 'chat') ||
-    (screenSize === 'lg' && selectedChatId) ||
+      (screenSize === 'sm' && selectedChatId && activeTab === 'chat') ||
+      (screenSize === 'lg' && selectedChatId) ||
       screenSize === 'xl',
-    [screenSize, selectedChatId, activeTab]
+    [screenSize, selectedChatId, activeTab],
   );
 
   return (
@@ -126,9 +122,7 @@ export default function ChatPage() {
         >
           {/* Sidebar Header (fixed) */}
           <div className="p-4 md:p-6 border-b border-gray-800 shrink-0">
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">
-              Chats
-            </h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6">Chats</h1>
 
             <div className="flex">
               <button className="text-white text-base md:text-lg font-medium pb-2 border-b-2 border-white">
@@ -166,12 +160,7 @@ export default function ChatPage() {
                     onClick={handleBackToList}
                     className="text-gray-400 hover:text-white p-2 mr-2"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -215,19 +204,15 @@ export default function ChatPage() {
             )}
 
             {/* Mobile profile tab */}
-            {screenSize === 'sm' &&
-              selectedChatId &&
-              activeTab === 'profile' && (
-                <div className="flex-1 min-w-0 overflow-y-auto">
-                  <ProfilePanel
-                    user={selectedChat?.user || null}
-                    generatedImages={
-                      selectedChat?.generatedImages?.images || []
-                    }
-                    onRefetchImages={refetch}
-                  />
-                </div>
-              )}
+            {screenSize === 'sm' && selectedChatId && activeTab === 'profile' && (
+              <div className="flex-1 min-w-0 overflow-y-auto">
+                <ProfilePanel
+                  user={selectedChat?.user || null}
+                  generatedImages={selectedChat?.generatedImages?.images || []}
+                  onRefetchImages={refetch}
+                />
+              </div>
+            )}
           </div>
         ) : null}
 

@@ -7,11 +7,7 @@ import CompanionsLayout from '@/components/layouts/CompanionsLayout';
 import { mapBotProfilesToCompanions } from '@/utils/mappers';
 
 export default function AnimePage() {
-  const {
-    data: botProfiles,
-    isLoading,
-    error,
-  } = useGetBotProfilesQuery('anime');
+  const { data: botProfiles, isLoading, error } = useGetBotProfilesQuery('anime');
 
   return (
     <CompanionsLayout
@@ -36,9 +32,7 @@ export default function AnimePage() {
       {/* Error State */}
       {error && (
         <div className="col-span-3 flex justify-center items-center h-[480px]">
-          <p className="text-red-500">
-            Failed to load companions. Please try again later.
-          </p>
+          <p className="text-red-500">Failed to load companions. Please try again later.</p>
         </div>
       )}
 
@@ -46,7 +40,7 @@ export default function AnimePage() {
       {!isLoading &&
         !error &&
         botProfiles?.botProfiles &&
-        mapBotProfilesToCompanions(botProfiles.botProfiles).map((companion) => (
+        mapBotProfilesToCompanions(botProfiles.botProfiles).map(companion => (
           <CompanionCard key={companion.id} companion={companion} />
         ))}
     </CompanionsLayout>

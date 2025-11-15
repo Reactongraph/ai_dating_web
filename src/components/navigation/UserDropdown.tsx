@@ -1,12 +1,6 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
-import {
-  FiLogIn,
-  FiSettings,
-  FiLogOut,
-  FiUser,
-  FiUserPlus,
-} from 'react-icons/fi';
+import { FiLogIn, FiSettings, FiLogOut, FiUser, FiUserPlus } from 'react-icons/fi';
 import { RiVipCrownFill } from 'react-icons/ri';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 // Removed useLogoutMutation import as we don't need to call the API
@@ -30,24 +24,16 @@ interface UserDropdownProps {
   onSignupClick: () => void;
 }
 
-const UserDropdown = ({
-  isOpen,
-  onClose,
-  onLoginClick,
-  onSignupClick,
-}: UserDropdownProps) => {
+const UserDropdown = ({ isOpen, onClose, onLoginClick, onSignupClick }: UserDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user } = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
   const { showSnackbar } = useSnackbar();
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
@@ -181,11 +167,7 @@ const UserDropdown = ({
           );
 
           return option.onClick ? (
-            <button
-              key={index}
-              onClick={option.onClick}
-              className={commonClasses}
-            >
+            <button key={index} onClick={option.onClick} className={commonClasses}>
               {content}
             </button>
           ) : (

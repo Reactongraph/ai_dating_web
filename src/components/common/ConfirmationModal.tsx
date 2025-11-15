@@ -50,10 +50,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Enhanced Backdrop - subtle overlay that keeps page visible */}
-      <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" onClick={onClose} />
 
       {/* Enhanced Modal */}
       <div className="relative bg-gray-800/95 backdrop-blur-sm rounded-2xl p-8 mx-4 max-w-sm w-full border border-gray-600/50 shadow-2xl">
@@ -77,16 +74,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           </div>
 
           {/* Enhanced Title */}
-          <h3 className="text-lg font-semibold text-white mb-4 leading-tight px-2">
-            {title}
-          </h3>
+          <h3 className="text-lg font-semibold text-white mb-4 leading-tight px-2">{title}</h3>
 
           {/* Message (only show if provided) */}
-          {message && (
-            <p className="text-gray-300 mb-6 text-sm leading-relaxed">
-              {message}
-            </p>
-          )}
+          {message && <p className="text-gray-300 mb-6 text-sm leading-relaxed">{message}</p>}
 
           {/* Enhanced Buttons */}
           <div className="space-y-3">

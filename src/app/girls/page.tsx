@@ -8,11 +8,7 @@ import { mapBotProfilesToCompanions } from '@/utils/mappers';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
 
 export default function GirlsPage() {
-  const {
-    data: botProfiles,
-    isLoading,
-    error,
-  } = useGetBotProfilesQuery('girl');
+  const { data: botProfiles, isLoading, error } = useGetBotProfilesQuery('girl');
 
   const { startChat } = useChatInitiation();
 
@@ -54,7 +50,7 @@ export default function GirlsPage() {
       {!isLoading &&
         !error &&
         botProfiles?.botProfiles &&
-        mapBotProfilesToCompanions(botProfiles.botProfiles).map((companion) => (
+        mapBotProfilesToCompanions(botProfiles.botProfiles).map(companion => (
           <CompanionCard
             key={companion.id}
             companion={companion}

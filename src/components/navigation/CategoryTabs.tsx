@@ -18,7 +18,7 @@ const CategoryTabs = ({ tabs, activeTab, onTabChange }: CategoryTabsProps) => {
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
-    const activeTabIndex = tabs.findIndex((tab) => tab.id === activeTab);
+    const activeTabIndex = tabs.findIndex(tab => tab.id === activeTab);
     const activeTabElement = tabsRef.current[activeTabIndex];
 
     if (activeTabElement) {
@@ -36,14 +36,12 @@ const CategoryTabs = ({ tabs, activeTab, onTabChange }: CategoryTabsProps) => {
         {tabs.map((tab, index) => (
           <button
             key={tab.id}
-            ref={(el) => {
+            ref={el => {
               tabsRef.current[index] = el;
             }}
             onClick={() => onTabChange(tab.id)}
             className={`relative py-2  sm:text-base md:text-lg transition-colors duration-200 ${
-              activeTab === tab.id
-                ? 'text-white'
-                : 'text-gray-666 hover:text-gray-300'
+              activeTab === tab.id ? 'text-white' : 'text-gray-666 hover:text-gray-300'
             }`}
           >
             {tab.label}

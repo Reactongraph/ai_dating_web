@@ -2,9 +2,7 @@
 
 import { useState } from 'react';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
-import EnhancedCompanionCard, {
-  Companion,
-} from '@/components/cards/EnhancedCompanionCard';
+import EnhancedCompanionCard, { Companion } from '@/components/cards/EnhancedCompanionCard';
 import Image from 'next/image';
 import { useGetUserBotProfilesQuery } from '@/redux/services/botProfilesApi';
 import { mapBotProfilesToEnhancedCompanions } from '@/utils/mappers';
@@ -17,7 +15,7 @@ export default function MyAIPage() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
   const { startChat } = useChatInitiation();
 
   const {
@@ -45,12 +43,9 @@ export default function MyAIPage() {
       {/* Header Section */}
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="sm:text-xl md:text-2xl font-bold text-white mb-4">
-            My AI
-          </h1>
+          <h1 className="sm:text-xl md:text-2xl font-bold text-white mb-4">My AI</h1>
           <p className="text-gray-400 text-lg">
-            Your characters come to life here — created by you, ready to chat
-            anytime.
+            Your characters come to life here — created by you, ready to chat anytime.
           </p>
         </div>
       </div>
@@ -85,9 +80,7 @@ export default function MyAIPage() {
           {/* Loading State */}
           {isAuthenticated && isLoading && (
             <div className="col-span-full flex justify-center items-center py-12">
-              <div className="text-white text-lg">
-                Loading your AI companions...
-              </div>
+              <div className="text-white text-lg">Loading your AI companions...</div>
             </div>
           )}
 
@@ -101,35 +94,25 @@ export default function MyAIPage() {
           )}
 
           {/* Empty State */}
-          {isAuthenticated &&
-            !isLoading &&
-            !error &&
-            companions.length === 0 && (
-              <div className="col-span-full flex justify-center items-center py-12">
-                <div className="text-gray-400 text-lg text-center">
-                  <p>You haven&apos;t created any AI companions yet.</p>
-                  <p className="mt-2">
-                    Click &quot;Create AI Character&quot; to get started!
-                  </p>
-                </div>
+          {isAuthenticated && !isLoading && !error && companions.length === 0 && (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <div className="text-gray-400 text-lg text-center">
+                <p>You haven&apos;t created any AI companions yet.</p>
+                <p className="mt-2">Click &quot;Create AI Character&quot; to get started!</p>
               </div>
-            )}
+            </div>
+          )}
 
           {/* Existing AI Companions */}
           {isAuthenticated &&
             !isLoading &&
             !error &&
-            companions.map((companion) => (
+            companions.map(companion => (
               <EnhancedCompanionCard
                 key={companion.id}
                 companion={companion}
                 topRightIcon={
-                  <Image
-                    src="/assets/ping_chat_icon.svg"
-                    alt="Chat"
-                    width={26}
-                    height={26}
-                  />
+                  <Image src="/assets/ping_chat_icon.svg" alt="Chat" width={26} height={26} />
                 }
                 onIconClick={() => handleIconClick(companion.id)}
                 onCardClick={() => handleCardClick(companion.id)}

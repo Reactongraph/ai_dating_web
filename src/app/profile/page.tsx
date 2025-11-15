@@ -26,7 +26,7 @@ export default function ProfilePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const { showSnackbar } = useSnackbar();
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector(state => state.auth);
 
   // Get userId from auth state
   const userId = user?._id || '';
@@ -43,8 +43,7 @@ export default function ProfilePage() {
   const profileData = profileResponse?.user;
 
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
-  const [uploadProfilePicture, { isLoading: isUploading }] =
-    useUploadProfilePictureMutation();
+  const [uploadProfilePicture, { isLoading: isUploading }] = useUploadProfilePictureMutation();
 
   const {
     register,
@@ -75,8 +74,7 @@ export default function ProfilePage() {
         setValue('name', userData.name || '');
         setValue('email', userData.email || '');
         // Handle countryCode - backend stores as number, convert to string with + prefix for dropdown
-        const countryCodeValue =
-          (userData as { countryCode?: number }).countryCode;
+        const countryCodeValue = (userData as { countryCode?: number }).countryCode;
         // Format country code: backend sends number (e.g., 1), convert to string with + prefix (e.g., "+1")
         const formattedCountryCode =
           countryCodeValue !== undefined && countryCodeValue !== null
@@ -90,22 +88,17 @@ export default function ProfilePage() {
             : '';
         setValue('phone', phoneValue);
         // Backend uses 'man' | 'woman' | 'other' directly, so no mapping needed
-        const genderValue =
-          ((userData.gender as 'man' | 'woman' | 'other') || 'other') as
-            | 'man'
-            | 'woman'
-            | 'other';
+        const genderValue = ((userData.gender as 'man' | 'woman' | 'other') || 'other') as
+          | 'man'
+          | 'woman'
+          | 'other';
         setValue('gender', genderValue);
         // Handle dateOfBirth - API uses birthDate, convert ISO date to YYYY-MM-DD format
         const birthDateValue =
-          ((userData as { birthDate?: string | Date }).birthDate as
-            | string
-            | Date) ||
-          ((userData as { dateOfBirth?: string | Date }).dateOfBirth as
-            | string
-            | Date) ||
+          ((userData as { birthDate?: string | Date }).birthDate as string | Date) ||
+          ((userData as { dateOfBirth?: string | Date }).dateOfBirth as string | Date) ||
           '';
-        
+
         // Convert ISO date string (e.g., "1988-01-01T00:00:00.000Z") to YYYY-MM-DD format
         let formattedDate = '';
         if (birthDateValue) {
@@ -153,10 +146,7 @@ export default function ProfilePage() {
         }).unwrap();
 
         if (imageResponse.statusCode === 200) {
-          showSnackbar(
-            imageResponse.message || 'Profile image updated successfully!',
-            'success'
-          );
+          showSnackbar(imageResponse.message || 'Profile image updated successfully!', 'success');
           // Update preview with the new profile image URL if available
           if (imageResponse.profileImage?.s3Location) {
             setPreviewUrl(imageResponse.profileImage.s3Location);
@@ -165,13 +155,15 @@ export default function ProfilePage() {
           } else if (imageResponse.user?.profileImageUrl) {
             setPreviewUrl(imageResponse.user.profileImageUrl);
           } else if (
-            (imageResponse.user as { profileImage?: { s3Location?: string } })
-              ?.profileImage?.s3Location
+            (imageResponse.user as { profileImage?: { s3Location?: string } })?.profileImage
+              ?.s3Location
           ) {
             setPreviewUrl(
-              (imageResponse.user as {
-                profileImage?: { s3Location?: string };
-              }).profileImage?.s3Location as string
+              (
+                imageResponse.user as {
+                  profileImage?: { s3Location?: string };
+                }
+              ).profileImage?.s3Location as string,
             );
           }
           // Refetch profile data to get updated user information
@@ -226,10 +218,7 @@ export default function ProfilePage() {
       }).unwrap();
 
       if (response.statusCode === 200) {
-        showSnackbar(
-          response.message || 'Profile updated successfully!',
-          'success'
-        );
+        showSnackbar(response.message || 'Profile updated successfully!', 'success');
       }
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -262,24 +251,20 @@ export default function ProfilePage() {
                 const profileImageUrl =
                   previewUrl ||
                   (profileData &&
-                    (profileData as { profileImage?: { s3Location?: string } })
-                      ?.profileImage?.s3Location) ||
+                    (profileData as { profileImage?: { s3Location?: string } })?.profileImage
+                      ?.s3Location) ||
                   (profileData &&
-                    (profileData as { profileImage?: { url?: string } })
-                      ?.profileImage?.url) ||
-                  (profileData &&
-                    (profileData as { profileImageUrl?: string })
-                      ?.profileImageUrl) ||
+                    (profileData as { profileImage?: { url?: string } })?.profileImage?.url) ||
+                  (profileData && (profileData as { profileImageUrl?: string })?.profileImageUrl) ||
                   (profileData?.photoUrl &&
                   Array.isArray(profileData.photoUrl) &&
                   profileData.photoUrl.length > 0
                     ? (profileData.photoUrl[0] as string)
                     : '') ||
                   (user &&
-                    (user as { profileImage?: { s3Location?: string } })
-                      ?.profileImage?.s3Location) ||
-                  (user &&
-                    (user as { profileImageUrl?: string })?.profileImageUrl) ||
+                    (user as { profileImage?: { s3Location?: string } })?.profileImage
+                      ?.s3Location) ||
+                  (user && (user as { profileImageUrl?: string })?.profileImageUrl) ||
                   (user?.profilePicture as string) ||
                   '';
 
@@ -324,10 +309,7 @@ export default function ProfilePage() {
             <form onSubmit={handleSubmit(onSubmit)}>
               {/* Full Name */}
               <div className="mb-3 sm:mb-4">
-                <label
-                  htmlFor="name"
-                  className="block text-xs text-gray-400 mb-1"
-                >
+                <label htmlFor="name" className="block text-xs text-gray-400 mb-1">
                   Full Name
                 </label>
                 <input
@@ -340,10 +322,7 @@ export default function ProfilePage() {
 
               {/* Email */}
               <div className="mb-3 sm:mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-xs text-gray-400 mb-1"
-                >
+                <label htmlFor="email" className="block text-xs text-gray-400 mb-1">
                   Email Id
                 </label>
                 <input
@@ -357,10 +336,7 @@ export default function ProfilePage() {
 
               {/* Phone Number with Country Code */}
               <div className="mb-3 sm:mb-4">
-                <label
-                  htmlFor="phone"
-                  className="block text-xs text-gray-400 mb-1"
-                >
+                <label htmlFor="phone" className="block text-xs text-gray-400 mb-1">
                   Phone Number
                 </label>
                 <div className="flex gap-2">
@@ -423,9 +399,7 @@ export default function ProfilePage() {
 
               {/* Gender Selection */}
               <div className="mb-3 sm:mb-4">
-                <label className="block text-xs text-gray-400 mb-1">
-                  Select Gender
-                </label>
+                <label className="block text-xs text-gray-400 mb-1">Select Gender</label>
                 <div className="grid grid-cols-3 gap-1 sm:gap-2">
                   <Controller
                     name="gender"
@@ -473,10 +447,7 @@ export default function ProfilePage() {
 
               {/* Date of Birth */}
               <div className="mb-3 sm:mb-4">
-                <label
-                  htmlFor="dateOfBirth"
-                  className="block text-xs text-gray-400 mb-1"
-                >
+                <label htmlFor="dateOfBirth" className="block text-xs text-gray-400 mb-1">
                   Date of Birth
                 </label>
                 <input
@@ -484,25 +455,18 @@ export default function ProfilePage() {
                   type="date"
                   id="dateOfBirth"
                   max={
-                    new Date(
-                      new Date().setFullYear(new Date().getFullYear() - 18)
-                    )
+                    new Date(new Date().setFullYear(new Date().getFullYear() - 18))
                       .toISOString()
                       .split('T')[0]
                   }
                   className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
-                <p className="mt-1 text-xs text-gray-500">
-                  Your age cannot be changed later
-                </p>
+                <p className="mt-1 text-xs text-gray-500">Your age cannot be changed later</p>
               </div>
 
               {/* About Me */}
               <div className="mb-6">
-                <label
-                  htmlFor="aboutMe"
-                  className="block text-xs text-gray-400 mb-1"
-                >
+                <label htmlFor="aboutMe" className="block text-xs text-gray-400 mb-1">
                   About Me
                 </label>
                 <textarea
@@ -524,9 +488,7 @@ export default function ProfilePage() {
               <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h3 className="text-sm sm:text-base font-medium">
-                      Current Plan
-                    </h3>
+                    <h3 className="text-sm sm:text-base font-medium">Current Plan</h3>
                     <p className="text-cyan-400">
                       {profileData?.subscriber?.isPremiumSubscriber
                         ? 'Premium'
@@ -546,9 +508,7 @@ export default function ProfilePage() {
 
               {/* Language Selection */}
               <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
-                <label className="block text-xs text-gray-400 mb-2">
-                  Language
-                </label>
+                <label className="block text-xs text-gray-400 mb-2">Language</label>
                 <div className="relative">
                   <select
                     className="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:outline-none appearance-none"
@@ -578,9 +538,7 @@ export default function ProfilePage() {
 
               {/* Language Section (second one for Notifications) */}
               <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
-                <label className="block text-xs text-gray-400 mb-2">
-                  Language
-                </label>
+                <label className="block text-xs text-gray-400 mb-2">Language</label>
                 <label className="flex items-center space-x-3">
                   <input
                     type="checkbox"
@@ -588,8 +546,8 @@ export default function ProfilePage() {
                     defaultChecked
                   />
                   <span className="text-sm text-gray-400">
-                    You&apos;ll automatically receive notifications from us. If
-                    you prefer not to, simply uncheck the box to opt out.
+                    You&apos;ll automatically receive notifications from us. If you prefer not to,
+                    simply uncheck the box to opt out.
                   </span>
                 </label>
               </div>
@@ -598,8 +556,8 @@ export default function ProfilePage() {
               <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <div className="flex justify-between items-center">
                   <p className="text-gray-400 text-xs sm:text-sm">
-                    If you no longer wish to use this account, you can delete it
-                    along with all saved data. Please proceed with caution.
+                    If you no longer wish to use this account, you can delete it along with all
+                    saved data. Please proceed with caution.
                   </p>
                   <button
                     type="button"

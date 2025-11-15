@@ -6,10 +6,6 @@ export const metadata: Metadata = {
   description: 'Chat with your AI companions',
 };
 
-export default function ChatLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ChatLayout({ children }: { children: React.ReactNode }) {
   return <LayoutWithoutFooter>{children}</LayoutWithoutFooter>;
 }

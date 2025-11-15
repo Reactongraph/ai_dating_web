@@ -71,9 +71,7 @@ export const authApi = createApi({
       // Get token from auth state or localStorage
       const token =
         (getState() as { auth: { token: string | null } }).auth.token ||
-        (typeof window !== 'undefined'
-          ? localStorage.getItem('accessToken')
-          : null);
+        (typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null);
 
       // If token exists, add authorization header
       if (token) {
@@ -87,16 +85,16 @@ export const authApi = createApi({
       return (response.status >= 200 && response.status < 300) || response.status === 304;
     },
   }),
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
-      query: (credentials) => ({
+      query: credentials => ({
         url: '/users/email-login',
         method: 'POST',
         body: credentials,
       }),
     }),
     signup: builder.mutation<SignupResponse, SignupRequest>({
-      query: (userData) => ({
+      query: userData => ({
         url: '/users/email-signup',
         method: 'POST',
         body: userData,
@@ -108,19 +106,12 @@ export const authApi = createApi({
         method: 'POST',
       }),
     }),
-    verifyToken: builder.query<
-      { valid: boolean; user?: LoginResponse['user'] },
-      void
-    >({
+    verifyToken: builder.query<{ valid: boolean; user?: LoginResponse['user'] }, void>({
       query: () => '/api/users/verify-token',
     }),
   }),
 });
 
 // Export hooks for using the API endpoints
-export const {
-  useLoginMutation,
-  useSignupMutation,
-  useLogoutMutation,
-  useVerifyTokenQuery,
-} = authApi;
+export const { useLoginMutation, useSignupMutation, useLogoutMutation, useVerifyTokenQuery } =
+  authApi;

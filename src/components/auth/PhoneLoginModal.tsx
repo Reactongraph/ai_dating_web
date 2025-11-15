@@ -14,11 +14,7 @@ interface PhoneLoginFormData {
   phoneNumber: string;
 }
 
-const PhoneLoginModal = ({
-  isOpen,
-  onClose,
-  onOtpSent,
-}: PhoneLoginModalProps) => {
+const PhoneLoginModal = ({ isOpen, onClose, onOtpSent }: PhoneLoginModalProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const {
     handleSubmit,
@@ -31,7 +27,7 @@ const PhoneLoginModal = ({
   const onSubmit = async (data: PhoneLoginFormData) => {
     try {
       // Here you would typically make an API call to send OTP
-      console.log('Sending OTP to:', phoneNumber);
+      // console.log('Sending OTP to:', phoneNumber);
       onOtpSent(phoneNumber);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -69,16 +65,14 @@ const PhoneLoginModal = ({
             />
           </div>
           {errors.phoneNumber && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.phoneNumber.message}
-            </p>
+            <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>
           )}
         </div>
 
         <div>
           <p className="text-sm text-gray-400 mb-6">
-            Add your mobile number. We will send you a verification code to
-            verify your mobile number.
+            Add your mobile number. We will send you a verification code to verify your mobile
+            number.
           </p>
           <button
             type="submit"

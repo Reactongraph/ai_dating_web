@@ -71,7 +71,7 @@ const characterAttributesSlice = createSlice({
       return initialState;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Add matchers for each query
     builder
       // Styles
@@ -79,105 +79,105 @@ const characterAttributesSlice = createSlice({
         characterAttributesApi.endpoints.getStyles.matchFulfilled,
         (state, { payload }) => {
           state.styles = payload.relationships;
-        }
+        },
       )
       // Ethnicities
       .addMatcher(
         characterAttributesApi.endpoints.getEthnicities.matchFulfilled,
         (state, { payload }) => {
           state.ethnicities = payload.ethinicities;
-        }
+        },
       )
       // Eye Colors
       .addMatcher(
         characterAttributesApi.endpoints.getEyeColors.matchFulfilled,
         (state, { payload }) => {
           state.eyeColors = payload.eyeColors;
-        }
+        },
       )
       // Hair Styles
       .addMatcher(
         characterAttributesApi.endpoints.getHairStyles.matchFulfilled,
         (state, { payload }) => {
           state.hairStyles = payload.hairStyles;
-        }
+        },
       )
       // Hair Colors
       .addMatcher(
         characterAttributesApi.endpoints.getHairColors.matchFulfilled,
         (state, { payload }) => {
           state.hairColors = payload.hairColors;
-        }
+        },
       )
       // Body Types
       .addMatcher(
         characterAttributesApi.endpoints.getBodyTypes.matchFulfilled,
         (state, { payload }) => {
           state.bodyTypes = payload.bodyTypes;
-        }
+        },
       )
       // Breast Sizes
       .addMatcher(
         characterAttributesApi.endpoints.getBreastSizes.matchFulfilled,
         (state, { payload }) => {
           state.breastSizes = payload.breastSizes;
-        }
+        },
       )
       // Butt Sizes
       .addMatcher(
         characterAttributesApi.endpoints.getButtSizes.matchFulfilled,
         (state, { payload }) => {
           state.buttSizes = payload.buttSizes;
-        }
+        },
       )
       // Clothings
       .addMatcher(
         characterAttributesApi.endpoints.getClothings.matchFulfilled,
         (state, { payload }) => {
           state.clothings = payload.clothings;
-        }
+        },
       )
       // Personalities
       .addMatcher(
         characterAttributesApi.endpoints.getPersonalities.matchFulfilled,
         (state, { payload }) => {
           state.personalities = payload.personalityTypes;
-        }
+        },
       )
       // Occupations
       .addMatcher(
         characterAttributesApi.endpoints.getOccupations.matchFulfilled,
         (state, { payload }) => {
           state.occupations = payload.occupations;
-        }
+        },
       )
       // Relationships
       .addMatcher(
         characterAttributesApi.endpoints.getRelationships.matchFulfilled,
         (state, { payload }) => {
           state.relationships = payload.relationships;
-        }
+        },
       )
       // Orientations
       .addMatcher(
         characterAttributesApi.endpoints.getOrientations.matchFulfilled,
         (state, { payload }) => {
           state.orientations = payload.orientations;
-        }
+        },
       )
       // Educations
       .addMatcher(
         characterAttributesApi.endpoints.getEducations.matchFulfilled,
         (state, { payload }) => {
           state.educations = payload.educations;
-        }
+        },
       )
       // Religions
       .addMatcher(
         characterAttributesApi.endpoints.getReligions.matchFulfilled,
         (state, { payload }) => {
           state.religions = payload.religions;
-        }
+        },
       );
   },
 });

@@ -1,35 +1,22 @@
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useCallback,
-} from 'react';
+import React, { createContext, useContext, ReactNode, useCallback } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export type SnackbarType = 'success' | 'error' | 'info' | 'warning';
 
 interface SnackbarContextType {
-  showSnackbar: (
-    message: string,
-    type?: SnackbarType,
-    duration?: number
-  ) => void;
+  showSnackbar: (message: string, type?: SnackbarType, duration?: number) => void;
   hideSnackbar: () => void;
 }
 
-const SnackbarContext = createContext<SnackbarContextType | undefined>(
-  undefined
-);
+const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined);
 
 export const useCustomSnackbar = () => {
   const context = useContext(SnackbarContext);
   if (!context) {
-    throw new Error(
-      'useCustomSnackbar must be used within a CustomSnackbarProvider'
-    );
+    throw new Error('useCustomSnackbar must be used within a CustomSnackbarProvider');
   }
   return context;
 };
@@ -66,7 +53,7 @@ function SnackbarWrapper({ children }: { children: ReactNode }) {
           break;
       }
     },
-    []
+    [],
   );
 
   const hideSnackbar = useCallback(() => {
@@ -80,12 +67,9 @@ function SnackbarWrapper({ children }: { children: ReactNode }) {
   );
 }
 
-export function CustomSnackbarProvider({
-  children,
-}: CustomSnackbarProviderProps) {
+export function CustomSnackbarProvider({ children }: CustomSnackbarProviderProps) {
   return (
     <>
-      {/* {console.log('CustomSnackbarProvider')} */}
       <SnackbarWrapper>{children}</SnackbarWrapper>
       <ToastContainer
         position="top-right"

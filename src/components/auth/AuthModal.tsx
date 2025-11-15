@@ -10,13 +10,7 @@ interface AuthModalProps {
   subtitle?: string;
 }
 
-const AuthModal = ({
-  isOpen,
-  onClose,
-  children,
-  title,
-  subtitle,
-}: AuthModalProps) => {
+const AuthModal = ({ isOpen, onClose, children, title, subtitle }: AuthModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -52,26 +46,12 @@ const AuthModal = ({
               </div>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center space-x-2 bg-black/30 backdrop-blur-sm rounded-lg px-4 py-2 w-fit">
-                  <Image
-                    src="/assets/chat.svg"
-                    alt="Chat"
-                    width={20}
-                    height={20}
-                  />
-                  <span className="text-sm text-white">
-                    Limitless Chat, Infinite Possibilities
-                  </span>
+                  <Image src="/assets/chat.svg" alt="Chat" width={20} height={20} />
+                  <span className="text-sm text-white">Limitless Chat, Infinite Possibilities</span>
                 </div>
                 <div className="flex items-center space-x-2 bg-black/30 backdrop-blur-sm rounded-lg px-4 py-2 w-fit">
-                  <Image
-                    src="/assets/wand.svg"
-                    alt="Unique"
-                    width={20}
-                    height={20}
-                  />
-                  <span className="text-sm text-white">
-                    AI-Created Images as Unique as You Are
-                  </span>
+                  <Image src="/assets/wand.svg" alt="Unique" width={20} height={20} />
+                  <span className="text-sm text-white">AI-Created Images as Unique as You Are</span>
                 </div>
               </div>
             </div>

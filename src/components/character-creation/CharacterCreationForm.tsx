@@ -34,7 +34,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
   const router = useRouter();
   const { handleSubmit } = useFormContext<CharacterFormData>();
   const [isGenerating, setIsGenerating] = useState(false);
-  const botType = useAppSelector((state) => state.characterAttributes.botType);
+  const botType = useAppSelector(state => state.characterAttributes.botType);
   const [generateAvatar] = useGenerateAvatarMutation();
   const { showSnackbar } = useSnackbar();
 
@@ -77,7 +77,11 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
 
     // Get userId from localStorage
     const userData = localStorage.getItem('userData');
-    const userId = userData ? JSON.parse(userData).id ? JSON.parse(userData).id: JSON.parse(userData)._id : null;
+    const userId = userData
+      ? JSON.parse(userData).id
+        ? JSON.parse(userData).id
+        : JSON.parse(userData)._id
+      : null;
     if (!userId) {
       showSnackbar('User ID not found. Please log in.', 'error');
       return;
@@ -123,10 +127,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
         showSnackbar('Failed to generate avatar', 'error');
       }
     } catch (err) {
-      showSnackbar(
-        err instanceof Error ? err.message : 'Failed to generate avatar',
-        'error'
-      );
+      showSnackbar(err instanceof Error ? err.message : 'Failed to generate avatar', 'error');
     } finally {
       setIsGenerating(false);
     }
@@ -143,12 +144,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
               disabled={currentStep === 1}
               className="text-white hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -158,20 +154,10 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
               </svg>
             </button>
 
-            <h1 className="text-3xl font-bold text-center">
-              Create AI Character
-            </h1>
+            <h1 className="text-3xl font-bold text-center">Create AI Character</h1>
 
-            <button
-              onClick={onClose}
-              className="text-white hover:text-gray-200"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+            <button onClick={onClose} className="text-white hover:text-gray-200">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

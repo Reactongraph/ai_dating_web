@@ -71,9 +71,7 @@ export const profileApi = createApi({
       // Get token from auth state or localStorage
       const token =
         (getState() as { auth: { token: string | null } }).auth.token ||
-        (typeof window !== 'undefined'
-          ? localStorage.getItem('accessToken')
-          : null);
+        (typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null);
 
       // If token exists, add authorization header
       if (token) {
@@ -82,15 +80,15 @@ export const profileApi = createApi({
 
       return headers;
     },
-    validateStatus: (response) => {
+    validateStatus: response => {
       // Treat 304 Not Modified as successful (cached data is still valid)
       return (response.status >= 200 && response.status < 300) || response.status === 304;
     },
   }),
   tagTypes: ['Profile'],
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getProfile: builder.query<GetProfileResponse, string>({
-      query: (userId) => `/users/get/${userId}`,
+      query: userId => `/users/get/${userId}`,
       providesTags: ['Profile'],
       transformResponse: (response: GetProfileResponse) => {
         // Return the response as-is since it already has the correct structure
@@ -112,10 +110,7 @@ export const profileApi = createApi({
       invalidatesTags: ['Profile'],
     }),
 
-    uploadProfilePicture: builder.mutation<
-      UpdateProfileResponse,
-      { userId: string; file: File }
-    >({
+    uploadProfilePicture: builder.mutation<UpdateProfileResponse, { userId: string; file: File }>({
       query: ({ userId, file }) => {
         const formData = new FormData();
         formData.append('profileImage', file);
@@ -131,8 +126,5 @@ export const profileApi = createApi({
   }),
 });
 
-export const {
-  useGetProfileQuery,
-  useUpdateProfileMutation,
-  useUploadProfilePictureMutation,
-} = profileApi;
+export const { useGetProfileQuery, useUpdateProfileMutation, useUploadProfilePictureMutation } =
+  profileApi;

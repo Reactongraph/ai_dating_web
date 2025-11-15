@@ -9,12 +9,7 @@ interface SidebarProps {
   isMobileOpen: boolean;
 }
 
-const Sidebar = ({
-  isExpanded,
-  onToggle,
-  isMobileView,
-  isMobileOpen,
-}: SidebarProps) => {
+const Sidebar = ({ isExpanded, onToggle, isMobileView, isMobileOpen }: SidebarProps) => {
   const pathname = usePathname();
 
   const isActive = (path: string) => {
@@ -46,16 +41,8 @@ const Sidebar = ({
           </Link>
         )}
         {isExpanded || isMobileView ? (
-          <button
-            onClick={onToggle}
-            className="p-2 hover:bg-background-elevated rounded-lg"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+          <button onClick={onToggle} className="p-2 hover:bg-background-elevated rounded-lg">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -65,16 +52,8 @@ const Sidebar = ({
             </svg>
           </button>
         ) : (
-          <button
-            onClick={onToggle}
-            className="p-2 hover:bg-background-elevated rounded-lg"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+          <button onClick={onToggle} className="p-2 hover:bg-background-elevated rounded-lg">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -92,9 +71,7 @@ const Sidebar = ({
         <Link
           href="/explore"
           className={`flex items-center ${isActive('/explore') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors ${
-            isExpanded || isMobileView
-              ? 'mx-3 px-3 py-2'
-              : 'mx-2 justify-center w-12 h-12'
+            isExpanded || isMobileView ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <svg
@@ -110,9 +87,7 @@ const Sidebar = ({
               d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"
             />
           </svg>
-          {(isExpanded || isMobileView) && (
-            <span className="ml-2 text-sm">Explore</span>
-          )}
+          {(isExpanded || isMobileView) && <span className="ml-2 text-sm">Explore</span>}
         </Link>
 
         {/* Girls - Mobile Only */}
@@ -165,9 +140,7 @@ const Sidebar = ({
         <Link
           href="/collection"
           className={`flex items-center ${isActive('/collection') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors ${
-            isExpanded || isMobileView
-              ? 'mx-3 px-3 py-2'
-              : 'mx-2 justify-center w-12 h-12'
+            isExpanded || isMobileView ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <svg
@@ -183,18 +156,14 @@ const Sidebar = ({
               d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
             />
           </svg>
-          {(isExpanded || isMobileView) && (
-            <span className="ml-2 text-sm">Collection</span>
-          )}
+          {(isExpanded || isMobileView) && <span className="ml-2 text-sm">Collection</span>}
         </Link>
 
         {/* Chat */}
         <Link
           href="/chat"
           className={`flex items-center ${isActive('/chat') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors ${
-            isExpanded || isMobileView
-              ? 'mx-3 px-3 py-2'
-              : 'mx-2 justify-center w-12 h-12'
+            isExpanded || isMobileView ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <svg
@@ -210,27 +179,18 @@ const Sidebar = ({
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          {(isExpanded || isMobileView) && (
-            <span className="ml-2 text-sm">Chat</span>
-          )}
+          {(isExpanded || isMobileView) && <span className="ml-2 text-sm">Chat</span>}
         </Link>
 
         {/* My AI */}
         <Link
           href="/my-ai"
           className={`flex items-center ${isActive('/my-ai') ? 'text-white bg-white-1a' : 'text-text-secondary'} hover:text-white group rounded-xl transition-colors ${
-            isExpanded || isMobileView
-              ? 'mx-3 px-3 py-2'
-              : 'mx-2 justify-center w-12 h-12'
+            isExpanded || isMobileView ? 'mx-3 px-3 py-2' : 'mx-2 justify-center w-12 h-12'
           } hover:bg-white-1a`}
         >
           <div className="relative flex-shrink-0 w-6 h-6">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -240,17 +200,13 @@ const Sidebar = ({
             </svg>
             <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></span>
           </div>
-          {(isExpanded || isMobileView) && (
-            <span className="ml-2 text-sm">My AI</span>
-          )}
+          {(isExpanded || isMobileView) && <span className="ml-2 text-sm">My AI</span>}
         </Link>
 
         {/* Create AI Character Button */}
         <div
           className={
-            isExpanded || isMobileView
-              ? 'px-2 mx-2 mt-2'
-              : 'mx-2 flex justify-center mt-2'
+            isExpanded || isMobileView ? 'px-2 mx-2 mt-2' : 'mx-2 flex justify-center mt-2'
           }
         >
           <Link

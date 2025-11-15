@@ -240,14 +240,10 @@ export const chatApi = createApi({
       const state = getState() as { auth: { token: string | null } };
       const token = state.auth.token;
 
-      console.log('Chat API - Token:', token);
-      console.log('Chat API - State:', state);
-
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
-        console.log('Chat API - Authorization header set');
       } else {
-        console.log('Chat API - No token found');
+        console.error('Chat API - No token found');
       }
 
       headers.set('Content-Type', 'application/json');
@@ -259,7 +255,7 @@ export const chatApi = createApi({
     },
   }),
   tagTypes: ['ChatList', 'ChatHistory'],
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getChatList: builder.query<ChatListResponse, ChatListParams>({
       query: ({ page = 1, limit = 20 }) => ({
         url: '/bot-chat/list',
@@ -268,19 +264,19 @@ export const chatApi = createApi({
       providesTags: ['ChatList'],
     }),
     initiateChat: builder.mutation<ChatInitiateResponse, string>({
-      query: (botId) => ({
+      query: botId => ({
         url: `/bot-chat/initiate/${botId}`,
         method: 'POST',
       }),
       invalidatesTags: ['ChatList'], // Refresh chat list after initiating new chat
     }),
     chatWithBot: builder.mutation<ChatWithBotResponse, ChatWithBotRequest>({
-      query: (requestData) => ({
+      query: requestData => ({
         url: '/botProfiles/chat-with-bot',
         method: 'POST',
         body: requestData,
       }),
-      invalidatesTags: (result) => {
+      invalidatesTags: result => {
         // If an image was generated, also invalidate ChatList to refresh generated images
         if (result?.data?.image) {
           return ['ChatHistory', 'ChatList'];
@@ -300,7 +296,7 @@ export const chatApi = createApi({
       invalidatesTags: ['ChatList', 'ChatHistory'], // Refresh chat list and history
     }),
     markMessagesAsRead: builder.mutation<MarkAsReadResponse, string>({
-      query: (channelName) => ({
+      query: channelName => ({
         url: `/chat/messageRead/${channelName}`,
         method: 'PATCH',
       }),
@@ -311,21 +307,16 @@ export const chatApi = createApi({
         url: `/chat/history/${channelName}`,
         params: { page, limit },
       }),
-      providesTags: (result, error, arg) => [
-        { type: 'ChatHistory', id: arg.channelName },
-      ],
+      providesTags: (result, error, arg) => [{ type: 'ChatHistory', id: arg.channelName }],
     }),
-    getChatSuggestions: builder.query<
-      ChatSuggestionsResponse,
-      ChatSuggestionsParams
-    >({
+    getChatSuggestions: builder.query<ChatSuggestionsResponse, ChatSuggestionsParams>({
       query: ({ botId, chatId, context, clickedSuggestion, currentSuggestions }) => ({
         url: `/bot-chat/suggestions/${botId}`,
-        params: { 
+        params: {
           chatId,
           context,
           clickedSuggestion,
-          currentSuggestions: currentSuggestions ? JSON.stringify(currentSuggestions) : undefined
+          currentSuggestions: currentSuggestions ? JSON.stringify(currentSuggestions) : undefined,
         },
       }),
     }),

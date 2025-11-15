@@ -6,10 +6,6 @@ export const metadata: Metadata = {
   description: 'Manage your AI companions',
 };
 
-export default function MyAILayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MyAILayout({ children }: { children: React.ReactNode }) {
   return <GlobalLayout>{children}</GlobalLayout>;
 }

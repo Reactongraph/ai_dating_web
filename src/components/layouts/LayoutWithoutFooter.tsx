@@ -32,9 +32,9 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
 
   const toggleSidebar = () => {
     if (isMobileView) {
-      setIsMobileSidebarOpen((prev) => !prev);
+      setIsMobileSidebarOpen(prev => !prev);
     } else {
-      setIsSidebarExpanded((prev) => !prev);
+      setIsSidebarExpanded(prev => !prev);
     }
   };
 
@@ -52,10 +52,7 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
       />
 
       {/* Header */}
-      <NavBar
-        onToggleSidebar={toggleSidebar}
-        isMobileOpen={isMobileSidebarOpen}
-      />
+      <NavBar onToggleSidebar={toggleSidebar} isMobileOpen={isMobileSidebarOpen} />
 
       {/* Main Content Area - No Footer */}
       <main className="pt-24 md:pl-16 flex-grow">{children}</main>

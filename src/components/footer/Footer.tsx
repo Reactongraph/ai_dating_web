@@ -8,10 +8,7 @@ const Footer = () => {
       <div className="max-w-7xl  md:mx-auto sm:px-4 md:px-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Logo and Description */}
         <div className="md:space-y-2 sm:space-y-6">
-          <Link
-            href="/"
-            className="text-text-primary text-xl sm:text-2xl font-bold italic"
-          >
+          <Link href="/" className="text-text-primary text-xl sm:text-2xl font-bold italic">
             True Companion
           </Link>
           <div className="flex items-center">
@@ -19,10 +16,9 @@ const Footer = () => {
             <span>English</span>
           </div>
           <p className="text-xs ">
-            True Companion is where imagination meets innovation. Bring your
-            ideas to life with custom AI characters, stunning AI-generated art,
-            and meaningful connections. Join us today and start creating
-            something extraordinary.
+            True Companion is where imagination meets innovation. Bring your ideas to life with
+            custom AI characters, stunning AI-generated art, and meaningful connections. Join us
+            today and start creating something extraordinary.
           </p>
           <div className=" text-xs">
             <p>Spyrou Kyprianou 92, FlatOffice 1192</p>
@@ -33,9 +29,7 @@ const Footer = () => {
 
         {/* True Companion Links */}
         <div className="md:space-y-2 sm:space-y-6">
-          <h3 className="text-text-primary text-base sm:text-lg">
-            True Companion
-          </h3>
+          <h3 className="text-text-primary text-base sm:text-lg">True Companion</h3>
           <div className="flex space-x-4">
             <Link
               href="https://discord.gg/truecompanion"
@@ -70,9 +64,7 @@ const Footer = () => {
 
         {/* Help Center */}
         <div className="md:space-y-2 sm:space-y-6">
-          <h3 className="text-text-primary text-base sm:text-lg">
-            Help Center
-          </h3>
+          <h3 className="text-text-primary text-base sm:text-lg">Help Center</h3>
           <Link
             href="mailto:help@truecompanion.com"
             className="block hover:text-primary-500 text-xs sm:text-sm"
@@ -85,28 +77,16 @@ const Footer = () => {
         <div className="md:space-y-2 sm:space-y-6">
           <h3 className="text-text-primary text-base sm:text-lg">Policy</h3>
           <div className="flex flex-col md:space-y-1 sm:space-y-3">
-            <Link
-              href="/privacy-policy"
-              className="hover:text-primary-500 text-xs sm:text-sm"
-            >
+            <Link href="/privacy-policy" className="hover:text-primary-500 text-xs sm:text-sm">
               Privacy Policy
             </Link>
-            <Link
-              href="/terms"
-              className="hover:text-primary-500 text-xs sm:text-sm"
-            >
+            <Link href="/terms" className="hover:text-primary-500 text-xs sm:text-sm">
               Terms & Conditions
             </Link>
-            <Link
-              href="/cookies"
-              className="hover:text-primary-500 text-xs sm:text-sm"
-            >
+            <Link href="/cookies" className="hover:text-primary-500 text-xs sm:text-sm">
               Cookies Policy
             </Link>
-            <Link
-              href="/content-moderation"
-              className="hover:text-primary-500 text-xs sm:text-sm"
-            >
+            <Link href="/content-moderation" className="hover:text-primary-500 text-xs sm:text-sm">
               Content Moderation Policy
             </Link>
           </div>

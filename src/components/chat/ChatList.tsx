@@ -32,9 +32,7 @@ const ChatList: React.FC<ChatListProps> = ({
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="text-center">
-          <h3 className="text-white text-xl font-semibold mb-2">
-            Please Login
-          </h3>
+          <h3 className="text-white text-xl font-semibold mb-2">Please Login</h3>
           <p className="text-gray-400 text-sm leading-relaxed">
             You need to be logged in to view your chats.
           </p>
@@ -65,9 +63,7 @@ const ChatList: React.FC<ChatListProps> = ({
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="text-center">
-          <h3 className="text-red-400 text-xl font-semibold mb-2">
-            Failed to Load Chats
-          </h3>
+          <h3 className="text-red-400 text-xl font-semibold mb-2">Failed to Load Chats</h3>
           <p className="text-gray-400 text-sm leading-relaxed mb-4">
             There was an error loading your chats. Please try again.
           </p>
@@ -89,9 +85,7 @@ const ChatList: React.FC<ChatListProps> = ({
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="text-center">
-          <h3 className="text-white text-xl font-semibold mb-2">
-            List is Empty
-          </h3>
+          <h3 className="text-white text-xl font-semibold mb-2">List is Empty</h3>
           <p className="text-gray-400 text-sm leading-relaxed">
             Customize your character and start a smart, fun
             <br />
@@ -104,7 +98,7 @@ const ChatList: React.FC<ChatListProps> = ({
 
   return (
     <div className="flex-1 overflow-y-auto">
-      {chats.map((chat) => (
+      {chats.map(chat => (
         <div
           key={chat.id}
           className={`flex items-center p-4 cursor-pointer hover:bg-gray-800/50 transition-colors ${
@@ -131,16 +125,10 @@ const ChatList: React.FC<ChatListProps> = ({
           {/* Chat Info */}
           <div className="flex-1 ml-3 min-w-0">
             <div className="flex items-center justify-between">
-              <h4 className="text-white font-medium truncate text-sm">
-                {chat.user.name}
-              </h4>
-              <span className="text-gray-400 text-xs">
-                {formatChatTime(chat.timestamp)}
-              </span>
+              <h4 className="text-white font-medium truncate text-sm">{chat.user.name}</h4>
+              <span className="text-gray-400 text-xs">{formatChatTime(chat.timestamp)}</span>
             </div>
-            <p className="text-gray-400 text-xs truncate mt-1">
-              {chat.lastMessage}
-            </p>
+            <p className="text-gray-400 text-xs truncate mt-1">{chat.lastMessage}</p>
           </div>
 
           {/* Unread Count */}
@@ -170,9 +158,7 @@ const ChatList: React.FC<ChatListProps> = ({
         <div className="p-4">
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary-500"></div>
-            <span className="ml-2 text-gray-400 text-sm">
-              Loading more chats...
-            </span>
+            <span className="ml-2 text-gray-400 text-sm">Loading more chats...</span>
           </div>
         </div>
       )}

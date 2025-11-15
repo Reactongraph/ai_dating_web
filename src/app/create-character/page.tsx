@@ -169,9 +169,7 @@ const CreateCharacterPageContent = () => {
         {/* Landing Header */}
         <div className="bg-black py-8 flex-shrink-0">
           <div className="max-w-7xl mx-auto px-4 text-center">
-            <h1 className="text-5xl font-bold mb-4">
-              Build Your Perfect AI Companion
-            </h1>
+            <h1 className="text-5xl font-bold mb-4">Build Your Perfect AI Companion</h1>
             <p className="text-xl text-white/90">
               From style to soul, design a character that fits your world.
             </p>

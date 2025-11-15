@@ -7,11 +7,7 @@ interface HeroSectionProps {
     main: string;
     highlight: {
       text: string;
-      color:
-        | 'text-primary-500'
-        | 'text-primary-600'
-        | 'text-white'
-        | 'text-gray-300';
+      color: 'text-primary-500' | 'text-primary-600' | 'text-white' | 'text-gray-300';
     };
     rest?: string;
   };
@@ -20,12 +16,7 @@ interface HeroSectionProps {
   imageSrc: string;
 }
 
-const HeroSection = ({
-  title,
-  subtitle,
-  buttonText,
-  imageSrc,
-}: HeroSectionProps) => {
+const HeroSection = ({ title, subtitle, buttonText, imageSrc }: HeroSectionProps) => {
   return (
     <div className="relative w-full overflow-hidden">
       {/* Background Image */}
@@ -41,15 +32,11 @@ const HeroSection = ({
           <h1 className=" text-xl md:text-5xl sm:text-xl font-bold text-white">
             <span className="block">{title.main}</span>
             <span className="block">
-              <span className={title.highlight.color}>
-                {title.highlight.text}
-              </span>
+              <span className={title.highlight.color}>{title.highlight.text}</span>
               {title.rest}
             </span>
           </h1>
-          <p className="text-xs sm:text-xs md:text-sm text-gray-300">
-            {subtitle}
-          </p>
+          <p className="text-xs sm:text-xs md:text-sm text-gray-300">{subtitle}</p>
           <Link
             href="/create-character"
             className="inline-flex bg-gradient-to-r from-primary-500 to-primary-600 text-white mb-2 sm:mb-2 lg:mb-0 px-2 py-2 sm:py-0 md:py-1  rounded-lg text-xs sm:text-base  font-medium items-center space-x-2 hover:opacity-90 transition-opacity"

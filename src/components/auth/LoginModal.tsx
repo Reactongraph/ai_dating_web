@@ -24,11 +24,8 @@ interface LoginFormData {
 const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
-  const [googleLogin, { isLoading: isGoogleLoading }] =
-    useGoogleLoginMutation();
-  const { error, requiresVerification, isAuthenticated } = useAppSelector(
-    (state) => state.auth
-  );
+  const [googleLogin, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
+  const { error, requiresVerification, isAuthenticated } = useAppSelector(state => state.auth);
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
@@ -56,10 +53,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
   // Show verification message if required
   useEffect(() => {
     if (requiresVerification) {
-      showSnackbar(
-        'Please verify your email address before logging in.',
-        'warning'
-      );
+      showSnackbar('Please verify your email address before logging in.', 'warning');
     }
   }, [requiresVerification, showSnackbar]);
 
@@ -79,15 +73,12 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
           }).unwrap();
 
           // Handle both direct token response and standard API response
-          if (
-            response.token ||
-            (response.statusCode === 200 && response.accessToken)
-          ) {
+          if (response.token || (response.statusCode === 200 && response.accessToken)) {
             // Cast to LoginResponse to satisfy type checker
             dispatch(
               setCredentials(
-                response as unknown as import('@/redux/services/authApi').LoginResponse
-              )
+                response as unknown as import('@/redux/services/authApi').LoginResponse,
+              ),
             );
             showSnackbar('Google login successful!', 'success');
           }
@@ -109,10 +100,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
       if (response.statusCode === 200) {
         showSnackbar('Login successful!', 'success');
       } else if (response.user && !response.user.isEmailVerified) {
-        showSnackbar(
-          'Please verify your email address before logging in.',
-          'warning'
-        );
+        showSnackbar('Please verify your email address before logging in.', 'warning');
       }
     } catch (err: unknown) {
       console.error('Login failed:', err);
@@ -152,16 +140,11 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
             placeholder="Enter your email"
             className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
           />
-          {errors.email && (
-            <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-          )}
+          {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm text-gray-400 mb-2"
-          >
+          <label htmlFor="password" className="block text-sm text-gray-400 mb-2">
             Password
           </label>
           <div className="relative">
@@ -183,26 +166,17 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
             >
-              {showPassword ? (
-                <IoEyeOffOutline size={20} />
-              ) : (
-                <IoEyeOutline size={20} />
-              )}
+              {showPassword ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
             </button>
           </div>
           {errors.password && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.password.message}
-            </p>
+            <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
           )}
           {/* Error and verification messages are now handled by the Snackbar component */}
         </div>
 
         <div className="flex justify-end">
-          <button
-            type="button"
-            className="text-accent-cyan text-sm hover:underline"
-          >
+          <button type="button" className="text-accent-cyan text-sm hover:underline">
             Forgot Password?
           </button>
         </div>
@@ -220,9 +194,7 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
             <div className="w-full border-t border-gray-700"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-1a text-gray-400">
-              Or continue with
-            </span>
+            <span className="px-2 bg-gray-1a text-gray-400">Or continue with</span>
           </div>
         </div>
 

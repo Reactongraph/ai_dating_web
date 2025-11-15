@@ -4,10 +4,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { Chat } from '@/types/chat';
 import { useChat } from '@/hooks/useChat';
-import {
-  useGetChatSuggestionsQuery,
-  SuggestionContext,
-} from '@/redux/services/chatApi';
+import { useGetChatSuggestionsQuery, SuggestionContext } from '@/redux/services/chatApi';
 
 interface ChatAreaProps {
   chat: Chat | null;
@@ -15,33 +12,19 @@ interface ChatAreaProps {
   onQuickSuggestionClick?: (suggestion: string) => void;
 }
 
-const ChatArea: React.FC<ChatAreaProps> = ({
-  chat,
-  privacyMessage,
-  onQuickSuggestionClick,
-}) => {
-  
+const ChatArea: React.FC<ChatAreaProps> = ({ chat, privacyMessage, onQuickSuggestionClick }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [suggestionContext, setSuggestionContext] =
-    useState<SuggestionContext>('greeting');
+  const [suggestionContext, setSuggestionContext] = useState<SuggestionContext>('greeting');
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
-  const [clickedSuggestion, setClickedSuggestion] = useState<
-    string | undefined
-  >();
+  const [clickedSuggestion, setClickedSuggestion] = useState<string | undefined>();
 
-  const {
-    messages,
-    isLoadingHistory,
-    isSendingMessage,
-    isTyping,
-    sendMessage,
-    historyError,
-  } = useChat({
-    chatId: chat?.id,
-    botId: chat?.user.id,
-    channelName: chat?.channelName,
-  });
+  const { messages, isLoadingHistory, isSendingMessage, isTyping, sendMessage, historyError } =
+    useChat({
+      chatId: chat?.id,
+      botId: chat?.user.id,
+      channelName: chat?.channelName,
+    });
 
   // Track if initial load is complete
   const initialLoadDoneRef = useRef<boolean>(false);
@@ -50,28 +33,27 @@ const ChatArea: React.FC<ChatAreaProps> = ({
   // State to control when to fetch suggestions
   const [shouldFetchSuggestions, setShouldFetchSuggestions] = useState(false);
 
-  const { data: suggestionsData, isLoading: isLoadingSuggestions } =
-    useGetChatSuggestionsQuery(
-      {
-        botId: chat?.user.id || '',
-        chatId: chat?.id,
-        context: suggestionContext,
-        clickedSuggestion: pendingClickedSuggestionRef.current,
-        currentSuggestions:
-          pendingClickedSuggestionRef.current && currentSuggestions.length > 0
-            ? currentSuggestions
-            : undefined,
-      },
-      {
-        // Only skip when we don't have chat ID or when we don't want to fetch
-        skip: !chat?.user.id || !shouldFetchSuggestions,
-        // Disable automatic refetching
-        refetchOnMountOrArgChange: false,
-        refetchOnFocus: false,
-        refetchOnReconnect: false,
-        pollingInterval: 0,
-      }
-    );
+  const { data: suggestionsData, isLoading: isLoadingSuggestions } = useGetChatSuggestionsQuery(
+    {
+      botId: chat?.user.id || '',
+      chatId: chat?.id,
+      context: suggestionContext,
+      clickedSuggestion: pendingClickedSuggestionRef.current,
+      currentSuggestions:
+        pendingClickedSuggestionRef.current && currentSuggestions.length > 0
+          ? currentSuggestions
+          : undefined,
+    },
+    {
+      // Only skip when we don't have chat ID or when we don't want to fetch
+      skip: !chat?.user.id || !shouldFetchSuggestions,
+      // Disable automatic refetching
+      refetchOnMountOrArgChange: false,
+      refetchOnFocus: false,
+      refetchOnReconnect: false,
+      pollingInterval: 0,
+    },
+  );
 
   useEffect(() => {
     // smooth scroll to bottom when messages change
@@ -265,9 +247,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
 
             <div className="text-center mb-2">
               <p className="text-gray-500 text-xs">Today</p>
-              <p className="text-gray-400 text-xs mt-1 max-w-md mx-auto">
-                {privacyMessage}
-              </p>
+              <p className="text-gray-400 text-xs mt-1 max-w-md mx-auto">{privacyMessage}</p>
             </div>
           </div>
           {isLoadingHistory && (
@@ -279,9 +259,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           {historyError && (
             <div className="flex justify-center mb-6">
               <div className="text-center">
-                <p className="text-red-400 text-sm mb-2">
-                  Failed to load chat history
-                </p>
+                <p className="text-red-400 text-sm mb-2">Failed to load chat history</p>
                 <button
                   onClick={() => window.location.reload()}
                   className="bg-primary-500 hover:bg-primary-600 text-white px-3 py-1 rounded text-sm transition-colors"
@@ -292,16 +270,14 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             </div>
           )}
 
-          {messages.map((message) => (
+          {messages.map(message => (
             <div
               key={message.id}
               className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
             >
               <div
                 className={`max-w-xs p-3 rounded-2xl ${
-                  message.isUser
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-gray-800 text-white'
+                  message.isUser ? 'bg-primary-500 text-white' : 'bg-gray-800 text-white'
                 }`}
               >
                 {message.type === 'IMAGE' ? (
@@ -343,9 +319,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({
             <div className="flex justify-start">
               <div className="bg-gray-800 text-white max-w-xs p-3 rounded-2xl">
                 <div className="flex items-center space-x-1">
-                  <span className="text-sm text-gray-300">
-                    {chat.user.name} is typing
-                  </span>
+                  <span className="text-sm text-gray-300">{chat.user.name} is typing</span>
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
                     <div
@@ -372,28 +346,26 @@ const ChatArea: React.FC<ChatAreaProps> = ({
           <div className="flex items-center gap-2 mb-3">
             <p className="text-gray-400 text-sm">Suggestions:</p>
             <div className="flex gap-1">
-              {(['greeting', 'casual', 'flirty'] as SuggestionContext[]).map(
-                (ctx) => (
-                  <button
-                    key={ctx}
-                    onClick={() => {
-                      setSuggestionContext(ctx);
-                      // Reset suggestions when changing context
-                      setCurrentSuggestions([]);
-                      // Clear any pending clicked suggestion when changing context
-                      setClickedSuggestion(undefined);
-                      // The effect will handle the refetch when context changes
-                    }}
-                    className={`text-xs px-2 py-1 rounded-full transition-colors ${
-                      suggestionContext === ctx
-                        ? 'bg-primary-500 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    }`}
-                  >
-                    {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
-                  </button>
-                )
-              )}
+              {(['greeting', 'casual', 'flirty'] as SuggestionContext[]).map(ctx => (
+                <button
+                  key={ctx}
+                  onClick={() => {
+                    setSuggestionContext(ctx);
+                    // Reset suggestions when changing context
+                    setCurrentSuggestions([]);
+                    // Clear any pending clicked suggestion when changing context
+                    setClickedSuggestion(undefined);
+                    // The effect will handle the refetch when context changes
+                  }}
+                  className={`text-xs px-2 py-1 rounded-full transition-colors ${
+                    suggestionContext === ctx
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -414,18 +386,13 @@ const ChatArea: React.FC<ChatAreaProps> = ({
                   </button>
                 ))
               ) : (
-                <div className="text-gray-400 text-sm whitespace-nowrap">
-                  No suggestions
-                </div>
+                <div className="text-gray-400 text-sm whitespace-nowrap">No suggestions</div>
               )}
             </div>
           </div>
         </div>
 
-        <form
-          onSubmit={handleFormSubmit}
-          className="flex items-center space-x-2"
-        >
+        <form onSubmit={handleFormSubmit} className="flex items-center space-x-2">
           <div className="flex-1 relative">
             <input
               type="text"

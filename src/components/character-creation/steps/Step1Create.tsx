@@ -16,7 +16,7 @@ const Step1Create: React.FC = () => {
       {/* Character Type Selection */}
       <div className="text-center">
         <div className="flex justify-center space-x-4 mb-6">
-          {(['girl', 'guy'] as const).map((type) => (
+          {(['girl', 'guy'] as const).map(type => (
             <button
               key={type}
               type="button"
@@ -32,26 +32,19 @@ const Step1Create: React.FC = () => {
           ))}
         </div>
 
-        <p className="text-gray-300 text-lg">
-          Choose the style of your character
-        </p>
+        <p className="text-gray-300 text-lg">Choose the style of your character</p>
       </div>
 
       {/* Style Selection */}
       <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
-        {styles.map((styleOption) => (
+        {styles.map(styleOption => (
           <div
             key={styleOption._id}
             className={`relative cursor-pointer rounded-2xl overflow-hidden transition-all ${
-              style === styleOption.name.toLowerCase()
-                ? 'ring-2 ring-primary-500'
-                : ''
+              style === styleOption.name.toLowerCase() ? 'ring-2 ring-primary-500' : ''
             }`}
             onClick={() =>
-              setValue(
-                'style',
-                styleOption.name.toLowerCase() as CharacterFormData['style']
-              )
+              setValue('style', styleOption.name.toLowerCase() as CharacterFormData['style'])
             }
           >
             <div
@@ -62,17 +55,11 @@ const Step1Create: React.FC = () => {
             >
               <div className="absolute inset-0 bg-black/20" />
               <div className="absolute bottom-4 left-0 right-0 text-center">
-                <h3 className="text-xl font-semibold text-white">
-                  {styleOption.name}
-                </h3>
+                <h3 className="text-xl font-semibold text-white">{styleOption.name}</h3>
               </div>
               {style === styleOption.name.toLowerCase() && (
                 <div className="absolute top-4 right-4 w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"

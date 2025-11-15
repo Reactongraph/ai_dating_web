@@ -29,7 +29,7 @@ const Step9Summary: React.FC = () => {
     register,
     formState: { errors },
   } = useFormContext<CharacterFormData>();
-  const botType = useAppSelector((state) => state.characterAttributes.botType);
+  const botType = useAppSelector(state => state.characterAttributes.botType);
 
   const {
     styles,
@@ -49,14 +49,9 @@ const Step9Summary: React.FC = () => {
   const formData = watch();
 
   // Helper function to find attribute name by value
-  const findAttributeName = (
-    value: string | undefined,
-    attributes: Array<Attribute>
-  ) => {
+  const findAttributeName = (value: string | undefined, attributes: Array<Attribute>) => {
     if (!value) return 'Not selected';
-    const attribute = attributes.find(
-      (a) => a.name.toLowerCase() === value.toLowerCase()
-    );
+    const attribute = attributes.find(a => a.name.toLowerCase() === value.toLowerCase());
     return attribute?.name || value;
   };
 
@@ -67,17 +62,14 @@ const Step9Summary: React.FC = () => {
         label: 'Style',
         value: findAttributeName(formData.style, styles),
         category: 'Style',
-        image: styles.find(
-          (s: Attribute) => s.name.toLowerCase() === formData.style
-        )?.imageUrl,
+        image: styles.find((s: Attribute) => s.name.toLowerCase() === formData.style)?.imageUrl,
       },
       {
         label: 'Occupation',
         value: findAttributeName(formData.occupation, occupations),
         category: 'Occupation',
-        image: occupations.find(
-          (o: Attribute) => o.name.toLowerCase() === formData.occupation
-        )?.imageUrl,
+        image: occupations.find((o: Attribute) => o.name.toLowerCase() === formData.occupation)
+          ?.imageUrl,
       },
       {
         label: 'Hobby',
@@ -88,17 +80,15 @@ const Step9Summary: React.FC = () => {
         label: 'Eye Color',
         value: findAttributeName(formData.eyeColor, eyeColors),
         category: 'Eye Color',
-        image: eyeColors.find(
-          (e: Attribute) => e.name.toLowerCase() === formData.eyeColor
-        )?.imageUrl,
+        image: eyeColors.find((e: Attribute) => e.name.toLowerCase() === formData.eyeColor)
+          ?.imageUrl,
       },
       {
         label: 'Clothing',
         value: findAttributeName(formData.clothing, clothings),
         category: 'Clothing',
-        image: clothings.find(
-          (c: Attribute) => c.name.toLowerCase() === formData.clothing
-        )?.imageUrl,
+        image: clothings.find((c: Attribute) => c.name.toLowerCase() === formData.clothing)
+          ?.imageUrl,
       },
       {
         label: 'Age',
@@ -109,49 +99,43 @@ const Step9Summary: React.FC = () => {
         label: 'Hairstyle',
         value: findAttributeName(formData.hairstyle, hairStyles),
         category: 'Hairstyle',
-        image: hairStyles.find(
-          (h: Attribute) => h.name.toLowerCase() === formData.hairstyle
-        )?.imageUrl,
+        image: hairStyles.find((h: Attribute) => h.name.toLowerCase() === formData.hairstyle)
+          ?.imageUrl,
       },
       {
         label: 'Hair Color',
         value: findAttributeName(formData.hairColor, hairColors),
         category: 'Hair Color',
-        image: hairColors.find(
-          (h: Attribute) => h.name.toLowerCase() === formData.hairColor
-        )?.imageUrl,
+        image: hairColors.find((h: Attribute) => h.name.toLowerCase() === formData.hairColor)
+          ?.imageUrl,
       },
       {
         label: 'Ethnicity',
         value: findAttributeName(formData.ethnicity, ethnicities),
         category: 'Ethnicity',
-        image: ethnicities.find(
-          (e: Attribute) => e.name.toLowerCase() === formData.ethnicity
-        )?.imageUrl,
+        image: ethnicities.find((e: Attribute) => e.name.toLowerCase() === formData.ethnicity)
+          ?.imageUrl,
       },
       {
         label: 'Body Type',
         value: findAttributeName(formData.bodyType, bodyTypes),
         category: 'Body Type',
-        image: bodyTypes.find(
-          (b: Attribute) => b.name.toLowerCase() === formData.bodyType
-        )?.imageUrl,
+        image: bodyTypes.find((b: Attribute) => b.name.toLowerCase() === formData.bodyType)
+          ?.imageUrl,
       },
       {
         label: 'Personality',
         value: findAttributeName(formData.personality, personalities),
         category: 'Personality',
-        image: personalities.find(
-          (p: Attribute) => p.name.toLowerCase() === formData.personality
-        )?.imageUrl,
+        image: personalities.find((p: Attribute) => p.name.toLowerCase() === formData.personality)
+          ?.imageUrl,
       },
       {
         label: 'Relationship',
         value: findAttributeName(formData.relationship, relationships),
         category: 'Relationship',
-        image: relationships.find(
-          (r: Attribute) => r.name.toLowerCase() === formData.relationship
-        )?.imageUrl,
+        image: relationships.find((r: Attribute) => r.name.toLowerCase() === formData.relationship)
+          ?.imageUrl,
       },
     ];
 
@@ -164,18 +148,16 @@ const Step9Summary: React.FC = () => {
           label: 'Breast Size',
           value: findAttributeName(formData.breastSize, breastSizes),
           category: 'Breast Size',
-          image: breastSizes.find(
-            (b: Attribute) => b.name.toLowerCase() === formData.breastSize
-          )?.imageUrl,
+          image: breastSizes.find((b: Attribute) => b.name.toLowerCase() === formData.breastSize)
+            ?.imageUrl,
         },
         {
           label: 'Booty Size',
           value: findAttributeName(formData.bootySize, buttSizes),
           category: 'Booty Size',
-          image: buttSizes.find(
-            (b: Attribute) => b.name.toLowerCase() === formData.bootySize
-          )?.imageUrl,
-        }
+          image: buttSizes.find((b: Attribute) => b.name.toLowerCase() === formData.bootySize)
+            ?.imageUrl,
+        },
       );
     }
 
@@ -197,9 +179,7 @@ const Step9Summary: React.FC = () => {
           <div
             key={index}
             className={`relative bg-gray-800 rounded-lg overflow-hidden ${
-              item.value && item.value !== 'None'
-                ? 'ring-2 ring-primary-500'
-                : ''
+              item.value && item.value !== 'None' ? 'ring-2 ring-primary-500' : ''
             }`}
           >
             {item.value && item.value !== 'None' ? (
@@ -219,17 +199,11 @@ const Step9Summary: React.FC = () => {
                   )}
                 </div>
                 <div className="p-3 text-center">
-                  <h3 className="text-lg font-semibold text-white">
-                    {item.value}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-white">{item.value}</h3>
                   <p className="text-sm text-gray-400">{item.category}</p>
                 </div>
                 <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -256,10 +230,7 @@ const Step9Summary: React.FC = () => {
           <div className="mb-6 grid grid-cols-2 gap-4">
             {/* Character Name */}
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-300 mb-2"
-              >
+              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                 Character Name *
               </label>
               <input
@@ -279,19 +250,12 @@ const Step9Summary: React.FC = () => {
                 placeholder="Enter character name"
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-400">
-                  {errors.name.message}
-                </p>
-              )}
+              {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>}
             </div>
 
             {/* Model Selection */}
             <div>
-              <label
-                htmlFor="model"
-                className="block text-sm font-medium text-gray-300 mb-2"
-              >
+              <label htmlFor="model" className="block text-sm font-medium text-gray-300 mb-2">
                 AI Model *
               </label>
               <select
@@ -307,20 +271,14 @@ const Step9Summary: React.FC = () => {
                 <option value="pony-realism">NSFW Level 2</option>
                 <option value="venice-sd35">NSFW Level 3</option>
               </select>
-              {errors.model && (
-                <p className="mt-1 text-sm text-red-400">
-                  {errors.model.message}
-                </p>
-              )}
+              {errors.model && <p className="mt-1 text-sm text-red-400">{errors.model.message}</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-left">
             <div>
               <span className="text-gray-400">Type: </span>
-              <span className="text-white font-medium">
-                {formData.characterType}
-              </span>
+              <span className="text-white font-medium">{formData.characterType}</span>
             </div>
             <div>
               <span className="text-gray-400">Style: </span>

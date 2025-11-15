@@ -4,34 +4,12 @@ export interface CharacterFormData {
   style: 'realistic' | 'anime';
 
   // Step 2: Ethnicity and Eye Color
-  ethnicity:
-    | 'caucasian'
-    | 'latina'
-    | 'asian'
-    | 'middle-eastern'
-    | 'african'
-    | 'native-american';
+  ethnicity: 'caucasian' | 'latina' | 'asian' | 'middle-eastern' | 'african' | 'native-american';
   eyeColor: 'blue' | 'green' | 'brown' | 'hazel' | 'gray';
 
   // Step 3: Hairstyle, Color, Age
-  hairstyle:
-    | 'ponytail'
-    | 'braid'
-    | 'bun'
-    | 'straight'
-    | 'wavy'
-    | 'curly'
-    | 'short';
-  hairColor:
-    | 'blonde'
-    | 'brown'
-    | 'black'
-    | 'red'
-    | 'gray'
-    | 'white'
-    | 'blue'
-    | 'pink'
-    | 'purple';
+  hairstyle: 'ponytail' | 'braid' | 'bun' | 'straight' | 'wavy' | 'curly' | 'short';
+  hairColor: 'blonde' | 'brown' | 'black' | 'red' | 'gray' | 'white' | 'blue' | 'pink' | 'purple';
   age: '18+' | '20s' | '30s' | '40s' | '50s' | 'custom';
 
   // Step 4: Body Type
@@ -76,15 +54,7 @@ export interface CharacterFormData {
     | 'stepmom';
 
   // Step 8: Clothing
-  clothing:
-    | 'casual'
-    | 'formal'
-    | 'sporty'
-    | 'elegant'
-    | 'sexy'
-    | 'bikini'
-    | 'uniform'
-    | 'costume';
+  clothing: 'casual' | 'formal' | 'sporty' | 'elegant' | 'sexy' | 'bikini' | 'uniform' | 'costume';
 
   // Step 9: Summary (auto-generated)
   summary?: string;

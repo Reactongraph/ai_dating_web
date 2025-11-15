@@ -132,12 +132,7 @@ export interface ReligionResponse {
 export interface GenerateAvatarRequest {
   bot_type: 'girl' | 'boy';
   name: string;
-  model:
-    | 'lustify-sdxl'
-    | 'flux-dev-uncensored'
-    | 'pony-realism'
-    | 'qwen-image'
-    | 'venice-sd35';
+  model: 'lustify-sdxl' | 'flux-dev-uncensored' | 'pony-realism' | 'qwen-image' | 'venice-sd35';
   style: 'Anime' | 'Realistic';
   ethnicity: string;
   age: number;
@@ -221,8 +216,7 @@ export const characterAttributesApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000',
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as { auth: { token: string | null } }).auth
-        .token;
+      const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
@@ -233,27 +227,24 @@ export const characterAttributesApi = createApi({
       return (response.status >= 200 && response.status < 300) || response.status === 304;
     },
   }),
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getStyles: builder.query<StyleResponse, string>({
-      query: (botType) => `/style/get-all-styles-for-app-user/${botType}`,
+      query: botType => `/style/get-all-styles-for-app-user/${botType}`,
     }),
     getEthnicities: builder.query<EthnicityResponse, string>({
-      query: (botType) =>
-        `/ethinicity/get-all-ethinicities-for-app-user/${botType}`,
+      query: botType => `/ethinicity/get-all-ethinicities-for-app-user/${botType}`,
     }),
     getEyeColors: builder.query<EyeColorResponse, string>({
-      query: (botType) => `/eyeColor/get-all-eyeColors-for-app-user/${botType}`,
+      query: botType => `/eyeColor/get-all-eyeColors-for-app-user/${botType}`,
     }),
     getHairStyles: builder.query<HairStyleResponse, string>({
-      query: (botType) =>
-        `/hairStyle/get-all-hairStyles-for-app-user/${botType}`,
+      query: botType => `/hairStyle/get-all-hairStyles-for-app-user/${botType}`,
     }),
     getHairColors: builder.query<HairColorResponse, string>({
-      query: (botType) =>
-        `/hairColor/get-all-hairColors-for-app-user/${botType}`,
+      query: botType => `/hairColor/get-all-hairColors-for-app-user/${botType}`,
     }),
     getBodyTypes: builder.query<BodyTypeResponse, string>({
-      query: (botType) => `/bodyType/get-all-bodyTypes-for-app-user/${botType}`,
+      query: botType => `/bodyType/get-all-bodyTypes-for-app-user/${botType}`,
     }),
     getBreastSizes: builder.query<BreastSizeResponse, void>({
       query: () => '/breastSize/get-all-breastSizes-for-app-user',
@@ -262,19 +253,16 @@ export const characterAttributesApi = createApi({
       query: () => '/buttSize/get-all-buttSizes-for-app-user',
     }),
     getClothings: builder.query<ClothingResponse, string>({
-      query: (botType) => `/clothing/get-all-clothings-for-app-user/${botType}`,
+      query: botType => `/clothing/get-all-clothings-for-app-user/${botType}`,
     }),
     getPersonalities: builder.query<PersonalityResponse, string>({
-      query: (botType) =>
-        `/personality/get-all-perosnalities-for-app-user/${botType}`,
+      query: botType => `/personality/get-all-perosnalities-for-app-user/${botType}`,
     }),
     getOccupations: builder.query<OccupationResponse, string>({
-      query: (botType) =>
-        `/occupation/get-all-occupations-for-app-user/${botType}`,
+      query: botType => `/occupation/get-all-occupations-for-app-user/${botType}`,
     }),
     getRelationships: builder.query<RelationshipResponse, string>({
-      query: (botType) =>
-        `/relationship/get-all-relationships-for-app-user/${botType}`,
+      query: botType => `/relationship/get-all-relationships-for-app-user/${botType}`,
     }),
     getOrientations: builder.query<OrientationResponse, void>({
       query: () => '/orientation/get-all',

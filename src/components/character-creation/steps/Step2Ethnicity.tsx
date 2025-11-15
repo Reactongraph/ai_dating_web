@@ -15,23 +15,16 @@ const Step2Ethnicity: React.FC = () => {
     <div className="space-y-8">
       {/* Ethnicity Selection */}
       <div>
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Choose ethnicity
-        </h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Choose ethnicity</h2>
         <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
-          {ethnicities.map((option) => (
+          {ethnicities.map(option => (
             <div
               key={option._id}
               className={`relative cursor-pointer rounded-lg overflow-hidden transition-all ${
-                ethnicity === option.name.toLowerCase()
-                  ? 'ring-2 ring-primary-500'
-                  : ''
+                ethnicity === option.name.toLowerCase() ? 'ring-2 ring-primary-500' : ''
               }`}
               onClick={() =>
-                setValue(
-                  'ethnicity',
-                  option.name.toLowerCase() as CharacterFormData['ethnicity']
-                )
+                setValue('ethnicity', option.name.toLowerCase() as CharacterFormData['ethnicity'])
               }
             >
               <div
@@ -42,17 +35,11 @@ const Step2Ethnicity: React.FC = () => {
               >
                 <div className="absolute inset-0 bg-black/20" />
                 <div className="absolute bottom-2 left-0 right-0 text-center">
-                  <h3 className="text-sm font-medium text-white">
-                    {option.name}
-                  </h3>
+                  <h3 className="text-sm font-medium text-white">{option.name}</h3>
                 </div>
                 {ethnicity === option.name.toLowerCase() && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
-                    <svg
-                      className="w-3 h-3 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -69,23 +56,16 @@ const Step2Ethnicity: React.FC = () => {
 
       {/* Eye Color Selection */}
       <div>
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Choose eye color
-        </h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Choose eye color</h2>
         <div className="flex justify-center space-x-6">
-          {eyeColors.map((option) => (
+          {eyeColors.map(option => (
             <div
               key={option._id}
               className={`relative cursor-pointer rounded-lg overflow-hidden transition-all ${
-                eyeColor === option.name.toLowerCase()
-                  ? 'ring-2 ring-primary-500'
-                  : ''
+                eyeColor === option.name.toLowerCase() ? 'ring-2 ring-primary-500' : ''
               }`}
               onClick={() =>
-                setValue(
-                  'eyeColor',
-                  option.name.toLowerCase() as CharacterFormData['eyeColor']
-                )
+                setValue('eyeColor', option.name.toLowerCase() as CharacterFormData['eyeColor'])
               }
             >
               <div
@@ -96,17 +76,11 @@ const Step2Ethnicity: React.FC = () => {
               >
                 <div className="absolute inset-0 bg-black/20" />
                 <div className="absolute bottom-2 left-0 right-0 text-center">
-                  <h3 className="text-sm font-medium text-white">
-                    {option.name}
-                  </h3>
+                  <h3 className="text-sm font-medium text-white">{option.name}</h3>
                 </div>
                 {eyeColor === option.name.toLowerCase() && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
-                    <svg
-                      className="w-3 h-3 text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"

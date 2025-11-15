@@ -63,9 +63,9 @@ export const googleAuthApi = createApi({
       return (response.status >= 200 && response.status < 300) || response.status === 304;
     },
   }),
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     googleLogin: builder.mutation<GoogleAuthResponse, GoogleAuthRequest>({
-      query: (credentials) => ({
+      query: credentials => ({
         url: '/auth/google/callback',
         method: 'POST',
         body: credentials,
@@ -75,7 +75,7 @@ export const googleAuthApi = createApi({
       GoogleAuthResponse,
       { sessionToken: string; email: string; userId: string }
     >({
-      query: (sessionData) => ({
+      query: sessionData => ({
         url: '/auth/verify-session',
         method: 'POST',
         body: sessionData,
@@ -84,5 +84,4 @@ export const googleAuthApi = createApi({
   }),
 });
 
-export const { useGoogleLoginMutation, useVerifySessionMutation } =
-  googleAuthApi;
+export const { useGoogleLoginMutation, useVerifySessionMutation } = googleAuthApi;

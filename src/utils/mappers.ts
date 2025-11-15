@@ -3,60 +3,37 @@ import { Companion } from '@/components/cards/CompanionCard';
 import { Companion as EnhancedCompanion } from '@/components/cards/EnhancedCompanionCard';
 import { ChatListItem, Chat, ChatUser } from '@/types/chat';
 
-export const mapBotProfilesToCompanions = (
-  profiles: BotProfile[]
-): Companion[] => {
-  return profiles.map((profile) => ({
+export const mapBotProfilesToCompanions = (profiles: BotProfile[]): Companion[] => {
+  return profiles.map(profile => ({
     id: profile._id,
     name: profile.name,
     age: parseInt(profile.age) || 20,
     description: profile.bio || 'No description available',
-    imageSrc:
-      profile.imageURL ||
-      profile.avatar_image?.s3Location ||
-      '/assets/default-avatar.png',
-    tags: [
-      profile.occupation,
-      profile.personality,
-      ...profile.hobbies.slice(0, 1),
-    ],
+    imageSrc: profile.imageURL || profile.avatar_image?.s3Location || '/assets/default-avatar.png',
+    tags: [profile.occupation, profile.personality, ...profile.hobbies.slice(0, 1)],
   }));
 };
 
-export const mapBotProfilesToEnhancedCompanions = (
-  profiles: BotProfile[]
-): EnhancedCompanion[] => {
-  return profiles.map((profile) => ({
+export const mapBotProfilesToEnhancedCompanions = (profiles: BotProfile[]): EnhancedCompanion[] => {
+  return profiles.map(profile => ({
     id: profile._id,
     name: profile.name,
     age: parseInt(profile.age) || 20,
     description: profile.bio || 'No description available',
-    imageSrc:
-      profile.imageURL ||
-      profile.avatar_image?.s3Location ||
-      '/assets/default-avatar.png',
-    tags: [
-      profile.occupation,
-      profile.personality,
-      ...profile.hobbies.slice(0, 1),
-    ],
+    imageSrc: profile.imageURL || profile.avatar_image?.s3Location || '/assets/default-avatar.png',
+    tags: [profile.occupation, profile.personality, ...profile.hobbies.slice(0, 1)],
   }));
 };
 
 // Chat List Mappers
-export const mapChatListItemsToChats = (
-  chatListItems: ChatListItem[]
-): Chat[] => {
-  return chatListItems.map((item) => {
+export const mapChatListItemsToChats = (chatListItems: ChatListItem[]): Chat[] => {
+  return chatListItems.map(item => {
     // Create a ChatUser object from the chat list item using botProfile data
     const chatUser: ChatUser = {
       id: item.botId,
       name: item.botProfile.name || item.botName,
       age: parseInt(item.botProfile.age) || 25,
-      avatar:
-        item.botProfile.imageURL ||
-        item.botImageURL ||
-        '/assets/default-avatar.png',
+      avatar: item.botProfile.imageURL || item.botImageURL || '/assets/default-avatar.png',
       isOnline: false, // Default to offline
       stats: {
         messages: '0',

@@ -3,14 +3,9 @@ import LayoutWithoutFooter from '@/components/layouts/LayoutWithoutFooter';
 
 export const metadata: Metadata = {
   title: 'Create AI Character - True Companion',
-  description:
-    'Create your perfect AI companion with our step-by-step character creator',
+  description: 'Create your perfect AI companion with our step-by-step character creator',
 };
 
-export default function CreateCharacterLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function CreateCharacterLayout({ children }: { children: React.ReactNode }) {
   return <LayoutWithoutFooter>{children}</LayoutWithoutFooter>;
 }

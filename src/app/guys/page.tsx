@@ -39,9 +39,7 @@ export default function GuysPage() {
       {/* Error State */}
       {error && (
         <div className="col-span-3 flex justify-center items-center h-[480px]">
-          <p className="text-red-500">
-            Failed to load companions. Please try again later.
-          </p>
+          <p className="text-red-500">Failed to load companions. Please try again later.</p>
         </div>
       )}
 
@@ -49,7 +47,7 @@ export default function GuysPage() {
       {!isLoading &&
         !error &&
         botProfiles?.botProfiles &&
-        mapBotProfilesToCompanions(botProfiles.botProfiles).map((companion) => (
+        mapBotProfilesToCompanions(botProfiles.botProfiles).map(companion => (
           <CompanionCard
             key={companion.id}
             companion={companion}

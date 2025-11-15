@@ -13,17 +13,14 @@ interface TabNavigationProps {
   defaultActiveTab?: string;
 }
 
-const TabNavigation = ({
-  tabs,
-  defaultActiveTab = 'Girls',
-}: TabNavigationProps) => {
+const TabNavigation = ({ tabs, defaultActiveTab = 'Girls' }: TabNavigationProps) => {
   const [activeTab, setActiveTab] = useState(defaultActiveTab);
 
   return (
     <div className="relative w-full">
       {/* Tabs Container */}
       <div className="flex justify-center items-center">
-        {tabs.map((tab) => (
+        {tabs.map(tab => (
           <div key={tab.label} className="relative">
             <Link
               href={tab.href}

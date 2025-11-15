@@ -7,11 +7,7 @@ interface CompanionsLayoutProps {
   children: ReactNode;
 }
 
-const CompanionsLayout = ({
-  title,
-  subtitle,
-  children,
-}: CompanionsLayoutProps) => {
+const CompanionsLayout = ({ title, subtitle, children }: CompanionsLayoutProps) => {
   return (
     <GlobalLayout>
       <div className="bg-black">

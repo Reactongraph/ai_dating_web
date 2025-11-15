@@ -33,7 +33,7 @@ const Step6Occupation: React.FC = () => {
     if (hobbies.includes(hobby)) {
       setValue(
         'hobbies',
-        hobbies.filter((h) => h !== hobby)
+        hobbies.filter(h => h !== hobby),
       );
     } else if (hobbies.length < 3) {
       setValue('hobbies', [...hobbies, hobby]);
@@ -44,19 +44,14 @@ const Step6Occupation: React.FC = () => {
     <div className="space-y-8">
       {/* Occupation Selection */}
       <div>
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Choose occupation
-        </h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Choose occupation</h2>
         <div className="grid grid-cols-5 gap-3 max-w-5xl mx-auto">
-          {occupations.map((option) => (
+          {occupations.map(option => (
             <button
               key={option._id}
               type="button"
               onClick={() =>
-                setValue(
-                  'occupation',
-                  option.name.toLowerCase() as CharacterFormData['occupation']
-                )
+                setValue('occupation', option.name.toLowerCase() as CharacterFormData['occupation'])
               }
               className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                 occupation === option.name.toLowerCase()
@@ -73,11 +68,9 @@ const Step6Occupation: React.FC = () => {
       {/* Hobbies Selection */}
       <div>
         <h2 className="text-2xl font-bold text-center mb-2">Choose hobbies</h2>
-        <p className="text-center text-gray-300 mb-6">
-          You can choose up to 3 variants
-        </p>
+        <p className="text-center text-gray-300 mb-6">You can choose up to 3 variants</p>
         <div className="grid grid-cols-5 gap-3 max-w-5xl mx-auto">
-          {hobbyOptions.map((hobby) => (
+          {hobbyOptions.map(hobby => (
             <button
               key={hobby}
               type="button"

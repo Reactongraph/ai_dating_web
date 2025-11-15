@@ -16,12 +16,7 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
     >
       {/* Image */}
       <div className="relative h-[480px] w-full">
-        <Image
-          src={character.mainImage}
-          alt={character.name}
-          fill
-          className="object-cover"
-        />
+        <Image src={character.mainImage} alt={character.name} fill className="object-cover" />
 
         {/* Top Actions */}
         <div className="absolute top-4 right-4 left-4 flex justify-between items-center">
@@ -37,9 +32,7 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
         {/* Bottom Content */}
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <div className="flex items-center space-x-2">
-            <h3 className="text-2xl font-semibold text-white">
-              {character.name}
-            </h3>
+            <h3 className="text-2xl font-semibold text-white">{character.name}</h3>
             <span className="text-xl text-white">{character.age}</span>
           </div>
         </div>

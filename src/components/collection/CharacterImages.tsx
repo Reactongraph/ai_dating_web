@@ -42,9 +42,7 @@ const CharacterImages = ({ character }: CharacterImagesProps) => {
                 height={24}
                 className="rounded-full"
               />
-              <span className="text-2xl font-bold text-white">
-                {character.name}
-              </span>
+              <span className="text-2xl font-bold text-white">{character.name}</span>
             </div>
           </nav>
         </div>
@@ -60,12 +58,7 @@ const CharacterImages = ({ character }: CharacterImagesProps) => {
               onClick={() => openGallery(index)}
             >
               <div className="relative aspect-[3/4]">
-                <Image
-                  src={image.url}
-                  alt={image.alt}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={image.url} alt={image.alt} fill className="object-cover" />
 
                 {/* Top Actions */}
                 <div className="absolute top-4 right-4">

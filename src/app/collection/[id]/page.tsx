@@ -16,7 +16,7 @@ export default function CharacterPage({ params }: any) {
     // Find the character in the mock data
     if (params && params.id) {
       const id = String(params.id); // Convert to string to ensure type safety
-      const foundCharacter = mockCollection.characters.find((c) => c.id === id);
+      const foundCharacter = mockCollection.characters.find(c => c.id === id);
       setCharacter(foundCharacter || null);
     }
     setLoading(false);

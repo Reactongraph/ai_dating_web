@@ -21,14 +21,10 @@ const StepCard = ({ iconSrc, title, description }: StepCardProps) => (
       </div>
 
       {/* Title */}
-      <h3 className="text-text-primary  sm:text-xl md:text-lg font-semibold  sm:mb-2">
-        {title}
-      </h3>
+      <h3 className="text-text-primary  sm:text-xl md:text-lg font-semibold  sm:mb-2">{title}</h3>
 
       {/* Description */}
-      <p className="text-text-muted sm:text-base leading-relaxed">
-        {description}
-      </p>
+      <p className="text-text-muted sm:text-base leading-relaxed">{description}</p>
     </div>
   </div>
 );
@@ -38,14 +34,12 @@ const HowToCreate = () => {
     {
       iconSrc: '/assets/signUp.svg',
       title: 'Sign Up',
-      description:
-        'Join the True Companion community with a quick and easy registration.',
+      description: 'Join the True Companion community with a quick and easy registration.',
     },
     {
       iconSrc: '/assets/wand.svg',
       title: 'Bring AI',
-      description:
-        'Use our powerful AI tools to create your first personalized AI character.',
+      description: 'Use our powerful AI tools to create your first personalized AI character.',
     },
     {
       iconSrc: '/assets/chat.svg',
@@ -60,9 +54,7 @@ const HowToCreate = () => {
       {/* Content */}
       <div className="max-w-7xl mx-auto">
         <h2 className="text-2xl sm:text-3xl md:text-2xl font-bold text-center  sm:mb-12 md:mb-4">
-          How to{' '}
-          <span className="text-primary-500">create your perfect AI</span>{' '}
-          Girlfriend?
+          How to <span className="text-primary-500">create your perfect AI</span> Girlfriend?
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-6 md:gap-8">

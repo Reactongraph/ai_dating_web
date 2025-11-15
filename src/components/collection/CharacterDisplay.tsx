@@ -9,7 +9,7 @@ interface CharacterDisplayProps {
 }
 
 export default function CharacterDisplay({ id }: CharacterDisplayProps) {
-  const character = mockCollection.characters.find((c) => c.id === id);
+  const character = mockCollection.characters.find(c => c.id === id);
 
   if (!character) {
     notFound();

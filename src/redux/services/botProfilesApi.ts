@@ -37,8 +37,7 @@ export const botProfilesApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000',
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as { auth: { token: string | null } }).auth
-        .token;
+      const token = (getState() as { auth: { token: string | null } }).auth.token;
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
@@ -51,13 +50,10 @@ export const botProfilesApi = createApi({
     },
   }),
   tagTypes: ['BotProfiles'],
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getBotProfiles: builder.query<GetBotProfilesResponse, string>({
-      query: (botType) =>
-        `/botProfiles/get-all-default-bot-profiles/${botType}`,
-      providesTags: (result, error, botType) => [
-        { type: 'BotProfiles', id: botType },
-      ],
+      query: botType => `/botProfiles/get-all-default-bot-profiles/${botType}`,
+      providesTags: (result, error, botType) => [{ type: 'BotProfiles', id: botType }],
     }),
     getUserBotProfiles: builder.query<GetBotProfilesResponse, void>({
       query: () => '/users/bot-profiles',
@@ -66,5 +62,4 @@ export const botProfilesApi = createApi({
   }),
 });
 
-export const { useGetBotProfilesQuery, useGetUserBotProfilesQuery } =
-  botProfilesApi;
+export const { useGetBotProfilesQuery, useGetUserBotProfilesQuery } = botProfilesApi;

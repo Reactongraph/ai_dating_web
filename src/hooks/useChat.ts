@@ -28,7 +28,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   const [chatWithBot] = useChatWithBotMutation();
   const [markAsRead] = useMarkMessagesAsReadMutation();
 
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector(state => state.auth.user);
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
 
@@ -56,30 +56,27 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       refetchOnMountOrArgChange: true, // Always refetch when component mounts or args change
       refetchOnFocus: false, // Don't refetch on window focus
       refetchOnReconnect: false, // Don't refetch on network reconnect
-    }
+    },
   );
 
   // Helper function to deduplicate messages
-  const deduplicateMessages = useCallback(
-    (messages: ChatMessage[]): ChatMessage[] => {
-      const seen = new Set<string>();
-      return messages.filter((msg) => {
-        // Create a unique key based on content and approximate timestamp (within 5 seconds)
-        const timeKey = Math.floor(new Date(msg.timestamp).getTime() / 5000);
-        const key = `${msg.content}-${msg.isUser}-${timeKey}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
-    },
-    []
-  );
+  const deduplicateMessages = useCallback((messages: ChatMessage[]): ChatMessage[] => {
+    const seen = new Set<string>();
+    return messages.filter(msg => {
+      // Create a unique key based on content and approximate timestamp (within 5 seconds)
+      const timeKey = Math.floor(new Date(msg.timestamp).getTime() / 5000);
+      const key = `${msg.content}-${msg.isUser}-${timeKey}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, []);
 
   // Convert API chat history messages to internal format
   const convertApiMessagesToInternal = useCallback(
     (apiMessages: ApiChatHistoryMessage[]): ChatMessage[] => {
       // Create a copy and reverse it so newest messages appear at the bottom
-      return [...apiMessages].reverse().flatMap((apiMsg) => {
+      return [...apiMessages].reverse().flatMap(apiMsg => {
         const baseMessage = {
           id: apiMsg.chatId,
           senderId: apiMsg.senderId,
@@ -115,7 +112,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         ];
       });
     },
-    []
+    [],
   );
 
   // Convert messages to API format for chat-with-bot
@@ -142,7 +139,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
       return history;
     },
-    []
+    [],
   );
 
   // Function to refetch chat history
@@ -157,18 +154,19 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
     async (messageContent: string) => {
       // Prevent multiple simultaneous calls
       if (isProcessingRef.current) {
-        console.log('Already processing a message, ignoring duplicate call');
+        console.warn('Already processing a message, ignoring duplicate call');
         return;
       }
 
       // console.log('sendChatMessage called with:', messageContent);
-      // console.log('Current state:', {
-      //   botId,
-      //   userId: user?.id,
-      //   messageContent,
-      // });
+      console.log('Current state:', {
+        botId,
+        userId: user?.id,
+        user_Id: user._id,
+        messageContent,
+      });
 
-      if (!botId || !user?.id || !messageContent.trim()) {
+      if (!botId || !user?.id || !messageContent.trim() || !user._id) {
         // console.log('Missing required data:', {
         //   botId,
         //   userId: user?._id,
@@ -197,7 +195,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       // Get current messages before adding the user message
       const currentMessages = messagesRef.current;
 
-      setMessages((prev) => deduplicateMessages([...prev, userMessage]));
+      setMessages(prev => deduplicateMessages([...prev, userMessage]));
 
       // Show typing indicator immediately
       setIsTyping(true);
@@ -216,34 +214,34 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           user_id: user.id as string,
         };
 
-        // console.log('Request data:', requestData);
+        console.log('Request chat with bot data:', requestData);
 
         // Start API call and minimum delay in parallel
         const [response] = await Promise.all([
           chatWithBot(requestData).unwrap(),
-          new Promise((resolve) => setTimeout(resolve, 2000)), // Minimum 2 second delay
+          new Promise(resolve => setTimeout(resolve, 2000)), // Minimum 2 second delay
         ]);
 
         // console.log('API Response:', response);
 
         if (response.success && response.data.answer) {
           // Replace temporary user message with real one
-          setMessages((prev) =>
+          setMessages(prev =>
             deduplicateMessages(
-              prev.map((msg) =>
+              prev.map(msg =>
                 msg.id === userMessage.id
                   ? {
                       ...msg,
                       id: `user-${Date.now()}`,
                     }
-                  : msg
-              )
-            )
+                  : msg,
+              ),
+            ),
           );
 
           // Add additional random delay (0-2 seconds) for more natural feel
           const additionalDelay = Math.random() * 2000; // 0-2 seconds
-          await new Promise((resolve) => setTimeout(resolve, additionalDelay));
+          await new Promise(resolve => setTimeout(resolve, additionalDelay));
 
           // Add text response
           const textMessage: ChatMessage = {
@@ -270,7 +268,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
             dispatch(chatApi.util.invalidateTags(['ChatList']));
           }
 
-          setMessages((prev) => deduplicateMessages([...prev, ...messages]));
+          setMessages(prev => deduplicateMessages([...prev, ...messages]));
           setIsTyping(false);
           // console.log('Message sent successfully and bot response added');
         } else {
@@ -279,7 +277,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       } catch (error) {
         console.error('Error sending message:', error);
         // Remove the optimistic message on error
-        setMessages((prev) => prev.filter((msg) => msg.id !== userMessage.id));
+        setMessages(prev => prev.filter(msg => msg.id !== userMessage.id));
         setIsTyping(false);
         showSnackbar('Failed to send message', 'error');
       } finally {
@@ -287,14 +285,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         isProcessingRef.current = false;
       }
     },
-    [
-      botId,
-      user?.id,
-      convertMessagesToHistory,
-      chatWithBot,
-      showSnackbar,
-      deduplicateMessages,
-    ]
+    [botId, user?.id, convertMessagesToHistory, chatWithBot, showSnackbar, deduplicateMessages],
   );
 
   // Mark messages as read
@@ -315,9 +306,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       //   'Loading chat history from API:',
       //   chatHistoryResponse.data.messages
       // );
-      const convertedMessages = convertApiMessagesToInternal(
-        chatHistoryResponse.data.messages
-      );
+      const convertedMessages = convertApiMessagesToInternal(chatHistoryResponse.data.messages);
       setMessages(deduplicateMessages(convertedMessages));
     }
   }, [chatHistoryResponse, convertApiMessagesToInternal, deduplicateMessages]);
@@ -372,9 +361,8 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
   // Make testApiConnection available globally for debugging
   if (typeof window !== 'undefined') {
-    (
-      window as unknown as { testChatApi: typeof testApiConnection }
-    ).testChatApi = testApiConnection;
+    (window as unknown as { testChatApi: typeof testApiConnection }).testChatApi =
+      testApiConnection;
   }
 
   return {

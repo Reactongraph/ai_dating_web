@@ -12,20 +12,13 @@ import { Companion } from '@/components/cards/CompanionCard';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
 
 const mapBotProfilesToCompanions = (profiles: ApiBotProfile[]): Companion[] => {
-  return profiles.map((profile) => ({
+  return profiles.map(profile => ({
     id: profile._id,
     name: profile.name,
     age: parseInt(profile.age) || 20,
     description: profile.bio || 'No description available',
-    imageSrc:
-      profile.imageURL ||
-      profile.avatar_image?.s3Location ||
-      '/assets/default-avatar.png',
-    tags: [
-      profile.occupation,
-      profile.personality,
-      ...profile.hobbies.slice(0, 1),
-    ],
+    imageSrc: profile.imageURL || profile.avatar_image?.s3Location || '/assets/default-avatar.png',
+    tags: [profile.occupation, profile.personality, ...profile.hobbies.slice(0, 1)],
   }));
 };
 
@@ -37,19 +30,13 @@ const tabs = [
 
 export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState('girl');
-  const {
-    data: botProfiles,
-    isLoading,
-    error,
-  } = useGetBotProfilesQuery(activeTab);
+  const { data: botProfiles, isLoading, error } = useGetBotProfilesQuery(activeTab);
   const { startChat } = useChatInitiation();
 
   // Handle companion card click
   const handleCompanionClick = (companion: { id: string }) => {
-    console.log("companion ---->",companion)  
     startChat(companion.id);
   };
-
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
@@ -91,11 +78,7 @@ export default function ExplorePage() {
               Discover AI Companions
             </h1>
           </div>
-          <CategoryTabs
-            tabs={tabs}
-            activeTab={activeTab}
-            onTabChange={handleTabChange}
-          />
+          <CategoryTabs tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
 
         {/* Grid Layout */}
@@ -123,12 +106,13 @@ export default function ExplorePage() {
           {!isLoading &&
             !error &&
             botProfiles?.botProfiles &&
-            mapBotProfilesToCompanions(botProfiles.botProfiles).map(
-              (companion) => (
-                <CompanionCard key={companion.id} companion={companion}
-                handleCardClick={handleCompanionClick} />
-              )
-            )}
+            mapBotProfilesToCompanions(botProfiles.botProfiles).map(companion => (
+              <CompanionCard
+                key={companion.id}
+                companion={companion}
+                handleCardClick={handleCompanionClick}
+              />
+            ))}
         </div>
       </div>
     </main>

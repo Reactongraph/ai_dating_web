@@ -33,9 +33,9 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
 
   const toggleSidebar = () => {
     if (isMobileView) {
-      setIsMobileSidebarOpen((prev) => !prev);
+      setIsMobileSidebarOpen(prev => !prev);
     } else {
-      setIsSidebarExpanded((prev) => !prev);
+      setIsSidebarExpanded(prev => !prev);
     }
   };
 
@@ -53,10 +53,7 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
       />
 
       {/* Header */}
-      <NavBar
-        onToggleSidebar={toggleSidebar}
-        isMobileOpen={isMobileSidebarOpen}
-      />
+      <NavBar onToggleSidebar={toggleSidebar} isMobileOpen={isMobileSidebarOpen} />
       {/* Main Content */}
       <main className="pt-17 md:pl-16 flex-grow">{children}</main>
       {/* Footer */}

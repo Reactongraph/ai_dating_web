@@ -64,9 +64,7 @@ const CreateCompanionCard = ({
       style={{ backgroundImage: `url("${backgroundImage}")` }}
     >
       <div className="absolute inset-0 flex flex-col items-center justify-end p-6 text-center bg-black/30">
-        <h3 className="sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-6">
-          {title}
-        </h3>
+        <h3 className="sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-6">{title}</h3>
         {renderButton()}
       </div>
     </div>

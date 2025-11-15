@@ -13,22 +13,17 @@ interface ImageGalleryProps {
   onClose: () => void;
 }
 
-const ImageGallery = ({
-  images,
-  initialImageIndex = 0,
-  isOpen,
-  onClose,
-}: ImageGalleryProps) => {
+const ImageGallery = ({ images, initialImageIndex = 0, isOpen, onClose }: ImageGalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialImageIndex);
 
   if (!isOpen) return null;
 
   const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
   return (
@@ -74,12 +69,7 @@ const ImageGallery = ({
             className={`w-16 h-16 relative rounded-lg overflow-hidden transition-opacity
               ${index === currentIndex ? 'ring-2 ring-accent-blue' : 'opacity-50 hover:opacity-100'}`}
           >
-            <Image
-              src={image.url}
-              alt={image.alt}
-              fill
-              className="object-cover"
-            />
+            <Image src={image.url} alt={image.alt} fill className="object-cover" />
           </button>
         ))}
       </div>

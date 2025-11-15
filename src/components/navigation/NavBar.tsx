@@ -14,12 +14,10 @@ interface NavBarProps {
 const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<'email-login' | 'signup'>(
-    'email-login'
-  );
+  const [authMode, setAuthMode] = useState<'email-login' | 'signup'>('email-login');
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const pathname = usePathname();
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user } = useAppSelector(state => state.auth);
   // Check if banner is visible and adjust navbar position
   useEffect(() => {
     const checkBannerVisibility = () => {
@@ -66,12 +64,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
               onClick={onToggleSidebar}
               className="md:hidden p-2 rounded-lg text-text-secondary hover:text-white hover:bg-white-1a transition-colors"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileOpen ? (
                   <path
                     strokeLinecap="round"
@@ -162,11 +155,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
           </div>
         </div>
       </nav>
-      <Auth
-        isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        initialMode={authMode}
-      />
+      <Auth isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} initialMode={authMode} />
     </>
   );
 };

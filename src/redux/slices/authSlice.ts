@@ -46,11 +46,8 @@ const getUserFromLocalStorage = (): LoginResponse['user'] | null => {
 // Define the initial state
 const initialState: AuthState = {
   user: getUserFromLocalStorage(),
-  token:
-    typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null,
-  isAuthenticated: !!(
-    typeof window !== 'undefined' && localStorage.getItem('accessToken')
-  ),
+  token: typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null,
+  isAuthenticated: !!(typeof window !== 'undefined' && localStorage.getItem('accessToken')),
   loading: false,
   requiresVerification: false,
   realtimeImage: null,
@@ -63,7 +60,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Initialize auth state from localStorage
-    initializeAuthState: (state) => {
+    initializeAuthState: state => {
       if (typeof window !== 'undefined') {
         const token = localStorage.getItem('accessToken');
         const userDataStr = localStorage.getItem('userData');
@@ -87,10 +84,7 @@ const authSlice = createSlice({
       state.requiresVerification = false;
       state.error = null;
     },
-    setCredentials: (
-      state,
-      action: PayloadAction<LoginResponse | GoogleAuthResponsePayload>
-    ) => {
+    setCredentials: (state, action: PayloadAction<LoginResponse | GoogleAuthResponsePayload>) => {
       const payload = action.payload;
 
       // Handle direct Google response format
@@ -133,9 +127,7 @@ const authSlice = createSlice({
         state.token = accessToken;
         state.isAuthenticated = true;
         state.requiresVerification = false;
-        state.realtimeImage = payload.realtimeImage?.length
-          ? payload.realtimeImage[0]
-          : null;
+        state.realtimeImage = payload.realtimeImage?.length ? payload.realtimeImage[0] : null;
 
         // Save token and user data to localStorage
         if (typeof window !== 'undefined') {
@@ -144,15 +136,13 @@ const authSlice = createSlice({
         }
       } else if (
         ('requiresVerification' in payload && payload.requiresVerification) ||
-        (payload.user &&
-          'isEmailVerified' in payload.user &&
-          !payload.user.isEmailVerified)
+        (payload.user && 'isEmailVerified' in payload.user && !payload.user.isEmailVerified)
       ) {
         state.requiresVerification = true;
         state.error = payload.message || 'Email verification required';
       }
     },
-    clearCredentials: (state) => {
+    clearCredentials: state => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
@@ -174,162 +164,132 @@ const authSlice = createSlice({
     },
   },
   // Add extra reducers to handle API responses
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
       // Clear transient fields when Redux rehydrates from persistence
-      .addCase(REHYDRATE, (state) => {
+      .addCase(REHYDRATE, state => {
         // Clear transient fields that shouldn't persist across page reloads
         state.loading = false;
         state.requiresVerification = false;
         state.error = null;
       })
       // Login pending
-      .addMatcher(authApi.endpoints.login.matchPending, (state) => {
+      .addMatcher(authApi.endpoints.login.matchPending, state => {
         state.loading = true;
         state.error = null;
       })
       // Google Login success
-      .addMatcher(
-        googleAuthApi.endpoints.googleLogin.matchFulfilled,
-        (state, { payload }) => {
-          state.loading = false;
+      .addMatcher(googleAuthApi.endpoints.googleLogin.matchFulfilled, (state, { payload }) => {
+        state.loading = false;
 
-          // Handle direct Google response format
-          if (payload.token) {
-            // Create a user object from Google data
-            const user = {
-              _id: payload.googleId || '',
-              name: payload.name || '',
-              email: payload.email || '',
-              profilePicture: payload.picture || '',
-              googleId: payload.googleId || '',
-              isEmailVerified: true,
-            };
+        // Handle direct Google response format
+        if (payload.token) {
+          // Create a user object from Google data
+          const user = {
+            _id: payload.googleId || '',
+            name: payload.name || '',
+            email: payload.email || '',
+            profilePicture: payload.picture || '',
+            googleId: payload.googleId || '',
+            isEmailVerified: true,
+          };
 
-            state.user = user as LoginResponse['user'];
-            state.token = payload.token;
-            state.isAuthenticated = true;
-            state.requiresVerification = false;
-            state.error = null;
+          state.user = user as LoginResponse['user'];
+          state.token = payload.token;
+          state.isAuthenticated = true;
+          state.requiresVerification = false;
+          state.error = null;
 
-            // Save token and user data to localStorage
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('accessToken', payload.token);
-              localStorage.setItem('userData', JSON.stringify(user));
-            }
-          }
-          // Handle standard API response format
-          else if (
-            payload.statusCode === 200 &&
-            payload.user &&
-            payload.accessToken
-          ) {
-            const accessToken =
-              typeof payload.accessToken === 'string'
-                ? payload.accessToken
-                : payload.accessToken.access_token;
-
-            state.user = payload.user;
-            state.token = accessToken;
-            state.isAuthenticated = true;
-            state.requiresVerification = false;
-            state.realtimeImage = payload.realtimeImage?.length
-              ? payload.realtimeImage[0]
-              : null;
-
-            // Save token and user data to localStorage
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('accessToken', accessToken);
-              localStorage.setItem('userData', JSON.stringify(payload.user));
-            }
+          // Save token and user data to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('accessToken', payload.token);
+            localStorage.setItem('userData', JSON.stringify(user));
           }
         }
-      )
+        // Handle standard API response format
+        else if (payload.statusCode === 200 && payload.user && payload.accessToken) {
+          const accessToken =
+            typeof payload.accessToken === 'string'
+              ? payload.accessToken
+              : payload.accessToken.access_token;
+
+          state.user = payload.user;
+          state.token = accessToken;
+          state.isAuthenticated = true;
+          state.requiresVerification = false;
+          state.realtimeImage = payload.realtimeImage?.length ? payload.realtimeImage[0] : null;
+
+          // Save token and user data to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('userData', JSON.stringify(payload.user));
+          }
+        }
+      })
       // Google Login error
-      .addMatcher(
-        googleAuthApi.endpoints.googleLogin.matchRejected,
-        (state, { error }) => {
-          state.loading = false;
-          state.error = error.message || 'Google login failed';
-        }
-      )
+      .addMatcher(googleAuthApi.endpoints.googleLogin.matchRejected, (state, { error }) => {
+        state.loading = false;
+        state.error = error.message || 'Google login failed';
+      })
       // Login success
-      .addMatcher(
-        authApi.endpoints.login.matchFulfilled,
-        (state, { payload }) => {
-          state.loading = false;
+      .addMatcher(authApi.endpoints.login.matchFulfilled, (state, { payload }) => {
+        state.loading = false;
 
-          if (
-            payload.statusCode === 200 &&
-            payload.user &&
-            payload.accessToken?.access_token
-          ) {
-            state.user = payload.user;
-            state.token = payload.accessToken.access_token;
-            state.isAuthenticated = true;
-            state.requiresVerification = false;
-            state.realtimeImage = payload.realtimeImage?.length
-              ? payload.realtimeImage[0]
-              : null;
+        if (payload.statusCode === 200 && payload.user && payload.accessToken?.access_token) {
+          state.user = payload.user;
+          state.token = payload.accessToken.access_token;
+          state.isAuthenticated = true;
+          state.requiresVerification = false;
+          state.realtimeImage = payload.realtimeImage?.length ? payload.realtimeImage[0] : null;
 
-            // Save token and user data to localStorage
-            if (typeof window !== 'undefined') {
-              localStorage.setItem(
-                'accessToken',
-                payload.accessToken.access_token
-              );
-              localStorage.setItem('userData', JSON.stringify(payload.user));
-            }
-          } else if (
-            payload.requiresVerification ||
-            (payload.user && !payload.user.isEmailVerified)
-          ) {
-            state.requiresVerification = true;
-            state.error = payload.message || 'Email verification required';
-          } else {
-            state.error = payload.message || 'Login failed';
+          // Save token and user data to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('accessToken', payload.accessToken.access_token);
+            localStorage.setItem('userData', JSON.stringify(payload.user));
           }
+        } else if (
+          payload.requiresVerification ||
+          (payload.user && !payload.user.isEmailVerified)
+        ) {
+          state.requiresVerification = true;
+          state.error = payload.message || 'Email verification required';
+        } else {
+          state.error = payload.message || 'Login failed';
         }
-      )
+      })
       // Login error
       .addMatcher(authApi.endpoints.login.matchRejected, (state, { error }) => {
         state.loading = false;
         state.error = error.message || 'Login failed';
       })
       // Signup pending
-      .addMatcher(authApi.endpoints.signup.matchPending, (state) => {
+      .addMatcher(authApi.endpoints.signup.matchPending, state => {
         state.loading = true;
         state.error = null;
       })
       // Signup success
-      .addMatcher(
-        authApi.endpoints.signup.matchFulfilled,
-        (state, { payload }) => {
-          state.loading = false;
+      .addMatcher(authApi.endpoints.signup.matchFulfilled, (state, { payload }) => {
+        state.loading = false;
 
-          // Handle signup response - check for statusCode 201 (success) or success flag
-          if (payload.statusCode === 201 || payload.success) {
-            // For signup, we don't set the user/token yet as it requires email verification
-            state.requiresVerification = payload.emailSent || false;
-            state.error = null; // Clear any previous errors
-          } else {
-            // Only set error if signup actually failed
-            state.error = payload.message || 'Signup failed';
-          }
+        // Handle signup response - check for statusCode 201 (success) or success flag
+        if (payload.statusCode === 201 || payload.success) {
+          // For signup, we don't set the user/token yet as it requires email verification
+          state.requiresVerification = payload.emailSent || false;
+          state.error = null; // Clear any previous errors
+        } else {
+          // Only set error if signup actually failed
+          state.error = payload.message || 'Signup failed';
         }
-      )
+      })
       // Signup error
-      .addMatcher(
-        authApi.endpoints.signup.matchRejected,
-        (state) => {
-          state.loading = false;
-          // Don't set error state for signup - we handle errors in SignupModal component
-          // This prevents duplicate error snackbars
-          state.error = null;
-        }
-      )
+      .addMatcher(authApi.endpoints.signup.matchRejected, state => {
+        state.loading = false;
+        // Don't set error state for signup - we handle errors in SignupModal component
+        // This prevents duplicate error snackbars
+        state.error = null;
+      })
       // Logout success
-      .addMatcher(authApi.endpoints.logout.matchFulfilled, (state) => {
+      .addMatcher(authApi.endpoints.logout.matchFulfilled, state => {
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
@@ -343,104 +303,84 @@ const authSlice = createSlice({
         }
       })
       // Verify token success
-      .addMatcher(
-        authApi.endpoints.verifyToken.matchFulfilled,
-        (state, { payload }) => {
-          state.loading = false;
+      .addMatcher(authApi.endpoints.verifyToken.matchFulfilled, (state, { payload }) => {
+        state.loading = false;
 
-          if (payload.valid && payload.user) {
-            state.user = payload.user;
-            state.isAuthenticated = true;
-          } else {
-            state.user = null;
-            state.token = null;
-            state.isAuthenticated = false;
+        if (payload.valid && payload.user) {
+          state.user = payload.user;
+          state.isAuthenticated = true;
+        } else {
+          state.user = null;
+          state.token = null;
+          state.isAuthenticated = false;
 
-            // Remove invalid token and user data from localStorage
-            if (typeof window !== 'undefined') {
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('userData');
-            }
+          // Remove invalid token and user data from localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('userData');
           }
         }
-      )
+      })
       // Verify session success (for Google auth)
-      .addMatcher(
-        googleAuthApi.endpoints.verifySession.matchFulfilled,
-        (state, { payload }) => {
-          state.loading = false;
+      .addMatcher(googleAuthApi.endpoints.verifySession.matchFulfilled, (state, { payload }) => {
+        state.loading = false;
 
-          // Handle direct token response format
-          if (payload.token) {
-            // Create a user object from Google data
-            const user = {
-              _id: payload.googleId || '',
-              name: payload.name || '',
-              email: payload.email || '',
-              profilePicture: payload.picture || '',
-              googleId: payload.googleId || '',
-              isEmailVerified: true,
-            };
+        // Handle direct token response format
+        if (payload.token) {
+          // Create a user object from Google data
+          const user = {
+            _id: payload.googleId || '',
+            name: payload.name || '',
+            email: payload.email || '',
+            profilePicture: payload.picture || '',
+            googleId: payload.googleId || '',
+            isEmailVerified: true,
+          };
 
-            state.user = user as LoginResponse['user'];
-            state.token = payload.token;
-            state.isAuthenticated = true;
-            state.requiresVerification = false;
-            state.error = null;
+          state.user = user as LoginResponse['user'];
+          state.token = payload.token;
+          state.isAuthenticated = true;
+          state.requiresVerification = false;
+          state.error = null;
 
-            // Save token and user data to localStorage
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('accessToken', payload.token);
-              localStorage.setItem('userData', JSON.stringify(user));
-            }
-          }
-          // Handle standard API response format
-          else if (
-            payload.statusCode === 200 &&
-            payload.user &&
-            payload.accessToken
-          ) {
-            const accessToken =
-              typeof payload.accessToken === 'string'
-                ? payload.accessToken
-                : payload.accessToken.access_token;
-
-            state.user = payload.user;
-            state.token = accessToken;
-            state.isAuthenticated = true;
-            state.requiresVerification = false;
-            state.realtimeImage = payload.realtimeImage?.length
-              ? payload.realtimeImage[0]
-              : null;
-
-            // Save token and user data to localStorage
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('accessToken', accessToken);
-              localStorage.setItem('userData', JSON.stringify(payload.user));
-            }
+          // Save token and user data to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('accessToken', payload.token);
+            localStorage.setItem('userData', JSON.stringify(user));
           }
         }
-      )
+        // Handle standard API response format
+        else if (payload.statusCode === 200 && payload.user && payload.accessToken) {
+          const accessToken =
+            typeof payload.accessToken === 'string'
+              ? payload.accessToken
+              : payload.accessToken.access_token;
+
+          state.user = payload.user;
+          state.token = accessToken;
+          state.isAuthenticated = true;
+          state.requiresVerification = false;
+          state.realtimeImage = payload.realtimeImage?.length ? payload.realtimeImage[0] : null;
+
+          // Save token and user data to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('userData', JSON.stringify(payload.user));
+          }
+        }
+      })
       // Verify session error
-      .addMatcher(
-        googleAuthApi.endpoints.verifySession.matchRejected,
-        (state, { error }) => {
-          state.loading = false;
-          state.error = error.message || 'Session verification failed';
-          console.error('Session verification failed:', error);
-        }
-      );
+      .addMatcher(googleAuthApi.endpoints.verifySession.matchRejected, (state, { error }) => {
+        state.loading = false;
+        state.error = error.message || 'Session verification failed';
+        console.error('Session verification failed:', error);
+      });
   },
 });
 
 // Export actions
-export const {
-  setCredentials,
-  clearCredentials,
-  setLoading,
-  setError,
-  initializeAuthState,
-} = authSlice.actions;
+export const { setCredentials, clearCredentials, setLoading, setError, initializeAuthState } =
+  authSlice.actions;
 
 // Export reducer
 export default authSlice.reducer;

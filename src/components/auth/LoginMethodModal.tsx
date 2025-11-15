@@ -31,9 +31,7 @@ const LoginMethodModal = ({
             <FiMail className="w-6 h-6 text-accent-cyan" />
             <div className="text-left">
               <h3 className="text-white font-medium">Email Login</h3>
-              <p className="text-sm text-gray-400">
-                Login with email and password
-              </p>
+              <p className="text-sm text-gray-400">Login with email and password</p>
             </div>
           </div>
         </button>

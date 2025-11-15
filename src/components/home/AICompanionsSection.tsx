@@ -27,17 +27,12 @@ const AICompanionsSection = () => {
 
   // Get the current bot type based on active category
   const currentBotType =
-    companionCategories.find((cat) => cat.id === activeCategory)?.botType ||
-    'girl';
+    companionCategories.find(cat => cat.id === activeCategory)?.botType || 'girl';
 
   // Fetch bot profiles for the current category
-  const {
-    data: botProfilesResponse,
-    isLoading,
-    error,
-  } = useGetBotProfilesQuery(currentBotType);
+  const { data: botProfilesResponse, isLoading, error } = useGetBotProfilesQuery(currentBotType);
 
-  const tabs = companionCategories.map((cat) => ({
+  const tabs = companionCategories.map(cat => ({
     id: cat.id,
     label: cat.label,
   }));
@@ -70,26 +65,19 @@ const AICompanionsSection = () => {
       <div className="bg-black mt-2 sm:mt-0 px-2 sm:px-2">
         <div className="max-w-7xl mx-auto sm:py-10 md:py-6">
           <p className="text-gray-400 md:text-lg sm:text-xs text-center  sm:mb-8 md:mb-3">
-            From friendly to flirty — dive into a world of personalities crafted
-            just for you.
+            From friendly to flirty — dive into a world of personalities crafted just for you.
           </p>
 
           {/* Tabs Navigation */}
           <div className="flex justify-center mb-8 sm:mb-8 md:mb-8">
-            <CategoryTabs
-              tabs={tabs}
-              activeTab={activeCategory}
-              onTabChange={setActiveCategory}
-            />
+            <CategoryTabs tabs={tabs} activeTab={activeCategory} onTabChange={setActiveCategory} />
           </div>
 
           {/* Grid */}
           <div className="grid gap-2 grid-cols-2 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 lg:grid-cols-4 sm:gap-5 md:gap-2 px-2 sm:px-2">
             <CreateCompanionCard
               backgroundImage={
-                activeCategory === 'girls'
-                  ? '/assets/cardgirl1.png'
-                  : '/assets/boy.png'
+                activeCategory === 'girls' ? '/assets/cardgirl1.png' : '/assets/boy.png'
               }
             />
 
@@ -129,7 +117,7 @@ const AICompanionsSection = () => {
             {/* Companion Cards */}
             {!isLoading &&
               !error &&
-              companions.map((companion) => (
+              companions.map(companion => (
                 <CompanionCard
                   key={companion.id}
                   companion={companion}

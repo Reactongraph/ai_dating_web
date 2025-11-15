@@ -11,10 +11,7 @@ interface AuthProps {
   initialMode?: 'email-login' | 'signup';
 }
 
-type AuthMode =
-  | 'method'
-  | 'email-login'
-  | /* 'phone-login' | 'otp' | */ 'signup';
+type AuthMode = 'method' | 'email-login' | /* 'phone-login' | 'otp' | */ 'signup';
 
 const Auth = ({ isOpen, onClose, initialMode = 'email-login' }: AuthProps) => {
   const [mode, setMode] = useState<AuthMode>(initialMode);

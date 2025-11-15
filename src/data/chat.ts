@@ -87,8 +87,7 @@ export const mockChats: Chat[] = [
       {
         id: '1',
         senderId: '1',
-        content:
-          "Hi there... I'm Valentina, I saw you online and couldn't pass by...",
+        content: "Hi there... I'm Valentina, I saw you online and couldn't pass by...",
         timestamp: '15:53',
         isUser: false,
         type: 'TEXT',

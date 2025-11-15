@@ -110,8 +110,7 @@ export const animeCompanions: Companion[] = [
     id: 'a2',
     name: 'Yuki',
     age: 23,
-    description:
-      'Mysterious anime companion with supernatural abilities.Show morecreated at Sep',
+    description: 'Mysterious anime companion with supernatural abilities.Show morecreated at Sep',
     imageSrc: '/assets/anime2.jpg',
     tags: ['Yuki, 23', 'Mysterious'],
   },

@@ -14,22 +14,17 @@ const Step8Clothing: React.FC = () => {
     <div className="space-y-8">
       {/* Instruction */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-6">
-          Choose your character&apos;s clothing
-        </h2>
+        <h2 className="text-2xl font-bold mb-6">Choose your character&apos;s clothing</h2>
       </div>
 
       {/* Clothing Selection */}
       <div className="grid grid-cols-5 gap-3 max-w-5xl mx-auto">
-        {clothings.map((option) => (
+        {clothings.map(option => (
           <button
             key={option._id}
             type="button"
             onClick={() =>
-              setValue(
-                'clothing',
-                option.name.toLowerCase() as CharacterFormData['clothing']
-              )
+              setValue('clothing', option.name.toLowerCase() as CharacterFormData['clothing'])
             }
             className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
               clothing === option.name.toLowerCase()

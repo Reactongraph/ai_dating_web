@@ -26,24 +26,19 @@ export function AuthInitializer() {
         try {
           // Verify the session with our backend
           const response = await verifySession({
-            sessionToken:
-              (session as { accessToken?: string }).accessToken || '',
+            sessionToken: (session as { accessToken?: string }).accessToken || '',
             email: session?.user?.email || '',
             userId: (session as { userId?: string }).userId || '',
           }).unwrap();
 
           // If we get a successful response, update the auth state
-          if (
-            response.token ||
-            (response.statusCode === 200 && response.accessToken)
-          ) {
+          if (response.token || (response.statusCode === 200 && response.accessToken)) {
             // Manually dispatch setCredentials to update auth state
             dispatch(
               setCredentials(
-                response as unknown as import('@/redux/services/authApi').LoginResponse
-              )
+                response as unknown as import('@/redux/services/authApi').LoginResponse,
+              ),
             );
-            console.log('NextAuth session verified and user authenticated');
           }
         } catch (error) {
           console.error('Failed to verify NextAuth session:', error);
