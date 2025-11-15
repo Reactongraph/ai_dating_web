@@ -59,26 +59,68 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
     },
   );
 
-  // Helper function to deduplicate messages
+  // Helper function to deduplicate messages based on unique IDs and content similarity
   const deduplicateMessages = useCallback((messages: ChatMessage[]): ChatMessage[] => {
-    const seen = new Set<string>();
-    return messages.filter(msg => {
-      // Create a unique key based on content and approximate timestamp (within 5 seconds)
-      const timeKey = Math.floor(new Date(msg.timestamp).getTime() / 5000);
-      const key = `${msg.content}-${msg.isUser}-${timeKey}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    const seenIds = new Set<string>();
+    const seenContentKeys = new Map<string, number>();
+    const result: ChatMessage[] = [];
+
+    for (const msg of messages) {
+      if (seenIds.has(msg.id)) {
+        continue;
+      }
+
+      const contentKey = `${msg.senderId}-${msg.isUser}-${msg.type}-${msg.content}`;
+      const timestamp = new Date(msg.timestamp).getTime();
+      const lastTimestamp = seenContentKeys.get(contentKey);
+
+      // Treat messages with identical content from the same sender within 60 seconds as duplicates
+      if (lastTimestamp !== undefined && Math.abs(timestamp - lastTimestamp) < 60000) {
+        continue;
+      }
+
+      seenIds.add(msg.id);
+      seenContentKeys.set(contentKey, timestamp);
+      result.push(msg);
+    }
+
+    return result;
   }, []);
+
+  const isOptimisticMessage = useCallback((message: ChatMessage) => {
+    return (
+      message.id.startsWith('temp-') ||
+      message.id.startsWith('user-') ||
+      message.id.startsWith('bot-text-') ||
+      message.id.startsWith('bot-image-')
+    );
+  }, []);
+
+  const hasMatchingHistoryMessage = useCallback(
+    (history: ChatMessage[], optimisticMessage: ChatMessage) => {
+      const targetContent = optimisticMessage.content?.trim() || '';
+      const targetTimestamp = new Date(optimisticMessage.timestamp).getTime();
+
+      return history.some(histMsg => {
+        if (histMsg.isUser !== optimisticMessage.isUser) return false;
+        if (histMsg.type !== optimisticMessage.type) return false;
+        if ((histMsg.content?.trim() || '') !== targetContent) return false;
+
+        const histTimestamp = new Date(histMsg.timestamp).getTime();
+        return Math.abs(histTimestamp - targetTimestamp) < 60000; // 60 second window
+      });
+    },
+    [],
+  );
 
   // Convert API chat history messages to internal format
   const convertApiMessagesToInternal = useCallback(
     (apiMessages: ApiChatHistoryMessage[]): ChatMessage[] => {
       // Create a copy and reverse it so newest messages appear at the bottom
       return [...apiMessages].reverse().flatMap(apiMsg => {
+        const uniqueSuffix = `${apiMsg.timestamp}-${apiMsg.messageType}-${apiMsg.type}`;
         const baseMessage = {
-          id: apiMsg.chatId,
+          id: `${apiMsg.chatId}-${uniqueSuffix}`,
           senderId: apiMsg.senderId,
           timestamp: apiMsg.timestamp,
           isUser: apiMsg.messageType === 'USER',
@@ -89,13 +131,13 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           return [
             {
               ...baseMessage,
-              id: `${apiMsg.chatId}-text`,
+              id: `${apiMsg.chatId}-text-${uniqueSuffix}`,
               content: apiMsg.message,
               type: 'TEXT',
             },
             {
               ...baseMessage,
-              id: `${apiMsg.chatId}-image`,
+              id: `${apiMsg.chatId}-image-${uniqueSuffix}`,
               content: apiMsg.metadata.imageUrl,
               type: 'IMAGE',
             },
@@ -231,7 +273,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
                 msg.id === userMessage.id
                   ? {
                       ...msg,
-                      id: `user-${Date.now()}`,
+                      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                     }
                   : msg,
               ),
@@ -242,9 +284,12 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           const additionalDelay = Math.random() * 2000; // 0-2 seconds
           await new Promise(resolve => setTimeout(resolve, additionalDelay));
 
+          // Create unique IDs for bot messages to prevent duplicates
+          const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          
           // Add text response
           const textMessage: ChatMessage = {
-            id: `bot-text-${Date.now()}`,
+            id: `bot-text-${uniqueId}`,
             senderId: botId,
             content: response.data.answer,
             timestamp: new Date().toISOString(),
@@ -253,21 +298,38 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           };
 
           // Add image response if present
-          const messages: ChatMessage[] = [textMessage];
+          const newMessages: ChatMessage[] = [textMessage];
           if (response.data.image) {
-            messages.push({
-              id: `bot-image-${response.data.image.id}`,
-              senderId: botId,
-              content: response.data.image.imageURL,
-              timestamp: new Date().toISOString(),
-              isUser: false,
-              type: 'IMAGE',
-            });
-            // Invalidate ChatList cache to refresh generated images
-            dispatch(chatApi.util.invalidateTags(['ChatList']));
+            // Use image ID from response if available, otherwise create unique ID
+            const imageId = response.data.image.id 
+              ? `bot-image-${response.data.image.id}` 
+              : `bot-image-${uniqueId}-img`;
+            
+            // Check if this image message already exists to prevent duplicates
+            const existingImageId = messagesRef.current.find(
+              msg => msg.type === 'IMAGE' && msg.content === response.data.image.imageURL
+            )?.id;
+            
+            if (!existingImageId) {
+              newMessages.push({
+                id: imageId,
+                senderId: botId,
+                content: response.data.image.imageURL,
+                timestamp: new Date().toISOString(),
+                isUser: false,
+                type: 'IMAGE',
+              });
+              // Invalidate ChatList cache to refresh generated images
+              dispatch(chatApi.util.invalidateTags(['ChatList']));
+            }
           }
 
-          setMessages(prev => deduplicateMessages([...prev, ...messages]));
+          // Only add messages that don't already exist (by ID)
+          setMessages(prev => {
+            const existingIds = new Set(prev.map(msg => msg.id));
+            const messagesToAdd = newMessages.filter(msg => !existingIds.has(msg.id));
+            return deduplicateMessages([...prev, ...messagesToAdd]);
+          });
           setIsTyping(false);
           // console.log('Message sent successfully and bot response added');
         } else {
@@ -309,14 +371,24 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   // Load chat history from API when response is available
   useEffect(() => {
     if (chatHistoryResponse?.success && chatHistoryResponse.data.messages) {
-      // console.log(
-      //   'Loading chat history from API:',
-      //   chatHistoryResponse.data.messages
-      // );
       const convertedMessages = convertApiMessagesToInternal(chatHistoryResponse.data.messages);
-      setMessages(deduplicateMessages(convertedMessages));
+      const dedupedHistory = deduplicateMessages(convertedMessages);
+
+      setMessages(prev => {
+        const pendingLocalMessages = prev.filter(
+          msg => isOptimisticMessage(msg) && !hasMatchingHistoryMessage(dedupedHistory, msg),
+        );
+
+        return deduplicateMessages([...dedupedHistory, ...pendingLocalMessages]);
+      });
     }
-  }, [chatHistoryResponse, convertApiMessagesToInternal, deduplicateMessages]);
+  }, [
+    chatHistoryResponse,
+    convertApiMessagesToInternal,
+    deduplicateMessages,
+    hasMatchingHistoryMessage,
+    isOptimisticMessage,
+  ]);
 
   // Clear messages and refetch history when chat changes
   useEffect(() => {
