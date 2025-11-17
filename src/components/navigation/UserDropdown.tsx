@@ -78,18 +78,18 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick, onSignupClick }: UserDrop
             label: user.name || 'User Profile',
             href: '/profile',
           },
-          {
-            icon: <FiSettings className="w-5 h-5" />,
-            label: 'Account Settings',
-            href: '/account-settings',
-          },
-          {
-            icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
-            label: 'Subscription',
-            href: '/subscription',
-            highlight: true,
-            badge: user.subscriber?.isPremiumSubscriber ? 'PREMIUM' : '70%',
-          },
+          // {
+          //   icon: <FiSettings className="w-5 h-5" />,
+          //   label: 'Account Settings',
+          //   href: '/account-settings',
+          // },
+          // {
+          //   icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
+          //   label: 'Subscription',
+          //   href: '/subscription',
+          //   highlight: true,
+          //   badge: user.subscriber?.isPremiumSubscriber ? 'PREMIUM' : '70%',
+          // },
           {
             icon: <FiLogOut className="w-5 h-5" />,
             label: 'Logout',
@@ -116,13 +116,13 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick, onSignupClick }: UserDrop
               onSignupClick();
             },
           },
-          {
-            icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
-            label: 'Subscription',
-            href: '/subscription',
-            highlight: true,
-            badge: '70%',
-          },
+          // {
+          //   icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
+          //   label: 'Subscription',
+          //   href: '/subscription',
+          //   highlight: true,
+          //   badge: '70%',
+          // },
         ];
 
   if (!isOpen) return null;
