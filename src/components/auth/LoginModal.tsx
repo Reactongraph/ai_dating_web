@@ -14,6 +14,7 @@ interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSignupClick: () => void;
+  onForgotPasswordClick?: () => void;
 }
 
 interface LoginFormData {
@@ -21,7 +22,7 @@ interface LoginFormData {
   password: string;
 }
 
-const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
+const LoginModal = ({ isOpen, onClose, onSignupClick, onForgotPasswordClick }: LoginModalProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
   const [googleLogin, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
@@ -176,7 +177,11 @@ const LoginModal = ({ isOpen, onClose, onSignupClick }: LoginModalProps) => {
         </div>
 
         <div className="flex justify-end">
-          <button type="button" className="text-accent-cyan text-sm hover:underline">
+          <button
+            type="button"
+            onClick={onForgotPasswordClick}
+            className="text-accent-cyan text-sm hover:underline"
+          >
             Forgot Password?
           </button>
         </div>

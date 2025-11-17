@@ -64,6 +64,15 @@ export interface SignupResponse {
   success?: boolean; // For backward compatibility
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  statusCode: number;
+  message: string;
+}
+
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
@@ -110,9 +119,21 @@ export const authApi = createApi({
     verifyToken: builder.query<{ valid: boolean; user?: LoginResponse['user'] }, void>({
       query: () => '/api/users/verify-token',
     }),
+    forgotPassword: builder.mutation<ForgotPasswordResponse, ForgotPasswordRequest>({
+      query: credentials => ({
+        url: '/users/forgot-password',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
   }),
 });
 
 // Export hooks for using the API endpoints
-export const { useLoginMutation, useSignupMutation, useLogoutMutation, useVerifyTokenQuery } =
-  authApi;
+export const {
+  useLoginMutation,
+  useSignupMutation,
+  useLogoutMutation,
+  useVerifyTokenQuery,
+  useForgotPasswordMutation,
+} = authApi;

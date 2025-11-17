@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
+import ForgotPasswordModal from './ForgotPasswordModal';
 // import LoginMethodModal from './LoginMethodModal'; // Temporarily disabled
 // import PhoneLoginModal from './PhoneLoginModal'; // Temporarily disabled
 // import OtpModal from './OtpModal'; // Temporarily disabled
@@ -11,7 +12,7 @@ interface AuthProps {
   initialMode?: 'email-login' | 'signup';
 }
 
-type AuthMode = 'method' | 'email-login' | /* 'phone-login' | 'otp' | */ 'signup';
+type AuthMode = 'method' | 'email-login' | /* 'phone-login' | 'otp' | */ 'signup' | 'forgot-password';
 
 const Auth = ({ isOpen, onClose, initialMode = 'email-login' }: AuthProps) => {
   const [mode, setMode] = useState<AuthMode>(initialMode);
@@ -59,6 +60,7 @@ const Auth = ({ isOpen, onClose, initialMode = 'email-login' }: AuthProps) => {
         isOpen={isOpen && mode === 'email-login'}
         onClose={handleClose}
         onSignupClick={() => setMode('signup')}
+        onForgotPasswordClick={() => setMode('forgot-password')}
       />
 
       {/* Phone Login temporarily disabled
@@ -79,6 +81,12 @@ const Auth = ({ isOpen, onClose, initialMode = 'email-login' }: AuthProps) => {
 
       <SignupModal
         isOpen={isOpen && mode === 'signup'}
+        onClose={handleClose}
+        onLoginClick={() => setMode('email-login')}
+      />
+
+      <ForgotPasswordModal
+        isOpen={isOpen && mode === 'forgot-password'}
         onClose={handleClose}
         onLoginClick={() => setMode('email-login')}
       />
