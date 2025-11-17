@@ -1,26 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import CategoryTabs from '@/components/navigation/CategoryTabs';
 import CompanionCard from '@/components/cards/CompanionCard';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import {
   useGetBotProfilesQuery,
-  BotProfile as ApiBotProfile,
+  useGetLikedBotsQuery,
 } from '@/redux/services/botProfilesApi';
-import { Companion } from '@/components/cards/CompanionCard';
+import { mapBotProfilesToCompanions } from '@/utils/mappers';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
-
-const mapBotProfilesToCompanions = (profiles: ApiBotProfile[]): Companion[] => {
-  return profiles.map(profile => ({
-    id: profile._id,
-    name: profile.name,
-    age: parseInt(profile.age) || 20,
-    description: profile.bio || 'No description available',
-    imageSrc: profile.imageURL || profile.avatar_image?.s3Location || '/assets/default-avatar.png',
-    tags: [profile.occupation, profile.personality, ...profile.hobbies.slice(0, 1)],
-  }));
-};
+import { useAppSelector } from '@/redux/hooks';
 
 const tabs = [
   { id: 'girl', label: 'Girls' },
@@ -30,8 +20,19 @@ const tabs = [
 
 export default function ExplorePage() {
   const [activeTab, setActiveTab] = useState('girl');
+  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
   const { data: botProfiles, isLoading, error } = useGetBotProfilesQuery(activeTab);
   const { startChat } = useChatInitiation();
+
+  // Fetch liked bots if user is authenticated
+  const { data: likedBotsResponse } = useGetLikedBotsQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
+  // Get liked bot IDs
+  const likedBotIds = useMemo(() => {
+    return likedBotsResponse?.likedBots?.map(bot => bot._id) || [];
+  }, [likedBotsResponse]);
 
   // Handle companion card click
   const handleCompanionClick = (companion: { id: string }) => {
@@ -106,7 +107,7 @@ export default function ExplorePage() {
           {!isLoading &&
             !error &&
             botProfiles?.botProfiles &&
-            mapBotProfilesToCompanions(botProfiles.botProfiles).map(companion => (
+            mapBotProfilesToCompanions(botProfiles.botProfiles, likedBotIds).map(companion => (
               <CompanionCard
                 key={companion.id}
                 companion={companion}

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiMoreVertical, FiChevronRight } from 'react-icons/fi';
+import { FiChevronRight } from 'react-icons/fi';
 import { CollectionCharacter } from '@/types/collection';
 import ImageGallery from './ImageGallery';
 
@@ -59,13 +59,6 @@ const CharacterImages = ({ character }: CharacterImagesProps) => {
             >
               <div className="relative aspect-[3/4]">
                 <Image src={image.url} alt={image.alt} fill className="object-cover" />
-
-                {/* Top Actions */}
-                <div className="absolute top-4 right-4">
-                  <button className="p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors">
-                    <FiMoreVertical size={20} />
-                  </button>
-                </div>
 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />

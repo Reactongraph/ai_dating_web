@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import EnhancedCompanionCard, { Companion } from '@/components/cards/EnhancedCompanionCard';
 import Image from 'next/image';
-import { useGetUserBotProfilesQuery } from '@/redux/services/botProfilesApi';
+import {
+  useGetUserBotProfilesQuery,
+  useGetLikedBotsQuery,
+} from '@/redux/services/botProfilesApi';
 import { mapBotProfilesToEnhancedCompanions } from '@/utils/mappers';
 import { useAppSelector } from '@/redux/hooks';
 import LoginModal from '@/components/auth/LoginModal';
@@ -26,8 +29,18 @@ export default function MyAIPage() {
     skip: !isAuthenticated, // Skip the query if user is not authenticated
   });
 
+  // Fetch liked bots if user is authenticated
+  const { data: likedBotsResponse } = useGetLikedBotsQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
+  // Get liked bot IDs
+  const likedBotIds = useMemo(() => {
+    return likedBotsResponse?.likedBots?.map(bot => bot._id) || [];
+  }, [likedBotsResponse]);
+
   const companions: Companion[] = botProfilesResponse?.botProfiles
-    ? mapBotProfilesToEnhancedCompanions(botProfilesResponse.botProfiles)
+    ? mapBotProfilesToEnhancedCompanions(botProfilesResponse.botProfiles, likedBotIds)
     : [];
 
   const handleIconClick = (companionId: string) => {

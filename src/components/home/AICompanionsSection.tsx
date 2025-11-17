@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import CompanionCard from '@/components/cards/CompanionCard';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import CategoryTabs from '@/components/navigation/CategoryTabs';
-import { useGetBotProfilesQuery } from '@/redux/services/botProfilesApi';
+import { useGetBotProfilesQuery, useGetLikedBotsQuery } from '@/redux/services/botProfilesApi';
 import { mapBotProfilesToCompanions } from '@/utils/mappers';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
+import { useAppSelector } from '@/redux/hooks';
 
 const companionCategories = [
   {
@@ -24,6 +25,7 @@ const companionCategories = [
 const AICompanionsSection = () => {
   const [activeCategory, setActiveCategory] = useState('girls');
   const { startChat } = useChatInitiation();
+  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
 
   // Get the current bot type based on active category
   const currentBotType =
@@ -32,14 +34,24 @@ const AICompanionsSection = () => {
   // Fetch bot profiles for the current category
   const { data: botProfilesResponse, isLoading, error } = useGetBotProfilesQuery(currentBotType);
 
+  // Fetch liked bots if user is authenticated
+  const { data: likedBotsResponse } = useGetLikedBotsQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
   const tabs = companionCategories.map(cat => ({
     id: cat.id,
     label: cat.label,
   }));
 
-  // Transform API data to companion format
+  // Get liked bot IDs
+  const likedBotIds = useMemo(() => {
+    return likedBotsResponse?.likedBots?.map(bot => bot._id) || [];
+  }, [likedBotsResponse]);
+
+  // Transform API data to companion format with liked status
   const companions = botProfilesResponse?.botProfiles
-    ? mapBotProfilesToCompanions(botProfilesResponse.botProfiles)
+    ? mapBotProfilesToCompanions(botProfilesResponse.botProfiles, likedBotIds)
     : [];
 
   // Handle companion card click

@@ -1,15 +1,31 @@
 'use client';
 
-import { useGetBotProfilesQuery } from '@/redux/services/botProfilesApi';
+import { useMemo } from 'react';
+import {
+  useGetBotProfilesQuery,
+  useGetLikedBotsQuery,
+} from '@/redux/services/botProfilesApi';
 import CompanionCard from '@/components/cards/CompanionCard';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import CompanionsLayout from '@/components/layouts/CompanionsLayout';
 import { mapBotProfilesToCompanions } from '@/utils/mappers';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
+import { useAppSelector } from '@/redux/hooks';
 
 export default function GuysPage() {
+  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
   const { data: botProfiles, isLoading, error } = useGetBotProfilesQuery('boy');
   const { startChat } = useChatInitiation();
+
+  // Fetch liked bots if user is authenticated
+  const { data: likedBotsResponse } = useGetLikedBotsQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+
+  // Get liked bot IDs
+  const likedBotIds = useMemo(() => {
+    return likedBotsResponse?.likedBots?.map(bot => bot._id) || [];
+  }, [likedBotsResponse]);
 
   // Handle companion card click
   const handleCompanionClick = (companion: { id: string }) => {
@@ -47,7 +63,7 @@ export default function GuysPage() {
       {!isLoading &&
         !error &&
         botProfiles?.botProfiles &&
-        mapBotProfilesToCompanions(botProfiles.botProfiles).map(companion => (
+        mapBotProfilesToCompanions(botProfiles.botProfiles, likedBotIds).map(companion => (
           <CompanionCard
             key={companion.id}
             companion={companion}

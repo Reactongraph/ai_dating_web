@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { IoClose } from 'react-icons/io5';
 import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5';
@@ -15,6 +15,13 @@ interface ImageGalleryProps {
 
 const ImageGallery = ({ images, initialImageIndex = 0, isOpen, onClose }: ImageGalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialImageIndex);
+
+  // Update currentIndex when initialImageIndex changes or gallery opens
+  useEffect(() => {
+    if (isOpen && initialImageIndex !== undefined) {
+      setCurrentIndex(initialImageIndex);
+    }
+  }, [isOpen, initialImageIndex]);
 
   if (!isOpen) return null;
 
