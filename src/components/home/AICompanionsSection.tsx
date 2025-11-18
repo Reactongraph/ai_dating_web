@@ -1,13 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import CompanionCard from '@/components/cards/CompanionCard';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import CategoryTabs from '@/components/navigation/CategoryTabs';
-import { useGetBotProfilesQuery, useGetLikedBotsQuery } from '@/redux/services/botProfilesApi';
-import { mapBotProfilesToCompanions } from '@/utils/mappers';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
-import { useAppSelector } from '@/redux/hooks';
+import { useBotProfilesWithLikes } from '@/hooks/useBotProfilesWithLikes';
 
 const companionCategories = [
   {
@@ -25,34 +23,18 @@ const companionCategories = [
 const AICompanionsSection = () => {
   const [activeCategory, setActiveCategory] = useState('girls');
   const { startChat } = useChatInitiation();
-  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
 
   // Get the current bot type based on active category
   const currentBotType =
     companionCategories.find(cat => cat.id === activeCategory)?.botType || 'girl';
 
-  // Fetch bot profiles for the current category
-  const { data: botProfilesResponse, isLoading, error } = useGetBotProfilesQuery(currentBotType);
-
-  // Fetch liked bots if user is authenticated
-  const { data: likedBotsResponse } = useGetLikedBotsQuery(undefined, {
-    skip: !isAuthenticated,
-  });
+  // Fetch bot profiles with likes using the custom hook
+  const { companions, isLoading, error } = useBotProfilesWithLikes(currentBotType);
 
   const tabs = companionCategories.map(cat => ({
     id: cat.id,
     label: cat.label,
   }));
-
-  // Get liked bot IDs
-  const likedBotIds = useMemo(() => {
-    return likedBotsResponse?.likedBots?.map(bot => bot._id) || [];
-  }, [likedBotsResponse]);
-
-  // Transform API data to companion format with liked status
-  const companions = botProfilesResponse?.botProfiles
-    ? mapBotProfilesToCompanions(botProfilesResponse.botProfiles, likedBotIds)
-    : [];
 
   // Handle companion card click
   const handleCompanionClick = (companion: { id: string }) => {

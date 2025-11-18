@@ -36,7 +36,7 @@ export default function MyAIPage() {
 
   // Get liked bot IDs
   const likedBotIds = useMemo(() => {
-    return likedBotsResponse?.likedBots?.map(bot => bot._id) || [];
+    return likedBotsResponse?.likedBots || [];
   }, [likedBotsResponse]);
 
   const companions: Companion[] = botProfilesResponse?.botProfiles

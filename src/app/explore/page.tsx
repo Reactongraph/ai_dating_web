@@ -1,16 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import CategoryTabs from '@/components/navigation/CategoryTabs';
 import CompanionCard from '@/components/cards/CompanionCard';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
-import {
-  useGetBotProfilesQuery,
-  useGetLikedBotsQuery,
-} from '@/redux/services/botProfilesApi';
-import { mapBotProfilesToCompanions } from '@/utils/mappers';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
-import { useAppSelector } from '@/redux/hooks';
+import { useBotProfilesWithLikes } from '@/hooks/useBotProfilesWithLikes';
 
 const tabs = [
   { id: 'girl', label: 'Girls' },
@@ -19,20 +14,9 @@ const tabs = [
 ];
 
 export default function ExplorePage() {
-  const [activeTab, setActiveTab] = useState('girl');
-  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
-  const { data: botProfiles, isLoading, error } = useGetBotProfilesQuery(activeTab);
+  const [activeTab, setActiveTab] = useState<'girl' | 'boy' | 'anime'>('girl');
+  const { companions, isLoading, error } = useBotProfilesWithLikes(activeTab);
   const { startChat } = useChatInitiation();
-
-  // Fetch liked bots if user is authenticated
-  const { data: likedBotsResponse } = useGetLikedBotsQuery(undefined, {
-    skip: !isAuthenticated,
-  });
-
-  // Get liked bot IDs
-  const likedBotIds = useMemo(() => {
-    return likedBotsResponse?.likedBots?.map(bot => bot._id) || [];
-  }, [likedBotsResponse]);
 
   // Handle companion card click
   const handleCompanionClick = (companion: { id: string }) => {
@@ -106,8 +90,7 @@ export default function ExplorePage() {
           {/* Companion Cards */}
           {!isLoading &&
             !error &&
-            botProfiles?.botProfiles &&
-            mapBotProfilesToCompanions(botProfiles.botProfiles, likedBotIds).map(companion => (
+            companions.map(companion => (
               <CompanionCard
                 key={companion.id}
                 companion={companion}
