@@ -14,7 +14,7 @@ const tabs = [
 ];
 
 export default function ExplorePage() {
-  const [activeTab, setActiveTab] = useState<'girl' | 'boy' | 'anime'>('girl');
+  const [activeTab, setActiveTab] = useState<'girl' | 'boy'>('girl');
   const { companions, isLoading, error } = useBotProfilesWithLikes(activeTab);
   const { startChat } = useChatInitiation();
 
@@ -24,7 +24,10 @@ export default function ExplorePage() {
   };
 
   const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
+    // Type guard to ensure tabId is a valid bot type
+    if (tabId === 'girl' || tabId === 'boy') {
+      setActiveTab(tabId);
+    }
   };
 
   const getCreateCompanionProps = () => {
