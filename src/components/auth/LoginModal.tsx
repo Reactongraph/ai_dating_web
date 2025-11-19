@@ -205,7 +205,14 @@ const LoginModal = ({ isOpen, onClose, onSignupClick, onForgotPasswordClick }: L
 
         <button
           type="button"
-          onClick={() => signIn('google')}
+          onClick={() => {
+            // Force account selection by adding timestamp to prevent caching
+            const timestamp = Date.now();
+            signIn('google', {
+              prompt: 'select_account',
+              callbackUrl: `${window.location.origin}?google_auth=${timestamp}`,
+            });
+          }}
           disabled={isGoogleLoading}
           className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >

@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { FiLogIn, FiSettings, FiLogOut, FiUser, FiUserPlus } from 'react-icons/fi';
-import { RiVipCrownFill } from 'react-icons/ri';
+import { FiLogIn, FiLogOut, FiUser, FiUserPlus } from 'react-icons/fi';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 // Removed useLogoutMutation import as we don't need to call the API
 import { clearCredentials } from '@/redux/slices/authSlice';
@@ -52,8 +51,29 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick, onSignupClick }: UserDrop
       // Clear Redux credentials
       dispatch(clearCredentials());
 
-      // Sign out from NextAuth
-      await signOut({ redirect: false });
+      // Sign out from NextAuth with callback to clear all session data
+      await signOut({
+        redirect: false,
+        callbackUrl: '/',
+      });
+
+      // Clear any remaining session storage and cookies related to NextAuth
+      if (typeof window !== 'undefined') {
+        // Clear NextAuth session storage
+        sessionStorage.removeItem('nextauth.message');
+        sessionStorage.removeItem('nextauth.csrfToken');
+
+        // Clear any Google OAuth related cookies
+        document.cookie.split(';').forEach(cookie => {
+          const eqPos = cookie.indexOf('=');
+          const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+          // Clear NextAuth and Google OAuth cookies
+          if (name.startsWith('next-auth.') || name.startsWith('__Secure-next-auth.')) {
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+          }
+        });
+      }
 
       // Show success message
       showSnackbar('Logged out successfully', 'success');
