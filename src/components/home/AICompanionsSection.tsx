@@ -68,7 +68,7 @@ const AICompanionsSection = () => {
           </div>
 
           {/* Grid */}
-          <div className="grid gap-2 grid-cols-2 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5 lg:grid-cols-4 sm:gap-5 md:gap-2 px-2 sm:px-2">
+          <div className="grid gap-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 sm:gap-5 md:gap-2 lg:gap-4 xl:gap-3 px-2 sm:px-2">
             <CreateCompanionCard
               backgroundImage={
                 activeCategory === 'girls' ? '/assets/cardgirl1.png' : '/assets/boy.png'
@@ -78,7 +78,7 @@ const AICompanionsSection = () => {
             {/* Loading State */}
             {isLoading && (
               <>
-                {[...Array(3)].map((_, index) => (
+                {[...Array(6)].map((_, index) => (
                   <div
                     key={`loading-${index}`}
                     className="bg-gray-800 rounded-lg p-4 animate-pulse"

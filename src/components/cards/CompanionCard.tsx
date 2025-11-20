@@ -89,11 +89,11 @@ const CompanionCard = ({ companion, handleCardClick = () => {} }: CompanionCardP
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-300"
+      className="relative rounded-2xl overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-300 w-full max-w-full"
       onClick={() => handleCardClick(companion)}
     >
       {/* Image */}
-      <div className="relative  h-[350px]  sm:h-[300px] lg:h-[400px]  w-full">
+      <div className="relative h-[350px] sm:h-[300px] lg:h-[380px] xl:h-[400px] 2xl:h-[420px] w-full">
         <Image src={companion.imageSrc} alt={companion.name} fill className="object-cover" />
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-90" />
@@ -114,7 +114,7 @@ const CompanionCard = ({ companion, handleCardClick = () => {} }: CompanionCardP
       </div>
 
       {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-6">
+      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 lg:p-6 xl:p-6 2xl:p-7">
         <h3 className="text-2xl font-semibold text-white mb-2">
           {companion.name}, {companion.age}
         </h3>
