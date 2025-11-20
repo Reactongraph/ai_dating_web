@@ -22,8 +22,8 @@ const CompanionsLayout = ({ title, subtitle, children }: CompanionsLayoutProps) 
         </div>
 
         {/* Content Section */}
-        <div className="max-w-7xl mx-auto  sm:px-4 sm:py-6 md:py-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+        <div className="w-full mx-auto sm:px-4 sm:py-6 md:py-4">
+          <div className="flex flex-wrap gap-2 sm:gap-5 md:gap-4 lg:gap-4 xl:gap-5 2xl:gap-6">
             {children}
           </div>
         </div>

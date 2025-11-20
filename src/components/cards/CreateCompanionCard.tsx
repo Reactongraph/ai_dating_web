@@ -60,7 +60,7 @@ const CreateCompanionCard = ({
 
   return (
     <div
-      className="relative h-[350px] sm:h-[300px] lg:h-[380px] xl:h-[400px] 2xl:h-[420px] w-full max-w-full rounded-2xl overflow-hidden bg-cover bg-center"
+      className="relative h-[350px] sm:h-[300px] lg:h-[380px] xl:h-[400px] 2xl:h-[420px] flex-[1_1_calc(50%-4px)] sm:flex-[1_1_calc(50%-10px)] md:flex-[1_1_calc(50%-8px)] lg:flex-[1_1_280px] xl:flex-[1_1_300px] 2xl:flex-[1_1_320px] min-w-[150px] max-w-[400px] rounded-2xl overflow-hidden bg-cover bg-center"
       style={{ backgroundImage: `url("${backgroundImage}")` }}
     >
       <div className="absolute inset-0 flex flex-col items-center justify-end p-4 sm:p-5 lg:p-6 xl:p-6 2xl:p-7 text-center bg-black/30">

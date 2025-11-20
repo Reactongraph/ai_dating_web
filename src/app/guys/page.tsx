@@ -30,14 +30,14 @@ export default function GuysPage() {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="col-span-3 flex justify-center items-center h-[480px]">
+        <div className="w-full flex justify-center items-center h-[480px]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
         </div>
       )}
 
       {/* Error State */}
       {error && (
-        <div className="col-span-3 flex justify-center items-center h-[480px]">
+        <div className="w-full flex justify-center items-center h-[480px]">
           <p className="text-red-500">Failed to load companions. Please try again later.</p>
         </div>
       )}

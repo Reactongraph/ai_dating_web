@@ -89,7 +89,7 @@ const CompanionCard = ({ companion, handleCardClick = () => {} }: CompanionCardP
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-300 w-full max-w-full"
+      className="relative rounded-2xl overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-300 flex-[1_1_calc(50%-4px)] sm:flex-[1_1_calc(50%-10px)] md:flex-[1_1_calc(50%-8px)] lg:flex-[1_1_280px] xl:flex-[1_1_300px] 2xl:flex-[1_1_320px] min-w-[150px] max-w-[400px]"
       onClick={() => handleCardClick(companion)}
     >
       {/* Image */}

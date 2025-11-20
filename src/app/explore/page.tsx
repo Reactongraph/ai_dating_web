@@ -58,7 +58,7 @@ export default function ExplorePage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4  sm:py-8 md:pt-12">
+      <div className="w-full mx-auto px-3 sm:px-4  sm:py-8 md:pt-12">
         {/* Category Tabs */}
         <div className="flex flex-col items-center justify-center mb-6 sm:mb-8 md:mb-12">
           <div className="max-w-7xl mx-auto  sm:px-3 text-center">
@@ -69,21 +69,21 @@ export default function ExplorePage() {
           <CategoryTabs tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
 
-        {/* Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+        {/* Flex Layout */}
+        <div className="flex flex-wrap gap-2 sm:gap-5 md:gap-2 lg:gap-3">
           {/* Create Companion Card */}
           <CreateCompanionCard {...getCreateCompanionProps()} />
 
           {/* Loading State */}
           {isLoading && (
-            <div className="col-span-3 flex justify-center items-center h-[300px] sm:h-[380px] md:h-[480px]">
+            <div className="w-full flex justify-center items-center h-[300px] sm:h-[380px] md:h-[480px]">
               <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 border-t-2 border-b-2 border-primary-500"></div>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className="col-span-3 flex justify-center items-center h-[300px] sm:h-[380px] md:h-[480px]">
+            <div className="w-full flex justify-center items-center h-[300px] sm:h-[380px] md:h-[480px]">
               <p className="text-red-500 text-sm sm:text-base md:text-lg text-center px-4">
                 Failed to load companions. Please try again later.
               </p>
