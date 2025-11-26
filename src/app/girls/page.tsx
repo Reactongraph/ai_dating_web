@@ -47,13 +47,18 @@ export default function GirlsPage() {
       {/* Companion Cards */}
       {!isLoading &&
         !error &&
-        companions.map(companion => (
-          <CompanionCard
-            key={companion.id}
-            companion={companion}
-            handleCardClick={handleCompanionClick}
-          />
-        ))}
+        companions.map(
+          companion => (
+            console.log('companion', companion),
+            (
+              <CompanionCard
+                key={companion.id}
+                companion={companion}
+                handleCardClick={handleCompanionClick}
+              />
+            )
+          ),
+        )}
     </CompanionsLayout>
   );
 }

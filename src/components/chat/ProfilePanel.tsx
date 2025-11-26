@@ -115,6 +115,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
       id: 'profile-main',
       url: user.avatar,
       alt: `${user.name} - Profile Image`,
+      imageType: user.imageType as 'sfw' | 'nsfw',
     });
 
     // Add generated images from the chat (sorted by latest first)
@@ -123,6 +124,7 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
         id: img.id,
         url: img.imageURL,
         alt: img.prompt,
+        imageType: img.imageType as 'sfw' | 'nsfw',
       });
     });
 

@@ -10,7 +10,9 @@ import { useAppSelector } from '@/redux/hooks';
 // Using a more specific type to avoid the PageProps constraint issue
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function CharacterPage({ params }: any) {
-  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+  const isAuthenticated = useAppSelector(
+    state => (state.auth as { isAuthenticated?: boolean }).isAuthenticated ?? false,
+  );
   const { data: likedBotsResponse, isLoading } = useGetLikedBotsQuery(undefined, {
     skip: !isAuthenticated,
   });

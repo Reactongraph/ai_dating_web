@@ -14,7 +14,7 @@ export default function GuysPage() {
   const handleCompanionClick = (companion: { id: string }) => {
     startChat(companion.id);
   };
-
+  // console.log('companions', companions);
   return (
     <CompanionsLayout
       title="Discover AI Boyfriends"
@@ -45,13 +45,16 @@ export default function GuysPage() {
       {/* Companion Cards */}
       {!isLoading &&
         !error &&
-        companions.map(companion => (
-          <CompanionCard
-            key={companion.id}
-            companion={companion}
-            handleCardClick={handleCompanionClick}
-          />
-        ))}
+        companions.map(companion => {
+          // console.log('companion', companion);
+          return (
+            <CompanionCard
+              key={companion.id}
+              companion={companion}
+              handleCardClick={handleCompanionClick}
+            />
+          );
+        })}
     </CompanionsLayout>
   );
 }

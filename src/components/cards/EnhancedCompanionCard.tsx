@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import SafeImage from '@/components/common/SafeImage';
 import { ReactNode } from 'react';
 
 export interface Companion {
@@ -26,7 +26,13 @@ const EnhancedCompanionCard = ({
   <div className="relative rounded-2xl overflow-hidden group cursor-pointer" onClick={onCardClick}>
     {/* Image */}
     <div className="relative h-[350px]  sm:h-[300px] lg:h-[400px]  w-full">
-      <Image src={companion.imageSrc} alt={companion.name} fill className="object-cover" />
+      <SafeImage
+        src={companion.imageSrc}
+        alt={companion.name}
+        imageType={(companion as { imageType?: 'sfw' | 'nsfw' }).imageType || 'sfw'}
+        fill
+        className="object-cover"
+      />
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-90" />
     </div>

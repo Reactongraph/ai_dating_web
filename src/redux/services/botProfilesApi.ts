@@ -15,6 +15,7 @@ export interface CollectionImage {
     _id?: string;
   };
   prompt?: string;
+  imageType?: 'sfw' | 'nsfw';
   context?: string;
   isPrimary?: boolean;
   createdAt?: string;
@@ -48,6 +49,7 @@ export interface BotProfile {
   isLiked?: boolean; // Added to track if bot is liked by current user
   collectionImages?: CollectionImage[]; // Collection images for liked bots
   totalImages?: number; // Total number of collection images
+  imageType?: 'sfw' | 'nsfw';
 }
 
 export interface GetBotProfilesResponse {

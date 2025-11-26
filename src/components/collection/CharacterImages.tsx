@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/common/SafeImage';
 import Link from 'next/link';
 import { FiChevronRight } from 'react-icons/fi';
 import { CollectionCharacter } from '@/types/collection';
 import ImageGallery from './ImageGallery';
+import Image from 'next/image';
 
 interface CharacterImagesProps {
   character: CollectionCharacter;
@@ -47,9 +48,8 @@ const CharacterImages = ({ character }: CharacterImagesProps) => {
           </nav>
         </div>
       </div>
-
       {/* Images Grid */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className=" relative max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {character.images.map((image, index) => (
             <div
@@ -58,7 +58,13 @@ const CharacterImages = ({ character }: CharacterImagesProps) => {
               onClick={() => openGallery(index)}
             >
               <div className="relative aspect-[3/4]">
-                <Image src={image.url} alt={image.alt} fill className="object-cover" />
+                <SafeImage
+                  src={image.url}
+                  alt={image.alt}
+                  imageType={(image as { imageType?: 'sfw' | 'nsfw' }).imageType || 'sfw'}
+                  fill
+                  className="object-cover"
+                />
 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />

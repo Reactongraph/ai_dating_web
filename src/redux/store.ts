@@ -21,6 +21,7 @@ import { chatApi } from './services/chatApi';
 
 import authReducer from './slices/authSlice';
 import characterAttributesReducer from './slices/characterAttributesSlice';
+import contentModeReducer from './slices/contentModeSlice';
 import { rtkQueryErrorLogger } from './middleware/rtkQueryErrorLogger';
 
 // Configure auth reducer persistence - exclude transient fields
@@ -37,9 +38,17 @@ const characterAttributesPersistConfig = {
   storage,
 };
 
+// Configure contentMode persistence
+const contentModePersistConfig = {
+  key: 'contentMode',
+  storage,
+  whitelist: ['mode'], // Only persist mode, not loading state
+};
+
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   characterAttributes: persistReducer(characterAttributesPersistConfig, characterAttributesReducer),
+  contentMode: persistReducer(contentModePersistConfig, contentModeReducer),
   [authApi.reducerPath]: authApi.reducer,
   [profileApi.reducerPath]: profileApi.reducer,
   [googleAuthApi.reducerPath]: googleAuthApi.reducer,

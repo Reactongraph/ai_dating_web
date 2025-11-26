@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import SafeImage from '@/components/common/SafeImage';
 import Link from 'next/link';
 import { BsImages } from 'react-icons/bs';
 import { FiMoreVertical } from 'react-icons/fi';
@@ -11,12 +11,18 @@ import { CollectionCharacter } from '@/types/collection';
 import { useUnlikeBotMutation } from '@/redux/services/botProfilesApi';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
 import { useSnackbar } from '@/providers';
+import { selectContentMode } from '@/redux/slices/contentModeSlice';
+import { useAppSelector } from '@/redux/hooks';
 
 interface CollectionCardProps {
   character: CollectionCharacter;
 }
 
 const CollectionCard = ({ character }: CollectionCardProps) => {
+  const mode = useAppSelector(selectContentMode);
+  const shouldBlur = useMemo(() => {
+    return mode === 'sfw' && character.imageType === 'nsfw';
+  }, [mode, character.imageType]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -74,14 +80,17 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
     startChat(character.id);
   };
 
-  return (
-    <Link
-      href={`/collection/${character.id}`}
-      className="relative rounded-2xl overflow-hidden group cursor-pointer"
-    >
+  const cardContent = (
+    <>
       {/* Image */}
       <div className="relative h-[480px] w-full">
-        <Image src={character.mainImage} alt={character.name} fill className="object-cover" />
+        <SafeImage
+          src={character.mainImage}
+          alt={character.name}
+          imageType={(character as { imageType?: 'sfw' | 'nsfw' }).imageType || 'sfw'}
+          fill
+          className="object-cover"
+        />
 
         {/* Top Actions */}
         <div className="absolute top-4 right-4 left-4 flex justify-between items-center z-10">
@@ -138,6 +147,23 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
+    </>
+  );
+
+  if (shouldBlur) {
+    return (
+      <div className="relative rounded-2xl overflow-hidden group cursor-not-allowed">
+        {cardContent}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={`/collection/${character.id}`}
+      className="relative rounded-2xl overflow-hidden group cursor-pointer"
+    >
+      {cardContent}
     </Link>
   );
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/common/SafeImage';
 import { IoClose } from 'react-icons/io5';
 import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5';
 import { CharacterImage } from '@/types/collection';
@@ -59,9 +59,10 @@ const ImageGallery = ({ images, initialImageIndex = 0, isOpen, onClose }: ImageG
 
       {/* Main Image */}
       <div className="relative w-full h-full max-w-6xl max-h-[80vh] mx-auto">
-        <Image
+        <SafeImage
           src={images[currentIndex].url}
           alt={images[currentIndex].alt}
+          imageType={(images[currentIndex] as { imageType?: 'sfw' | 'nsfw' }).imageType || 'sfw'}
           fill
           className="object-contain"
         />
@@ -76,7 +77,13 @@ const ImageGallery = ({ images, initialImageIndex = 0, isOpen, onClose }: ImageG
             className={`w-16 h-16 relative rounded-lg overflow-hidden transition-opacity
               ${index === currentIndex ? 'ring-2 ring-accent-blue' : 'opacity-50 hover:opacity-100'}`}
           >
-            <Image src={image.url} alt={image.alt} fill className="object-cover" />
+            <SafeImage
+              src={image.url}
+              alt={image.alt}
+              imageType={(image as { imageType?: 'sfw' | 'nsfw' }).imageType || 'sfw'}
+              fill
+              className="object-cover"
+            />
           </button>
         ))}
       </div>

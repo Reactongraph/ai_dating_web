@@ -2,6 +2,7 @@ export interface CharacterImage {
   id: string;
   url: string;
   alt: string;
+  imageType?: 'sfw' | 'nsfw';
 }
 
 export interface CollectionCharacter {
@@ -10,6 +11,7 @@ export interface CollectionCharacter {
   age: number;
   images: CharacterImage[];
   mainImage: string;
+  imageType?: 'sfw' | 'nsfw';
 }
 
 export interface Collection {

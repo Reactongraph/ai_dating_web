@@ -5,6 +5,7 @@ export interface ChatUser {
   name: string;
   age: number;
   avatar: string;
+  // imageType: 'sfw' | 'nsfw';
   isLimitedEdition?: boolean;
   isOnline?: boolean;
   stats: {
@@ -54,6 +55,7 @@ export interface GeneratedImage {
   isPrimary: boolean;
   createdAt: string;
   updatedAt: string;
+  imageType: 'sfw' | 'nsfw';
 }
 
 export interface GeneratedImagesData {

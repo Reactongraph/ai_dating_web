@@ -4,7 +4,8 @@ import Image from 'next/image';
 import UserDropdown from './UserDropdown';
 import Auth from '../auth/Auth';
 import { usePathname } from 'next/navigation';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { selectContentMode, setMode } from '@/redux/slices/contentModeSlice';
 
 interface NavBarProps {
   onToggleSidebar: () => void;
@@ -18,6 +19,8 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const pathname = usePathname();
   const { isAuthenticated, user } = useAppSelector(state => state.auth);
+  const contentMode = useAppSelector(selectContentMode);
+  const dispatch = useAppDispatch();
   // Check if banner is visible and adjust navbar position
   useEffect(() => {
     const checkBannerVisibility = () => {
@@ -122,6 +125,34 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
             >
               Create AI Character
             </Link> */}
+
+            {/* SFW/NSFW Toggle Switch */}
+            <div className="flex items-center space-x-2">
+              <span
+                className={`text-xs font-medium hidden sm:block ${contentMode === 'sfw' ? 'text-green-400' : 'text-gray-400'}`}
+              >
+                SFW
+              </span>
+              <button
+                onClick={() => dispatch(setMode(contentMode === 'sfw' ? 'nsfw' : 'sfw'))}
+                className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                  contentMode === 'nsfw' ? 'bg-red-600' : 'bg-green-600'
+                }`}
+                aria-label={`Switch to ${contentMode === 'sfw' ? 'NSFW' : 'SFW'} mode`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    contentMode === 'nsfw' ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <span
+                className={`text-xs font-medium hidden sm:block ${contentMode === 'nsfw' ? 'text-red-400' : 'text-gray-400'}`}
+              >
+                NSFW
+              </span>
+            </div>
+
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}

@@ -37,9 +37,7 @@ export const useBotProfilesWithLikes = (botType: 'girl' | 'boy' | 'anime') => {
   useEffect(() => {
     if (!prevAuthenticatedRef.current && isAuthenticated) {
       // User just logged in, invalidate cache and refetch bot profiles to get updated isLiked values
-      dispatch(
-        botProfilesApi.util.invalidateTags([{ type: 'BotProfiles', id: botType }]),
-      );
+      dispatch(botProfilesApi.util.invalidateTags([{ type: 'BotProfiles', id: botType }]));
       refetchBotProfiles();
     }
     prevAuthenticatedRef.current = isAuthenticated;
@@ -57,7 +55,7 @@ export const useBotProfilesWithLikes = (botType: 'girl' | 'boy' | 'anime') => {
     }
     return mapBotProfilesToCompanions(botProfilesResponse.botProfiles, likedBotIds);
   }, [botProfilesResponse?.botProfiles, likedBotIds]);
-
+  // console.log('companions', { companions, botProfilesResponse });
   return {
     companions,
     isLoading,
@@ -67,4 +65,3 @@ export const useBotProfilesWithLikes = (botType: 'girl' | 'boy' | 'anime') => {
     refetch: refetchBotProfiles,
   };
 };
-
