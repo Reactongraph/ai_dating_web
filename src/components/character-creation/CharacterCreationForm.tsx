@@ -83,7 +83,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
         : JSON.parse(userData)._id
       : null;
     if (!userId) {
-      showSnackbar('User ID not found. Please log in.', 'error');
+      showSnackbar('Please log in.', 'error');
       return;
     }
 

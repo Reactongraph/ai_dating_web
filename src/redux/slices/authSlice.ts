@@ -26,20 +26,25 @@ interface AuthState {
   requiresVerification: boolean;
   realtimeImage: string | null;
   error: string | null;
+  authModal: {
+    isOpen: boolean;
+    mode: 'email-login' | 'signup' | 'forgot-password';
+  };
 }
 
 // Normalize user object to ensure both id and _id are set consistently
 const normalizeUser = (user: LoginResponse['user'] | null): LoginResponse['user'] | null => {
   if (!user) return null;
-  
+
   // Determine the actual ID value - prefer _id if it exists, otherwise use id
-  const userId = (user as { _id?: string; id?: string })._id || (user as { _id?: string; id?: string }).id;
-  
+  const userId =
+    (user as { _id?: string; id?: string })._id || (user as { _id?: string; id?: string }).id;
+
   if (!userId) {
     console.warn('User object missing both id and _id fields');
     return user;
   }
-  
+
   // Create normalized user object with both id and _id set to the same value
   return {
     ...user,
@@ -73,6 +78,10 @@ const initialState: AuthState = {
   requiresVerification: false,
   realtimeImage: null,
   error: null,
+  authModal: {
+    isOpen: false,
+    mode: 'email-login',
+  },
 };
 
 // Create the auth slice
@@ -185,6 +194,16 @@ const authSlice = createSlice({
     },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
+    },
+    openAuthModal: (
+      state,
+      action: PayloadAction<{ mode?: 'email-login' | 'signup' | 'forgot-password' } | undefined>,
+    ) => {
+      state.authModal.isOpen = true;
+      state.authModal.mode = action.payload?.mode || 'email-login';
+    },
+    closeAuthModal: state => {
+      state.authModal.isOpen = false;
     },
   },
   // Add extra reducers to handle API responses
@@ -338,7 +357,7 @@ const authSlice = createSlice({
           const normalizedUser = normalizeUser(payload.user);
           state.user = normalizedUser;
           state.isAuthenticated = true;
-          
+
           // Update localStorage with normalized user data
           if (typeof window !== 'undefined' && normalizedUser) {
             localStorage.setItem('userData', JSON.stringify(normalizedUser));
@@ -416,8 +435,15 @@ const authSlice = createSlice({
 });
 
 // Export actions
-export const { setCredentials, clearCredentials, setLoading, setError, initializeAuthState } =
-  authSlice.actions;
+export const {
+  setCredentials,
+  clearCredentials,
+  setLoading,
+  setError,
+  initializeAuthState,
+  openAuthModal,
+  closeAuthModal,
+} = authSlice.actions;
 
 // Export reducer
 export default authSlice.reducer;

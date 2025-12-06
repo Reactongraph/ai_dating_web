@@ -64,7 +64,9 @@ const LoginModal = ({ isOpen, onClose, onSignupClick, onForgotPasswordClick }: L
       // Only process Google session when modal is open and user is not authenticated
       if (isOpen && session && session.user && !isAuthenticated) {
         try {
-          // Send the session data to our backend for verification and user creation/login
+          // The backend call (/auth/google/callback) was already made in NextAuth signIn callback
+          // This ensures the user exists in the database before we get here
+          // Now we just need to get the user data and set credentials
           const response = await googleLogin({
             token: (session as { accessToken?: string }).accessToken || '',
             email: session.user.email || '',

@@ -27,7 +27,7 @@ interface CustomSnackbarProviderProps {
 
 function SnackbarWrapper({ children }: { children: ReactNode }) {
   const showSnackbar = useCallback(
-    (message: string, type: SnackbarType = 'info', duration = 5000) => {
+    (message: string, type: SnackbarType = 'info', duration = 1500) => {
       const options = {
         position: 'top-right' as const,
         autoClose: duration,
@@ -73,7 +73,7 @@ export function CustomSnackbarProvider({ children }: CustomSnackbarProviderProps
       <SnackbarWrapper>{children}</SnackbarWrapper>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={1500}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useInitiateChatMutation } from '@/redux/services/chatApi';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { openAuthModal } from '@/redux/slices/authSlice';
 import { useSnackbar } from '@/providers';
 
 export const useChatInitiation = () => {
@@ -9,11 +10,12 @@ export const useChatInitiation = () => {
   const [isInitiating, setIsInitiating] = useState(false);
   const [initiateChat] = useInitiateChatMutation();
   const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+  const dispatch = useAppDispatch();
   const { showSnackbar } = useSnackbar();
 
   const startChat = async (botId: string) => {
     if (!isAuthenticated) {
-      showSnackbar('Please login to start a chat', 'warning');
+      dispatch(openAuthModal({ mode: 'email-login' }));
       return;
     }
 

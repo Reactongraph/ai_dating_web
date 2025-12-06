@@ -9,16 +9,16 @@ const Footer = () => {
         {/* Logo and Description */}
         <div className="md:space-y-2 sm:space-y-6">
           <Link href="/" className="text-text-primary text-xl sm:text-2xl font-bold italic">
-            True Companion
+            Daily Love
           </Link>
           <div className="flex items-center">
             <IoLanguage className="w-5 h-5 mr-2" />
             <span>English</span>
           </div>
           <p className="text-xs ">
-            True Companion is where imagination meets innovation. Bring your ideas to life with
-            custom AI characters, stunning AI-generated art, and meaningful connections. Join us
-            today and start creating something extraordinary.
+            Daily Love is where imagination meets innovation. Bring your ideas to life with custom
+            AI characters, stunning AI-generated art, and meaningful connections. Join us today and
+            start creating something extraordinary.
           </p>
           <div className=" text-xs">
             <p>Spyrou Kyprianou 92, FlatOffice 1192</p>
@@ -27,9 +27,9 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* True Companion Links */}
+        {/* Daily Love Links */}
         <div className="md:space-y-2 sm:space-y-6">
-          <h3 className="text-text-primary text-base sm:text-lg">True Companion</h3>
+          <h3 className="text-text-primary text-base sm:text-lg">Daily Love</h3>
           <div className="flex space-x-4">
             <Link
               href="https://discord.gg/truecompanion"
@@ -95,7 +95,7 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="max-w-7xl mx-auto sm:px-4 md:mt-2 sm:mt-4  sm:pt-3 border-t border-gray-800">
-        <p className="text-sm">© True Companion. All rights reserved.</p>
+        <p className="text-sm">© Daily Love. All rights reserved.</p>
       </div>
     </footer>
   );

@@ -6,6 +6,7 @@ import Auth from '../auth/Auth';
 import { usePathname } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { selectContentMode, setMode } from '@/redux/slices/contentModeSlice';
+import { openAuthModal, closeAuthModal } from '@/redux/slices/authSlice';
 
 interface NavBarProps {
   onToggleSidebar: () => void;
@@ -14,11 +15,9 @@ interface NavBarProps {
 
 const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<'email-login' | 'signup'>('email-login');
   const [isBannerVisible, setIsBannerVisible] = useState(true);
   const pathname = usePathname();
-  const { isAuthenticated, user } = useAppSelector(state => state.auth);
+  const { isAuthenticated, user, authModal } = useAppSelector(state => state.auth);
   const contentMode = useAppSelector(selectContentMode);
   const dispatch = useAppDispatch();
   // Check if banner is visible and adjust navbar position
@@ -39,13 +38,11 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
   }, [pathname]);
 
   const handleLoginClick = () => {
-    setAuthMode('email-login');
-    setIsAuthOpen(true);
+    dispatch(openAuthModal({ mode: 'email-login' }));
   };
 
   const handleSignupClick = () => {
-    setAuthMode('signup');
-    setIsAuthOpen(true);
+    dispatch(openAuthModal({ mode: 'signup' }));
   };
 
   // const navLinks = [
@@ -87,7 +84,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
             </button>
             <Link href="/" className="text-xl font-bold">
               <Image
-                src="/assets/true_compnion_logo.png"
+                src="/assets/daily_love.png"
                 alt="Logo"
                 width={170}
                 height={50}
@@ -186,7 +183,11 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
           </div>
         </div>
       </nav>
-      <Auth isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} initialMode={authMode} />
+      <Auth
+        isOpen={authModal.isOpen}
+        onClose={() => dispatch(closeAuthModal())}
+        initialMode={authModal.mode}
+      />
     </>
   );
 };

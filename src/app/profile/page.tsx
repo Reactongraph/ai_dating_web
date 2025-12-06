@@ -134,7 +134,7 @@ export default function ProfilePage() {
 
       // Immediately upload the image when file is selected
       if (!userId) {
-        showSnackbar('User ID not found. Please login again.', 'error');
+        showSnackbar('Please login again.', 'error');
         return;
       }
 
@@ -196,7 +196,7 @@ export default function ProfilePage() {
   // Handle profile update
   const onSubmit = async (data: ProfileFormData) => {
     if (!userId) {
-      showSnackbar('User ID not found. Please login again.', 'error');
+      showSnackbar(' Please login again.', 'error');
       return;
     }
 

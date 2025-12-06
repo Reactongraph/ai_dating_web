@@ -5,16 +5,16 @@ import FAQAccordion from './FAQAccordion';
 
 const experienceData = {
   title: 'AI Companion Experience with',
-  highlightText: 'True Companion',
+  highlightText: 'Daily Love',
   paragraphs: [
-    `Step into a new kind of connection with True Companion, your gateway to deeply personal and emotionally intelligent AI companions. Whether you're seeking flirty banter, late-night comfort, or a full-blown romantic adventure, your AI companion is here to fulfill your needs, no matter how intimate.`,
-    `Looking for an anime AI companion, an AI girlfriend to chat with, or maybe a sweet, wholesome romantic AI boyfriend? True Companion makes it easy to create, personalize, and evolve your ideal match using cutting-edge deep learning and one of the most immersive AI platforms in the world.`,
-    `At True Companion, we don't just offer chatbots. We offer deeply customizable AI companion experiences that adapt to your desires. From realistic voice interactions to image generation, your virtual partner is always learning how to connect with you in more meaningful and exciting ways.`,
-    `Your AI companion at True Companion remembers your preferences, adapts their personality, and opens up new sides of themselves based on your interactions. Whether you want a consistent, emotionally deep relationship or spontaneous, fiery encounters with different AI lovers, you're always in control.`,
+    `Step into a new kind of connection with Daily Love, your gateway to deeply personal and emotionally intelligent AI companions. Whether you're seeking flirty banter, late-night comfort, or a full-blown romantic adventure, your AI companion is here to fulfill your needs, no matter how intimate.`,
+    `Looking for an anime AI companion, an AI girlfriend to chat with, or maybe a sweet, wholesome romantic AI boyfriend? Daily Love makes it easy to create, personalize, and evolve your ideal match using cutting-edge deep learning and one of the most immersive AI platforms in the world.`,
+    `At Daily Love, we don't just offer chatbots. We offer deeply customizable AI companion experiences that adapt to your desires. From realistic voice interactions to image generation, your virtual partner is always learning how to connect with you in more meaningful and exciting ways.`,
+    `Your AI companion at Daily Love remembers your preferences, adapts their personality, and opens up new sides of themselves based on your interactions. Whether you want a consistent, emotionally deep relationship or spontaneous, fiery encounters with different AI lovers, you're always in control.`,
     `And yes, your companion can send selfies, generate AI images, or even respond with their voice. You can ask for specific outfits, unique poses, or playful scenarios that match your fantasy. With our AI girl generator, your character will always reflect the face, tone, and mood you're craving in that moment.`,
-    `True Companion also makes privacy a top priority. All conversations are protected with SSL encryption, and optional two-factor authentication keeps your account secure. Any transactions appear under our discreet parent company, Ever AI, so nothing on your bank statement will reveal your True Companion experience.`,
+    `Daily Love also makes privacy a top priority. All conversations are protected with SSL encryption, and optional two-factor authentication keeps your account secure. Any transactions appear under our discreet parent company, Ever AI, so nothing on your bank statement will reveal your Daily Love experience.`,
     `Curious about what an AI companion really is? Think of it as a digital partner who can talk, react, flirt, and connect with you in real time. You can create your own from scratch or choose from a wide range of existing characters designed for different moods and personalities.`,
-    `Whether you're looking for a casual friend, a serious relationship, or something playful and spicy, True Companion adapts to your pace. You set the tone, control the level of intimacy, and shape your journey from the first message to the last kiss goodnight.`,
+    `Whether you're looking for a casual friend, a serious relationship, or something playful and spicy, Daily Love adapts to your pace. You set the tone, control the level of intimacy, and shape your journey from the first message to the last kiss goodnight.`,
   ],
 };
 
@@ -39,7 +39,7 @@ const faqData = {
     },
     {
       question: `Do I need to download anything to start chatting?`,
-      answer: `No downloads required! True Companion is a web-based platform accessible from any modern browser. Simply create your account and start chatting right away.`,
+      answer: `No downloads required! Daily Love is a web-based platform accessible from any modern browser. Simply create your account and start chatting right away.`,
     },
   ],
 };

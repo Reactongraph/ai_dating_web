@@ -1,10 +1,11 @@
 import SafeImage from '@/components/common/SafeImage';
 import { IoHeart, IoHeartOutline } from 'react-icons/io5';
 import { useLikeBotMutation, useUnlikeBotMutation } from '@/redux/services/botProfilesApi';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { useSnackbar } from '@/providers';
 import { useState, useEffect, useMemo } from 'react';
 import { selectContentMode } from '@/redux/slices/contentModeSlice';
+import { openAuthModal } from '@/redux/slices/authSlice';
 export interface Companion {
   id: string;
   name: string;
@@ -22,6 +23,7 @@ interface CompanionCardProps {
 
 const CompanionCard = ({ companion, handleCardClick = () => {} }: CompanionCardProps) => {
   const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+  const dispatch = useAppDispatch();
   const [likeBot, { isLoading: isLiking }] = useLikeBotMutation();
   const [unlikeBot, { isLoading: isUnliking }] = useUnlikeBotMutation();
   const { showSnackbar } = useSnackbar();
@@ -40,7 +42,7 @@ const CompanionCard = ({ companion, handleCardClick = () => {} }: CompanionCardP
     e.stopPropagation(); // Prevent card click when clicking heart
 
     if (!isAuthenticated) {
-      showSnackbar('Please login to like companions', 'warning');
+      dispatch(openAuthModal({ mode: 'email-login' }));
       return;
     }
 

@@ -44,14 +44,40 @@ const handler = (NextAuth as any)({
       return session;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async signIn({ user }: any) {
-      // You can implement additional validation here
-      // For example, check if the user's email is verified
-      if (user.email) {
-        return true;
+    async signIn({ user, account, profile }: any) {
+      // Only process for Google provider
+      if (account?.provider === 'google') {
+        try {
+          // Call backend API to create/update user in database
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000'}/auth/google/callback`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                token: account.access_token,
+                email: user.email,
+                name: user.name,
+                picture: user.image,
+                googleId: profile?.sub || user.id,
+              }),
+            },
+          );
+
+          if (!response.ok) {
+            console.error('Failed to create/update user in backend:', await response.text());
+            // Still allow sign in even if backend call fails
+            // The frontend will handle this in the session callback
+          }
+        } catch (error) {
+          console.error('Error calling backend during Google sign in:', error);
+          // Still allow sign in even if backend call fails
+        }
       }
 
-      // Allow sign in regardless
+      // Allow sign in
       return true;
     },
   },

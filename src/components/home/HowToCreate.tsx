@@ -34,7 +34,7 @@ const HowToCreate = () => {
     {
       iconSrc: '/assets/signUp.svg',
       title: 'Sign Up',
-      description: 'Join the True Companion community with a quick and easy registration.',
+      description: 'Join the Daily Love community with a quick and easy registration.',
     },
     {
       iconSrc: '/assets/wand.svg',

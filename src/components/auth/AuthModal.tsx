@@ -29,7 +29,7 @@ const AuthModal = ({ isOpen, onClose, children, title, subtitle }: AuthModalProp
           <div className="absolute inset-0">
             <Image
               src="/assets/login_screen_girlboy.png"
-              alt="True Companion"
+              alt="Daily Love"
               fill
               className="!h-[423px] !bottom-[0px] w-auto !object-cover !inset-auto"
               priority
@@ -37,8 +37,8 @@ const AuthModal = ({ isOpen, onClose, children, title, subtitle }: AuthModalProp
             <div className="absolute inset-0 flex flex-col justify-between p-7">
               <div className="flex items-center justify-start pl-4">
                 <Image
-                  src="/assets/true_compnion_logo.png"
-                  alt="True Companion"
+                  src="/assets/daily_love.png"
+                  alt="Daily Love"
                   width={180}
                   height={50}
                   className="object-contain"

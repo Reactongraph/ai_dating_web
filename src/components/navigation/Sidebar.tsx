@@ -32,7 +32,7 @@ const Sidebar = ({ isExpanded, onToggle, isMobileView, isMobileOpen }: SidebarPr
         {isExpanded && (
           <Link href="/" className="text-xl font-bold">
             <Image
-              src="/assets/true_compnion_logo.png"
+              src="/assets/daily_love.png"
               alt="Logo"
               width={170}
               height={50}

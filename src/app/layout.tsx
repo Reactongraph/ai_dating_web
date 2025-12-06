@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'True Companion - Your AI Friends',
+  title: 'Daily Love - Your AI Friends',
   description: 'Create and interact with AI companions tailored to your preferences',
 };
 

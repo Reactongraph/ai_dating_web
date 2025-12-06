@@ -9,10 +9,14 @@ import ForgotPasswordModal from './ForgotPasswordModal';
 interface AuthProps {
   isOpen: boolean;
   onClose: () => void;
-  initialMode?: 'email-login' | 'signup';
+  initialMode?: 'email-login' | 'signup' | 'forgot-password';
 }
 
-type AuthMode = 'method' | 'email-login' | /* 'phone-login' | 'otp' | */ 'signup' | 'forgot-password';
+type AuthMode =
+  | 'method'
+  | 'email-login'
+  | /* 'phone-login' | 'otp' | */ 'signup'
+  | 'forgot-password';
 
 const Auth = ({ isOpen, onClose, initialMode = 'email-login' }: AuthProps) => {
   const [mode, setMode] = useState<AuthMode>(initialMode);

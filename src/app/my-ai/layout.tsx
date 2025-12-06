@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import GlobalLayout from '@/components/layouts/GlobalLayout';
 
 export const metadata: Metadata = {
-  title: 'My AI - True Companion',
+  title: 'My AI - Daily Love',
   description: 'Manage your AI companions',
 };
 

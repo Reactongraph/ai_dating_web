@@ -4,10 +4,7 @@ import { useState, useMemo } from 'react';
 import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import EnhancedCompanionCard, { Companion } from '@/components/cards/EnhancedCompanionCard';
 import Image from 'next/image';
-import {
-  useGetUserBotProfilesQuery,
-  useGetLikedBotsQuery,
-} from '@/redux/services/botProfilesApi';
+import { useGetUserBotProfilesQuery, useGetLikedBotsQuery } from '@/redux/services/botProfilesApi';
 import { mapBotProfilesToEnhancedCompanions } from '@/utils/mappers';
 import { useAppSelector } from '@/redux/hooks';
 import LoginModal from '@/components/auth/LoginModal';

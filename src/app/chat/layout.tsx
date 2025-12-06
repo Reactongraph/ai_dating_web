@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import LayoutWithoutFooter from '@/components/layouts/LayoutWithoutFooter';
 
 export const metadata: Metadata = {
-  title: 'Chats - True Companion',
+  title: 'Chats - Daily Love',
   description: 'Chat with your AI companions',
 };
 
