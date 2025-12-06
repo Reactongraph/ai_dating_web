@@ -37,6 +37,7 @@ export interface GeneratedImage {
   isPrimary: boolean;
   createdAt: string;
   updatedAt: string;
+  imageType: 'sfw' | 'nsfw';
 }
 
 export interface GeneratedImagesData {
