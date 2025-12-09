@@ -1,4 +1,4 @@
-name: Docker Deploy
+name: Docker Deploy (Server Build)
 
 on:
   push:
@@ -9,39 +9,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout (for lint/tests only, optional)
         uses: actions/checkout@v4
 
-      - name: Build Docker Image
-        run: |
-          docker build -t daily_love_image:latest .
+      # Optional: local CI sanity check
+      # - name: Setup Node
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      #   ...
+      #   run: npm install && npm run lint && npm run build:production
 
-      - name: Save Docker image as file
-        run: docker save daily_love_image:latest | gzip > daily_love_image.tar.gz
-
-      - name: Copy image to server
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: './daily_love_image.tar.gz'
-          target: '/home/daily_love/docker/'
-
-      - name: SSH & Deploy container
+      - name: SSH & Build on server
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
+          host: ${{ secrets.SSH_HOST }} # 216.48.179.224
+          username: ${{ secrets.SSH_USER }} # meandev
           key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }} # 22
+          script_stop: true
           script: |
+            set -e
+
+            echo ">>> Go to project directory"
+            cd /home/daily_love/ai_dating_web
+
+            echo ">>> Pull latest code from master"
+            sudo git pull origin master
+
+            echo ">>> Build Docker image"
+            docker build -t daily_love_image:latest .
+
+            echo ">>> Restart container via docker compose"
             cd /home/daily_love/docker
-
-            echo ">>> Loading Docker image"
-            docker load -i daily_love_image.tar.gz
-
-            echo ">>> Restarting container"
-            docker compose down
+            docker compose down || true
             docker compose up -d
 
+            echo ">>> Running containers:"
             docker ps
