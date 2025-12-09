@@ -1,0 +1,47 @@
+name: Docker Deploy
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build -t daily_love_image:latest .
+
+      - name: Save Docker image as file
+        run: docker save daily_love_image:latest | gzip > daily_love_image.tar.gz
+
+      - name: Copy image to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: './daily_love_image.tar.gz'
+          target: '/home/daily_love/docker/'
+
+      - name: SSH & Deploy container
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/daily_love/docker
+
+            echo ">>> Loading Docker image"
+            docker load -i daily_love_image.tar.gz
+
+            echo ">>> Restarting container"
+            docker compose down
+            docker compose up -d
+
+            docker ps
