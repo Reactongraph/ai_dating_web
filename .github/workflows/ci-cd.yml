@@ -47,6 +47,16 @@ jobs:
           script: |
             echo ">>> Switching to root for deployment"
             sudo su - << 'EOF'
+             # Try to load nvm for root (if you used nvm to install Node 20)
+            if [ -d "/root/.nvm" ]; then
+              export NVM_DIR="/root/.nvm"
+              [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+              # Prefer Node 20, fall back to 18 if needed
+              nvm use 20 || nvm use 18 || true
+            fi
+
+            echo ">>> Node version in deploy shell:"
+            node -v || echo "node not found"
 
             echo ">>> Mark repo as safe for git"
             git config --global --add safe.directory /home/daily_love/ai_dating_web
