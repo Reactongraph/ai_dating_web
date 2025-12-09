@@ -8,7 +8,7 @@ import GlobalLayout from '@/components/layouts/GlobalLayout';
 export default function Home() {
   return (
     <GlobalLayout>
-      {/* Ad Banner */}
+      {/* Ad Banner test */}
       {/* <AdBanner
         text="Exclusive Discount on Premium New Users"
         discount="-70%"
