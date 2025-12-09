@@ -1,0 +1,32 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# Build outputs
+.next
+out
+dist
+coverage
+
+# Git & CI
+.git
+.gitignore
+.github
+
+# Editor / OS junk
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# Env files (never copy secrets into image)
+.env
+.env.*
+!.env.example
+
+# Docker-related
+docker-compose.yml
+docker-compose.*.yml
