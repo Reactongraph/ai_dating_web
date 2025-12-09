@@ -45,6 +45,9 @@ jobs:
           port: ${{ secrets.SSH_PORT }} # 22
           script_stop: true
           script: |
+            echo ">>> Mark repo as safe for git"
+            git config --global --add safe.directory /home/daily_love/ai_dating_web
+
             echo ">>> Switching to project directory"
             cd /home/daily_love/ai_dating_web
 
