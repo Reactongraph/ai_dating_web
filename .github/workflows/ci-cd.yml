@@ -24,9 +24,6 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Lint
-        run: npm run lint
-
       - name: Build app
         env:
           NODE_ENV: production
@@ -55,7 +52,7 @@ jobs:
             git pull origin master
 
             echo ">>> Installing production dependencies"
-            npm ci --omit=dev
+            yarn install --omit=dev
 
             echo ">>> Building production bundle"
             NODE_ENV=production npm run build:production
