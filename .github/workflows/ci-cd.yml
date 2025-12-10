@@ -1,0 +1,75 @@
+name: CI/CD - Next.js Deploy (daily_love)
+
+on:
+  push:
+    branches: ['master']
+  pull_request:
+    branches: ['master']
+
+jobs:
+  build:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # or '18' if you really want, but 20 matches server
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build app
+        env:
+          NODE_ENV: production
+        run: yarn build:production
+
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+      - name: SSH & Deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }} # e.g. 216.48.179.224
+          username: ${{ secrets.SSH_USER }} # e.g. meandev
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }} # usually 22
+          script_stop: true
+          script: |
+            echo ">>> Node version on server"
+            node -v || echo "node not found"
+
+            echo ">>> Mark repo as safe for git"
+            git config --global --add safe.directory /home/daily_love/ai_dating_web
+
+            echo ">>> Switch to project directory"
+            cd /home/daily_love/ai_dating_web
+
+            echo ">>> Pull latest from master"
+            git pull origin master
+
+            echo ">>> Install dependencies with Yarn"
+            yarn install --frozen-lockfile
+
+            echo ">>> Build production bundle"
+            NODE_ENV=production yarn build:production
+
+            echo ">>> Reload (or start) PM2 service"
+            if pm2 list | grep -q "daily_love_frontend"; then
+              pm2 reload daily_love_frontend --update-env
+            else
+              # If not running yet, start it once
+              NODE_ENV=production pm2 start "yarn start:production" --name daily_love_frontend
+            fi
+
+            echo ">>> PM2 status"
+            pm2 status
