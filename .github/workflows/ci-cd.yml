@@ -18,16 +18,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # or '18' if you really want, but 20 matches server
-          cache: 'yarn'
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       - name: Build app
         env:
           NODE_ENV: production
-        run: yarn build:production
+        run: npm run build:production
 
   deploy:
     name: Deploy to Server
@@ -39,13 +39,27 @@ jobs:
       - name: SSH & Deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.SSH_HOST }} # e.g. 216.48.179.224
-          username: ${{ secrets.SSH_USER }} # e.g. meandev
+          host: ${{ secrets.SSH_HOST }} # 216.48.179.224
+          username: ${{ secrets.SSH_USER }} # meandev
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }} # usually 22
+          port: ${{ secrets.SSH_PORT }} # 22
           script_stop: true
           script: |
-            echo ">>> Node version on server"
+            set -e
+
+            echo ">>> Load nvm / Node for meandev"
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+              . "$NVM_DIR/nvm.sh"
+            fi
+            if [ -s "$NVM_DIR/bash_completion" ]; then
+              . "$NVM_DIR/bash_completion"
+            fi
+
+            # Use Node 20 if available
+            nvm use 20 || nvm use default || true
+
+            echo ">>> Node version on server (CI shell)"
             node -v || echo "node not found"
 
             echo ">>> Mark repo as safe for git"
@@ -63,13 +77,17 @@ jobs:
             echo ">>> Build production bundle"
             NODE_ENV=production yarn build:production
 
-            echo ">>> Reload (or start) PM2 service"
+            echo ">>> Start or reload PM2 service"
             if pm2 list | grep -q "daily_love_frontend"; then
+              echo ">>> Reloading existing PM2 process"
               pm2 reload daily_love_frontend --update-env
             else
-              # If not running yet, start it once
+              echo ">>> PM2 process not found, starting new one"
               NODE_ENV=production pm2 start "yarn start:production" --name daily_love_frontend
             fi
+
+            echo ">>> Save PM2 process list"
+            pm2 save
 
             echo ">>> PM2 status"
             pm2 status
