@@ -18,16 +18,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: '20' # Next.js 15 wants >=18.18; 20 is perfect
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Build app
         env:
           NODE_ENV: production
-        run: npm run build:production
+        run: yarn build:production
 
   deploy:
     name: Deploy to Server
@@ -47,20 +47,12 @@ jobs:
           script: |
             set -e
 
-            echo ">>> Load nvm / Node for meandev"
-            export NVM_DIR="$HOME/.nvm"
-            if [ -s "$NVM_DIR/nvm.sh" ]; then
-              . "$NVM_DIR/nvm.sh"
-            fi
-            if [ -s "$NVM_DIR/bash_completion" ]; then
-              . "$NVM_DIR/bash_completion"
-            fi
+            # Ensure common bin paths are in PATH (for non-interactive shell)
+            export PATH="/usr/local/bin:/usr/bin:$PATH"
 
-            # Use Node 20 if available
-            nvm use 20 || nvm use default || true
-
-            echo ">>> Node version on server (CI shell)"
+            echo ">>> Node + Yarn versions on server (CI shell)"
             node -v || echo "node not found"
+            yarn -v || echo "yarn not found"
 
             echo ">>> Mark repo as safe for git"
             git config --global --add safe.directory /home/daily_love/ai_dating_web
@@ -75,7 +67,7 @@ jobs:
             yarn install --frozen-lockfile
 
             echo ">>> Build production bundle"
-            NODE_ENV=production npm run build:production
+            NODE_ENV=production yarn build:production
 
             echo ">>> Start or reload PM2 service"
             if pm2 list | grep -q "daily_love_frontend"; then
