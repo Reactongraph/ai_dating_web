@@ -18,16 +18,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: '20' # or '18' if you really want, but 20 matches server
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Build app
         env:
           NODE_ENV: production
-        run: npm run build:production
+        run: yarn build:production
 
   deploy:
     name: Deploy to Server
@@ -39,42 +39,37 @@ jobs:
       - name: SSH & Deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.SSH_HOST }} # 216.48.179.224
-          username: ${{ secrets.SSH_USER }} # root
-          key: ${{ secrets.SSH_KEY }} # private SSH key
-          port: ${{ secrets.SSH_PORT }} # 22
+          host: ${{ secrets.SSH_HOST }} # e.g. 216.48.179.224
+          username: ${{ secrets.SSH_USER }} # e.g. meandev
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }} # usually 22
           script_stop: true
           script: |
-            echo ">>> Switching to root for deployment"
-            sudo su - << 'EOF'
-             # Try to load nvm for root (if you used nvm to install Node 20)
-            if [ -d "/root/.nvm" ]; then
-              export NVM_DIR="/root/.nvm"
-              [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-              # Prefer Node 20, fall back to 18 if needed
-              nvm use 20 || nvm use 18 || true
-            fi
-
-            echo ">>> Node version in deploy shell:"
+            echo ">>> Node version on server"
             node -v || echo "node not found"
 
             echo ">>> Mark repo as safe for git"
             git config --global --add safe.directory /home/daily_love/ai_dating_web
 
-            echo ">>> Switching to project directory"
+            echo ">>> Switch to project directory"
             cd /home/daily_love/ai_dating_web
 
-            echo ">>> Pulling latest code"
+            echo ">>> Pull latest from master"
             git pull origin master
 
-            echo ">>> Installing production dependencies"
-            yarn install --omit=dev
+            echo ">>> Install dependencies with Yarn"
+            yarn install --frozen-lockfile
 
-            echo ">>> Building production bundle"
-            NODE_ENV=production npm run build:production
+            echo ">>> Build production bundle"
+            NODE_ENV=production yarn build:production
 
-            echo ">>> Reloading PM2 service"
-            pm2 reload daily_love_frontend --update-env
+            echo ">>> Reload (or start) PM2 service"
+            if pm2 list | grep -q "daily_love_frontend"; then
+              pm2 reload daily_love_frontend --update-env
+            else
+              # If not running yet, start it once
+              NODE_ENV=production pm2 start "yarn start:production" --name daily_love_frontend
+            fi
 
-            echo ">>> Showing PM2 status"
+            echo ">>> PM2 status"
             pm2 status
