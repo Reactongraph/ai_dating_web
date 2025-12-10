@@ -75,7 +75,7 @@ jobs:
             yarn install --frozen-lockfile
 
             echo ">>> Build production bundle"
-            NODE_ENV=production yarn build:production
+            NODE_ENV=production npm run build:production
 
             echo ">>> Start or reload PM2 service"
             if pm2 list | grep -q "daily_love_frontend"; then
