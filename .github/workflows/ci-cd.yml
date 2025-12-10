@@ -47,7 +47,15 @@ jobs:
           script: |
             set -e
 
-            # Ensure common bin paths are in PATH (for non-interactive shell)
+            echo ">>> Load shell profile so node & yarn are in PATH"
+            if [ -f "$HOME/.profile" ]; then
+              . "$HOME/.profile"
+            fi
+            if [ -f "$HOME/.bashrc" ]; then
+              . "$HOME/.bashrc"
+            fi
+
+            # Just in case, prepend common bin dirs too
             export PATH="/usr/local/bin:/usr/bin:$PATH"
 
             echo ">>> Node + Yarn versions on server (CI shell)"
