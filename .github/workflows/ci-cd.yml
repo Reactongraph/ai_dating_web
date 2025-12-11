@@ -55,10 +55,10 @@ jobs:
             yarn -v || echo "yarn not found"
 
             echo ">>> Mark repo as safe for git"
-            git config --global --add safe.directory /home/daily_love/ai_dating_web
+            git config --global --add safe.directory /home/meandev/daily_love/ai_dating_web
 
             echo ">>> Switch to project directory"
-            cd /home/daily_love/ai_dating_web
+            cd /home/meandev/daily_love/ai_dating_web
 
             echo ">>> Pull latest from master"
             git pull origin master
@@ -75,7 +75,7 @@ jobs:
               pm2 reload daily_love_frontend --update-env
             else
               echo ">>> PM2 process not found, starting new one"
-              NODE_ENV=production pm2 start "yarn start:production" --name daily_love_frontend
+              NODE_ENV=production pm2 start "npm run start:production" --name daily_love_frontend
             fi
 
             echo ">>> Save PM2 process list"
