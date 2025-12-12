@@ -2,7 +2,6 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['devog.s3.amazonaws.com', 'aidatingapi.ongraph.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -12,7 +11,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'aidatingapi.ongraph.com',
+        hostname: 'api.dailylove.ai',
         port: '',
         pathname: '/uploads/**',
       },

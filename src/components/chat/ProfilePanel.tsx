@@ -471,9 +471,9 @@ const ProfilePanel: React.FC<ProfilePanelProps> = ({
 
                     {/* Image info overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="text-white text-xs truncate" title={image.prompt}>
+                      {/* <p className="text-white text-xs truncate" title={image.prompt}>
                         {image.prompt}
-                      </p>
+                      </p> */}
                       <p className="text-gray-300 text-xs">
                         {new Date(image.createdAt).toLocaleDateString()}
                       </p>
