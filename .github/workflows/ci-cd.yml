@@ -3,83 +3,84 @@ name: CI/CD - Next.js Deploy (daily_love)
 on:
   push:
     branches: ['master']
-  pull_request:
-    branches: ['master']
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build & Lint
+    name: Build Next.js App
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js (Node 24)
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Next.js 15 wants >=18.18; 20 is perfect
+          node-version: '24'
           cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build app
+      - name: Build Next.js App
         env:
           NODE_ENV: production
         run: yarn build:production
 
   deploy:
-    name: Deploy to Server
-    runs-on: ubuntu-latest
+    name: Deploy to EC2 Server
     needs: build
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
 
     steps:
-      - name: SSH & Deploy
+      - name: SSH & Deploy to EC2
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.SSH_HOST }} # 216.48.179.224
-          username: ${{ secrets.SSH_USER }} # meandev
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }} # 22
+          port: ${{ secrets.SSH_PORT }}
           script_stop: true
           script: |
             set -e
 
-            # 🔹 Make sure node & yarn are in PATH for this CI shell
-            export PATH="/opt/node-20.19.6/bin:/usr/local/bin:/usr/bin:$PATH"
+            echo ">>> Loading NVM (Node 24)"
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-            echo ">>> Node + Yarn versions on server (CI shell)"
-            node -v || echo "node not found"
-            yarn -v || echo "yarn not found"
+            nvm install 24
+            nvm use 24
 
-            echo ">>> Mark repo as safe for git"
-            git config --global --add safe.directory /home/meandev/daily_love/ai_dating_web
+            PROJECT_DIR="/home/ubuntu/daily_love/ai_dating_web"
+            APP="daily_love_frontend"
+            PORT=4001
 
-            echo ">>> Switch to project directory"
-            cd /home/meandev/daily_love/ai_dating_web
+            echo ">>> Switching to project directory"
+            cd $PROJECT_DIR
 
-            echo ">>> Pull latest from master"
-            git pull origin master
+            echo ">>> Pulling latest code"
+            git fetch --all --prune
+            git reset --hard origin/master
 
-            echo ">>> Install dependencies with Yarn"
+            echo ">>> Installing dependencies"
             yarn install --frozen-lockfile
 
-            echo ">>> Build production bundle"
-            NODE_ENV=production npm run build:production
+            echo ">>> Building Next.js"
+            NODE_ENV=production yarn build:production
 
-            echo ">>> Start or reload PM2 service"
-            if pm2 list | grep -q "daily_love_frontend"; then
-              echo ">>> Reloading existing PM2 process"
-              pm2 reload daily_love_frontend --update-env
-            else
-              echo ">>> PM2 process not found, starting new one"
-              NODE_ENV=production pm2 start "npm run start:production" --name daily_love_frontend
+            echo ">>> Ensuring PM2 is installed"
+            if ! command -v pm2 >/dev/null 2>&1; then
+              npm install -g pm2
             fi
 
-            echo ">>> Save PM2 process list"
-            pm2 save
+            echo ">>> Starting or Reloading PM2 app on port $PORT"
+            if pm2 describe $APP > /dev/null 2>&1; then
+              pm2 restart $APP --update-env
+            else
+              pm2 start npm --name "$APP" -- start -- -p $PORT
+            fi
 
-            echo ">>> PM2 status"
+            pm2 save
             pm2 status
