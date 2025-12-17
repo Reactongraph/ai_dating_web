@@ -17,6 +17,7 @@ export interface UpdateProfileRequest {
   sexualInterest?: number;
   interest?: number[];
   zodiac?: number;
+  isNsfw?: boolean;
   location?: {
     type: 'Point';
     coordinates: [number, number]; // [longitude, latitude]
