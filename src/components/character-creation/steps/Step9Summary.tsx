@@ -226,7 +226,7 @@ const Step9Summary: React.FC = () => {
         <div className="bg-gray-800 rounded-lg p-6 max-w-2xl mx-auto">
           <h3 className="text-xl font-semibold mb-4">Character Overview</h3>
 
-          {/* Name Input Field and Model Selection */}
+          {/* Character Type and Style Summary */}
           <div className="mb-6 grid grid-cols-2 gap-4">
             {/* Character Name */}
             <div>
@@ -253,8 +253,8 @@ const Step9Summary: React.FC = () => {
               {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>}
             </div>
 
-            {/* Model Selection */}
-            <div>
+            {/* Model Selection - Commented out, will use contentMode from navbar */}
+            {/* <div>
               <label htmlFor="model" className="block text-sm font-medium text-gray-300 mb-2">
                 AI Model *
               </label>
@@ -272,7 +272,7 @@ const Step9Summary: React.FC = () => {
                 <option value="venice-sd35">NSFW Level 3</option>
               </select>
               {errors.model && <p className="mt-1 text-sm text-red-400">{errors.model.message}</p>}
-            </div>
+            </div> */}
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-left">

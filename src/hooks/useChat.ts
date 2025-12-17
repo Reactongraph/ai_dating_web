@@ -10,6 +10,7 @@ import {
   ChatHistoryMessage as ApiChatHistoryMessage,
 } from '@/redux/services/chatApi';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { selectContentMode } from '@/redux/slices/contentModeSlice';
 import { useSnackbar } from '@/providers';
 
 interface UseChatProps {
@@ -29,6 +30,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   const [markAsRead] = useMarkMessagesAsReadMutation();
 
   const user = useAppSelector(state => state.auth.user);
+  const contentMode = useAppSelector(selectContentMode); // Get contentMode from navbar
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
 
@@ -129,12 +131,12 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         if (apiMsg.type === 'TEXTANDIMAGE' && apiMsg.metadata?.imageUrl) {
           // For TEXTANDIMAGE, create two messages: one for text and one for image
           return [
-            {
-              ...baseMessage,
-              id: `${apiMsg.chatId}-text-${uniqueSuffix}`,
-              content: apiMsg.message,
-              type: 'TEXT',
-            },
+            // {
+            //   ...baseMessage,
+            //   id: `${apiMsg.chatId}-text-${uniqueSuffix}`,
+            //   content: apiMsg.message,
+            //   type: 'TEXT',
+            // },
             {
               ...baseMessage,
               id: `${apiMsg.chatId}-image-${uniqueSuffix}`,
@@ -201,11 +203,11 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
       }
 
       // console.log('sendChatMessage called with:', messageContent);
-      console.log('Current state:', {
-        botId,
-        userId: user?.id,
-        messageContent,
-      });
+      // console.log('Current state:', {
+      //   botId,
+      //   userId: user?.id,
+      //   messageContent,
+      // });
 
       if (!botId || !user?.id || !messageContent.trim()) {
         // console.log('Missing required data:', {
@@ -216,9 +218,6 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         return;
       }
 
-      // console.log('Sending message:', messageContent);
-      // console.log('Bot ID:', botId);
-      // console.log('User ID:', user.id);
 
       isProcessingRef.current = true;
       setIsSendingMessage(true);
@@ -253,6 +252,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           chat_history: chatHistory,
           bot_profile_id: botId,
           user_id: user.id as string,
+          category: contentMode, // Use contentMode from navbar (nsfw/sfw)
         };
 
         console.log('Request chat with bot data:', requestData);
@@ -286,7 +286,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
           // Create unique IDs for bot messages to prevent duplicates
           const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-          
+
           // Add text response
           const textMessage: ChatMessage = {
             id: `bot-text-${uniqueId}`,
@@ -301,15 +301,15 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           const newMessages: ChatMessage[] = [textMessage];
           if (response.data.image) {
             // Use image ID from response if available, otherwise create unique ID
-            const imageId = response.data.image.id 
-              ? `bot-image-${response.data.image.id}` 
+            const imageId = response.data.image.id
+              ? `bot-image-${response.data.image.id}`
               : `bot-image-${uniqueId}-img`;
-            
+
             // Check if this image message already exists to prevent duplicates
             const existingImageId = messagesRef.current.find(
-              msg => msg.type === 'IMAGE' && msg.content === response.data.image.imageURL
+              msg => msg.type === 'IMAGE' && msg.content === response.data.image.imageURL,
             )?.id;
-            
+
             if (!existingImageId) {
               newMessages.push({
                 id: imageId,
@@ -349,6 +349,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
     [
       botId,
       user?.id,
+      contentMode,
       convertMessagesToHistory,
       chatWithBot,
       showSnackbar,
@@ -429,6 +430,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         chat_history: [],
         bot_profile_id: botId,
         user_id: (user?.id as string) || '',
+        category: contentMode, // Use contentMode from navbar (nsfw/sfw)
       };
 
       await chatWithBot(testRequest).unwrap();

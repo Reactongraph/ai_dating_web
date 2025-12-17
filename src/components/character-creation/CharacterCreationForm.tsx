@@ -6,6 +6,7 @@ import { useSnackbar } from '@/providers';
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData, FormStepProps } from '@/types/character';
 import { useAppSelector } from '@/redux/hooks';
+import { selectContentMode } from '@/redux/slices/contentModeSlice';
 import {
   useGenerateAvatarMutation,
   GenerateAvatarRequest,
@@ -35,6 +36,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
   const { handleSubmit } = useFormContext<CharacterFormData>();
   const [isGenerating, setIsGenerating] = useState(false);
   const botType = useAppSelector(state => state.characterAttributes.botType);
+  const contentMode = useAppSelector(selectContentMode); // Get contentMode from navbar
   const [generateAvatar] = useGenerateAvatarMutation();
   const { showSnackbar } = useSnackbar();
 
@@ -93,11 +95,11 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
       // Convert age string to number
       const ageNumber = parseInt(data.age.replace(/\D/g, '')) || 25;
 
-      // Prepare request data
+      // Prepare request data - use category from contentMode instead of model
       const requestData: GenerateAvatarRequest = {
         bot_type: botType as 'girl' | 'boy',
         name: data.name,
-        model: data.model,
+        category: contentMode, // Use contentMode from navbar (nsfw/sfw)
         style: data.style === 'realistic' ? 'Realistic' : 'Anime',
         ethnicity: data.ethnicity,
         age: ageNumber,
