@@ -83,6 +83,34 @@ const CreateCharacterPageContent = () => {
     }
   }, [searchParams]);
 
+  // Load saved form data from localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('characterFormData');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        // Reset form with saved data
+        Object.keys(parsedData).forEach(key => {
+          methods.setValue(key as keyof CharacterFormData, parsedData[key]);
+        });
+      } catch (error) {
+        console.error('Failed to load saved form data:', error);
+      }
+    }
+  }, [methods]);
+
+  // Save form data to localStorage on changes
+  useEffect(() => {
+    const subscription = methods.watch(value => {
+      localStorage.setItem('characterFormData', JSON.stringify(value));
+    });
+    return () => subscription.unsubscribe();
+  }, [methods]);
+
+  const handleJumpToStep9 = () => {
+    goToStep(9);
+  };
+
   const goToStep = (step: number) => {
     setCurrentStep(step);
     router.push(`/create-character?step=${step}`);
@@ -110,6 +138,9 @@ const CreateCharacterPageContent = () => {
   };
 
   const handleConfirmClose = () => {
+    // Clear localStorage
+    localStorage.removeItem('characterFormData');
+
     // Reset form data
     methods.reset({
       // Step 1: Create
@@ -199,6 +230,7 @@ const CreateCharacterPageContent = () => {
         onNext={goToNextStep}
         onPrevious={goToPreviousStep}
         onClose={handleClose}
+        onJumpToStep9={handleJumpToStep9}
       />
 
       {/* Confirmation Modal */}

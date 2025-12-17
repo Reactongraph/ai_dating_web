@@ -3,13 +3,38 @@
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData } from '@/types/character';
 import { useCharacterAttributes } from '@/hooks/useCharacterAttributes';
+import { generateRandomProfile } from '@/utils/randomProfile';
 
-const Step1Create: React.FC = () => {
+interface Step1CreateProps {
+  onRandomProfile?: () => void;
+}
+
+const Step1Create: React.FC<Step1CreateProps> = ({ onRandomProfile }) => {
   const { register, watch, setValue } = useFormContext<CharacterFormData>();
-  const { styles } = useCharacterAttributes();
+  const attributes = useCharacterAttributes();
+  const { styles } = attributes;
 
   const characterType = watch('characterType');
   const style = watch('style');
+
+  const handleCreateRandomProfile = () => {
+    if (!characterType || !style) return;
+
+    const randomData = generateRandomProfile(characterType, style, attributes);
+
+    // Set all form values with random data
+    Object.keys(randomData).forEach(key => {
+      setValue(key as keyof CharacterFormData, randomData[key as keyof CharacterFormData] as any);
+    });
+
+    // Save to localStorage for persistence
+    localStorage.setItem('characterFormData', JSON.stringify(randomData));
+
+    // Call the callback to jump to step 9
+    if (onRandomProfile) {
+      onRandomProfile();
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -72,6 +97,19 @@ const Step1Create: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Create Random Profile Button */}
+      {characterType && style && (
+        <div className="flex justify-center mt-8">
+          <button
+            type="button"
+            onClick={handleCreateRandomProfile}
+            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-full text-lg transition-all transform hover:scale-105 shadow-lg"
+          >
+            ✨ Create Random Profile
+          </button>
+        </div>
+      )}
 
       {/* Hidden form inputs for React Hook Form */}
       <input type="hidden" {...register('characterType')} />
