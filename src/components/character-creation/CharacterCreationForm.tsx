@@ -24,6 +24,7 @@ import Step9Summary from './steps/Step9Summary';
 
 type CharacterCreationFormProps = Omit<FormStepProps, 'onSubmit'> & {
   onClose: () => void;
+  onJumpToStep9?: () => void;
 };
 
 const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
@@ -31,6 +32,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
   onNext,
   onPrevious,
   onClose,
+  onJumpToStep9,
 }) => {
   const router = useRouter();
   const { handleSubmit } = useFormContext<CharacterFormData>();
@@ -204,7 +206,11 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <form onSubmit={handleSubmit(handleFormSubmit)}>
-            <CurrentStepComponent />
+            {currentStep === 1 ? (
+              <Step1Create onRandomProfile={onJumpToStep9} />
+            ) : (
+              <CurrentStepComponent />
+            )}
 
             {/* Navigation Button */}
             <div className="flex flex-col items-center mt-8 mb-6">
