@@ -28,6 +28,7 @@ export const mapBotProfilesToCompanions = (
       tags: [profile.occupation, profile.personality, ...profile.hobbies.slice(0, 1)],
       isLiked,
       imageType: profile.imageType as 'sfw' | 'nsfw',
+      category: profile.category as 'sfw' | 'nsfw', // Add category for blur logic
     };
   });
 };
@@ -55,6 +56,7 @@ export const mapBotProfilesToEnhancedCompanions = (
       tags: [profile.occupation, profile.personality, ...profile.hobbies.slice(0, 1)],
       isLiked,
       imageType: profile.imageType as 'sfw' | 'nsfw',
+      category: profile.category as 'sfw' | 'nsfw', // Add category for blur logic
     };
   });
 };
@@ -166,6 +168,7 @@ export const mapBotProfilesToCollectionCharacters = (
       images,
       mainImage,
       imageType: profile.imageType as 'sfw' | 'nsfw',
+      category: profile.category as 'sfw' | 'nsfw', // Add category for blur logic
     };
   });
 };

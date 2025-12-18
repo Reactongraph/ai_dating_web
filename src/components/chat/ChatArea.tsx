@@ -199,17 +199,17 @@ const ChatArea: React.FC<ChatAreaProps> = ({ chat, privacyMessage, onQuickSugges
               className="object-cover"
             />
           </div>
-          {chat.user.isLimitedEdition && (
+          {/* {chat.user.isLimitedEdition && (
             <div className="absolute -top-1 -right-1 bg-yellow-500 text-black text-xs px-1 rounded text-[10px] font-bold">
               LIMITED EDITION
             </div>
-          )}
+          )} */}
         </div>
         <div className="ml-3">
           <h3 className="text-white font-medium">{chat.user.name}</h3>
-          {chat.user.isLimitedEdition && (
+          {/* {chat.user.isLimitedEdition && (
             <span className="text-yellow-400 text-xs">LIMITED EDITION</span>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -232,11 +232,11 @@ const ChatArea: React.FC<ChatAreaProps> = ({ chat, privacyMessage, onQuickSugges
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  {chat.user.isLimitedEdition && (
+                  {/* {chat.user.isLimitedEdition && (
                     <div className="absolute top-1 left-1 bg-white/90 text-black text-xs px-1.5 py-0.5 rounded text-[10px] font-bold">
                       LIMITED EDITION
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 <h4 className="text-white font-bold text-sm text-center mb-2">
@@ -319,7 +319,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ chat, privacyMessage, onQuickSugges
             <div className="flex justify-start">
               <div className="bg-gray-800 text-white max-w-xs p-3 rounded-2xl">
                 <div className="flex items-center space-x-1">
-                  <span className="text-sm text-gray-300">{chat.user.name} is typing</span>
+                  <span className="text-sm text-gray-300">{chat.user.name}</span>
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
                     <div

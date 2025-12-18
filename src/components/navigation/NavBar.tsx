@@ -3,10 +3,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import UserDropdown from './UserDropdown';
 import Auth from '../auth/Auth';
+import AgeVerificationModal from '../modals/AgeVerificationModal';
 import { usePathname } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { selectContentMode, setMode } from '@/redux/slices/contentModeSlice';
 import { openAuthModal, closeAuthModal } from '@/redux/slices/authSlice';
+import { useUpdateProfileMutation, useGetProfileQuery } from '@/redux/services/profileApi';
 
 interface NavBarProps {
   onToggleSidebar: () => void;
@@ -16,10 +18,18 @@ interface NavBarProps {
 const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(true);
+  const [showAgeVerification, setShowAgeVerification] = useState(false);
   const pathname = usePathname();
   const { isAuthenticated, user, authModal } = useAppSelector(state => state.auth);
   const contentMode = useAppSelector(selectContentMode);
   const dispatch = useAppDispatch();
+  const [updateProfile] = useUpdateProfileMutation();
+
+  // Fetch user profile on page load if authenticated
+  const { data: profileData } = useGetProfileQuery(user?.id || user?._id || '', {
+    skip: !isAuthenticated || (!user?.id && !user?._id), // Skip if not authenticated or no user ID
+  });
+
   // Check if banner is visible and adjust navbar position
   useEffect(() => {
     const checkBannerVisibility = () => {
@@ -43,6 +53,84 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
 
   const handleSignupClick = () => {
     dispatch(openAuthModal({ mode: 'signup' }));
+  };
+
+  // Sync content mode with user's NSFW preference from profile data
+  useEffect(() => {
+    if (isAuthenticated && profileData?.user) {
+      // Check if user has isNsfw property in their profile
+      const userIsNsfw = (profileData.user as { isNsfw?: boolean }).isNsfw;
+      if (userIsNsfw !== undefined) {
+        // Set content mode based on user's preference
+        dispatch(setMode(userIsNsfw ? 'nsfw' : 'sfw'));
+        // Also set age verification in localStorage if user has NSFW enabled
+        if (userIsNsfw) {
+          localStorage.setItem('ageVerified', 'true');
+        }
+      }
+    }
+  }, [isAuthenticated, profileData, dispatch]);
+
+  const handleToggleContentMode = async () => {
+    // If switching from SFW to NSFW, check if user has already verified
+    if (contentMode === 'sfw') {
+      const hasVerified = localStorage.getItem('ageVerified') === 'true';
+      if (hasVerified) {
+        // User has already verified, switch directly
+        dispatch(setMode('nsfw'));
+        // Update backend if user is authenticated
+        if (isAuthenticated && user) {
+          try {
+            await updateProfile({
+              userId: user.id || user._id || '',
+              data: { isNsfw: true },
+            });
+          } catch (error) {
+            console.error('Failed to update NSFW preference:', error);
+          }
+        }
+      } else {
+        // Show verification modal for first time
+        setShowAgeVerification(true);
+      }
+    } else {
+      // Switching from NSFW to SFW, no verification needed
+      dispatch(setMode('sfw'));
+      // Update backend if user is authenticated
+      if (isAuthenticated && user) {
+        try {
+          await updateProfile({
+            userId: user.id || user._id || '',
+            data: { isNsfw: false },
+          });
+        } catch (error) {
+          console.error('Failed to update NSFW preference:', error);
+        }
+      }
+    }
+  };
+
+  const handleAgeVerificationConfirm = async () => {
+    // Save verification status to localStorage
+    localStorage.setItem('ageVerified', 'true');
+    dispatch(setMode('nsfw'));
+    setShowAgeVerification(false);
+
+    // Update backend if user is authenticated
+    if (isAuthenticated && user) {
+      try {
+        await updateProfile({
+          userId: user.id || user._id || '',
+          data: { isNsfw: true },
+        });
+      } catch (error) {
+        console.error('Failed to update NSFW preference:', error);
+      }
+    }
+  };
+
+  const handleAgeVerificationCancel = () => {
+    setShowAgeVerification(false);
   };
 
   // const navLinks = [
@@ -126,12 +214,12 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
             {/* SFW/NSFW Toggle Switch */}
             <div className="flex items-center space-x-2">
               <span
-                className={`text-xs font-medium hidden sm:block ${contentMode === 'sfw' ? 'text-green-400' : 'text-gray-400'}`}
+                className={`text-xs font-medium  sm:block ${contentMode === 'sfw' ? 'text-green-400' : 'text-gray-400'}`}
               >
                 SFW
               </span>
               <button
-                onClick={() => dispatch(setMode(contentMode === 'sfw' ? 'nsfw' : 'sfw'))}
+                onClick={handleToggleContentMode}
                 className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
                   contentMode === 'nsfw' ? 'bg-red-600' : 'bg-green-600'
                 }`}
@@ -144,9 +232,59 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                 />
               </button>
               <span
-                className={`text-xs font-medium hidden sm:block ${contentMode === 'nsfw' ? 'text-red-400' : 'text-gray-400'}`}
+                className={`text-xs font-medium  sm:block ${contentMode === 'nsfw' ? 'text-red-400' : 'text-gray-400'}`}
               >
-                NSFW
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 40 40"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="transition-all duration-300"
+                >
+                  <defs>
+                    <linearGradient id="eighteenPlusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop
+                        offset="0%"
+                        stopColor={contentMode === 'nsfw' ? '#ef4444' : '#6b7280'}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor={contentMode === 'nsfw' ? '#dc2626' : '#4b5563'}
+                      />
+                    </linearGradient>
+                  </defs>
+                  {/* Outer circle with gradient */}
+                  <circle
+                    cx="20"
+                    cy="20"
+                    r="18"
+                    fill="url(#eighteenPlusGradient)"
+                    opacity={contentMode === 'nsfw' ? '1' : '0.6'}
+                  />
+                  {/* Inner circle for depth */}
+                  <circle
+                    cx="20"
+                    cy="20"
+                    r="16"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="0.5"
+                    opacity="0.3"
+                  />
+                  {/* 18+ text */}
+                  <text
+                    x="20"
+                    y="25"
+                    textAnchor="middle"
+                    fill="white"
+                    fontSize="14"
+                    fontWeight="bold"
+                    fontFamily="Arial, sans-serif"
+                  >
+                    18+
+                  </text>
+                </svg>
               </span>
             </div>
 
@@ -187,6 +325,11 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
         isOpen={authModal.isOpen}
         onClose={() => dispatch(closeAuthModal())}
         initialMode={authModal.mode}
+      />
+      <AgeVerificationModal
+        isOpen={showAgeVerification}
+        onClose={handleAgeVerificationCancel}
+        onConfirm={handleAgeVerificationConfirm}
       />
     </>
   );

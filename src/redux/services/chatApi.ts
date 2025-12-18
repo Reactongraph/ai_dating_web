@@ -131,6 +131,7 @@ export interface ChatWithBotRequest {
   chat_history: ChatWithBotHistoryMessage[];
   bot_profile_id: string;
   user_id: string;
+  category: 'nsfw' | 'sfw'; // Content mode from navbar
 }
 
 export interface ChatWithBotImageResponse {

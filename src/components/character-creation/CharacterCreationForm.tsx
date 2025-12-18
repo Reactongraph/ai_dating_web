@@ -6,6 +6,7 @@ import { useSnackbar } from '@/providers';
 import { useFormContext } from 'react-hook-form';
 import { CharacterFormData, FormStepProps } from '@/types/character';
 import { useAppSelector } from '@/redux/hooks';
+import { selectContentMode } from '@/redux/slices/contentModeSlice';
 import {
   useGenerateAvatarMutation,
   GenerateAvatarRequest,
@@ -23,6 +24,7 @@ import Step9Summary from './steps/Step9Summary';
 
 type CharacterCreationFormProps = Omit<FormStepProps, 'onSubmit'> & {
   onClose: () => void;
+  onJumpToStep9?: () => void;
 };
 
 const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
@@ -30,11 +32,13 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
   onNext,
   onPrevious,
   onClose,
+  onJumpToStep9,
 }) => {
   const router = useRouter();
   const { handleSubmit } = useFormContext<CharacterFormData>();
   const [isGenerating, setIsGenerating] = useState(false);
   const botType = useAppSelector(state => state.characterAttributes.botType);
+  const contentMode = useAppSelector(selectContentMode); // Get contentMode from navbar
   const [generateAvatar] = useGenerateAvatarMutation();
   const { showSnackbar } = useSnackbar();
 
@@ -93,11 +97,11 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
       // Convert age string to number
       const ageNumber = parseInt(data.age.replace(/\D/g, '')) || 25;
 
-      // Prepare request data
+      // Prepare request data - use category from contentMode instead of model
       const requestData: GenerateAvatarRequest = {
         bot_type: botType as 'girl' | 'boy',
         name: data.name,
-        model: data.model,
+        category: contentMode, // Use contentMode from navbar (nsfw/sfw)
         style: data.style === 'realistic' ? 'Realistic' : 'Anime',
         ethnicity: data.ethnicity,
         age: ageNumber,
@@ -202,7 +206,11 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <form onSubmit={handleSubmit(handleFormSubmit)}>
-            <CurrentStepComponent />
+            {currentStep === 1 ? (
+              <Step1Create onRandomProfile={onJumpToStep9} />
+            ) : (
+              <CurrentStepComponent />
+            )}
 
             {/* Navigation Button */}
             <div className="flex flex-col items-center mt-8 mb-6">

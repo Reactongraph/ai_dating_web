@@ -50,11 +50,30 @@ export interface BotProfile {
   collectionImages?: CollectionImage[]; // Collection images for liked bots
   totalImages?: number; // Total number of collection images
   imageType?: 'sfw' | 'nsfw';
+  category?: 'sfw' | 'nsfw'; // Category from API response
+  displayId?: number; // Display ID from API response
+}
+
+export interface BotProfilesPagination {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 export interface GetBotProfilesResponse {
   statusCode: number;
   botProfiles: BotProfile[];
+  pagination?: BotProfilesPagination; // Optional pagination info
+}
+
+export interface GetBotProfilesParams {
+  botType: string;
+  category?: 'nsfw' | 'sfw'; // Content mode from navbar
+  page?: number;
+  limit?: number; // Default is 20 on backend
 }
 
 export interface LikeBotResponse {
@@ -100,9 +119,24 @@ export const botProfilesApi = createApi({
   }),
   tagTypes: ['BotProfiles'],
   endpoints: builder => ({
-    getBotProfiles: builder.query<GetBotProfilesResponse, string>({
-      query: botType => `/botProfiles/get-all-default-bot-profiles/${botType}`,
-      providesTags: (result, error, botType) => [{ type: 'BotProfiles', id: botType }],
+    // Query params: ?category=nsfw&page=1&limit=20
+    // Usage examples:
+    // - /get-all-default-bot-profiles/girl
+    // - /get-all-default-bot-profiles/girl?category=nsfw
+    // - /get-all-default-bot-profiles/girl?category=sfw&page=2&limit=10
+    getBotProfiles: builder.query<GetBotProfilesResponse, GetBotProfilesParams>({
+      query: ({ botType, category, page, limit }) => {
+        const params = new URLSearchParams();
+        if (category) params.append('category', category);
+        if (page) params.append('page', page.toString());
+        if (limit) params.append('limit', limit.toString());
+
+        const queryString = params.toString();
+        return `/botProfiles/get-all-default-bot-profiles/${botType}${queryString ? `?${queryString}` : ''}`;
+      },
+      providesTags: (result, error, { botType, category }) => [
+        { type: 'BotProfiles', id: `${botType}-${category || 'all'}` },
+      ],
     }),
     getUserBotProfiles: builder.query<GetBotProfilesResponse, void>({
       query: () => '/users/bot-profiles',
