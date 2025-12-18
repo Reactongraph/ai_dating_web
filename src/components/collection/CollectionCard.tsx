@@ -11,24 +11,32 @@ import { CollectionCharacter } from '@/types/collection';
 import { useUnlikeBotMutation } from '@/redux/services/botProfilesApi';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
 import { useSnackbar } from '@/providers';
-import { selectContentMode } from '@/redux/slices/contentModeSlice';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import { selectContentMode, setMode } from '@/redux/slices/contentModeSlice';
+import { useUpdateProfileMutation } from '@/redux/services/profileApi';
 
 interface CollectionCardProps {
   character: CollectionCharacter;
 }
 
 const CollectionCard = ({ character }: CollectionCardProps) => {
-  const mode = useAppSelector(selectContentMode);
-  const shouldBlur = useMemo(() => {
-    return mode === 'sfw' && character.imageType === 'nsfw';
-  }, [mode, character.imageType]);
+  const contentMode = useAppSelector(selectContentMode);
+  const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated);
+  const userId = useAppSelector(state => state.auth.user?._id);
+  const dispatch = useAppDispatch();
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [unlikeBot, { isLoading: isUnliking }] = useUnlikeBotMutation();
+  const [updateProfile] = useUpdateProfileMutation();
   const { startChat } = useChatInitiation();
   const { showSnackbar } = useSnackbar();
+
+  // Check if card should be blurred (sfw mode + nsfw category)
+  const shouldBlur = useMemo(() => {
+    const category = (character as { category?: 'sfw' | 'nsfw' }).category;
+    return contentMode === 'sfw' && category === 'nsfw';
+  }, [contentMode, (character as { category?: 'sfw' | 'nsfw' }).category]);
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -80,6 +88,33 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
     startChat(character.id);
   };
 
+  const handleCardClick = async (e: React.MouseEvent) => {
+    // If card is blurred, toggle to NSFW mode and update user profile instead of navigating
+    if (shouldBlur) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      try {
+        // Toggle content mode to nsfw
+        dispatch(setMode('nsfw'));
+
+        // Update user's isNsfw flag if authenticated
+        if (isAuthenticated && userId) {
+          await updateProfile({
+            userId,
+            data: { isNsfw: true },
+          }).unwrap();
+        }
+
+        showSnackbar('Switched to NSFW mode', 'success');
+      } catch (error) {
+        console.error('Failed to update profile:', error);
+        // Don't show error to user, mode is already toggled
+      }
+    }
+    // If not blurred, Link component will handle navigation
+  };
+
   const cardContent = (
     <>
       {/* Image */}
@@ -87,7 +122,8 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
         <SafeImage
           src={character.mainImage}
           alt={character.name}
-          imageType={(character as { imageType?: 'sfw' | 'nsfw' }).imageType || 'sfw'}
+          imageType={(character as { imageType?: 'sfw' | 'nsfw' }).imageType}
+          category={(character as { category?: 'sfw' | 'nsfw' }).category}
           fill
           className="object-cover"
         />
@@ -98,7 +134,8 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
             <button
               ref={buttonRef}
               onClick={handleMoreClick}
-              className="p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+              disabled={shouldBlur}
+              className={`p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${shouldBlur ? 'blur-sm pointer-events-none' : ''}`}
               aria-label="More options"
             >
               <FiMoreVertical size={20} />
@@ -128,7 +165,9 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
               </div>
             )}
           </div>
-          <div className="flex items-center space-x-1 px-2 py-1 rounded-full bg-black/50 text-white">
+          <div
+            className={`flex items-center space-x-1 px-2 py-1 rounded-full bg-black/50 text-white ${shouldBlur ? 'blur-sm' : ''}`}
+          >
             <BsImages size={16} />
             <span className="text-sm">
               +{character.images.length > 0 ? character.images.length - 1 : 0}
@@ -139,8 +178,12 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
         {/* Bottom Content */}
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <div className="flex items-center space-x-2">
-            <h3 className="text-2xl font-semibold text-white">{character.name}</h3>
-            <span className="text-xl text-white">{character.age}</span>
+            <h3 className={`text-2xl font-semibold text-white ${shouldBlur ? 'blur-sm' : ''}`}>
+              {character.name}
+            </h3>
+            <span className={`text-xl text-white ${shouldBlur ? 'blur-sm' : ''}`}>
+              {character.age}
+            </span>
           </div>
         </div>
 
@@ -150,18 +193,11 @@ const CollectionCard = ({ character }: CollectionCardProps) => {
     </>
   );
 
-  if (shouldBlur) {
-    return (
-      <div className="relative rounded-2xl overflow-hidden group cursor-not-allowed">
-        {cardContent}
-      </div>
-    );
-  }
-
   return (
     <Link
       href={`/collection/${character.id}`}
       className="relative rounded-2xl overflow-hidden group cursor-pointer"
+      onClick={handleCardClick}
     >
       {cardContent}
     </Link>
