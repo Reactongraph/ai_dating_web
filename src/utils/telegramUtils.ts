@@ -125,6 +125,27 @@ export interface ParsedTelegramInitData {
 }
 
 /**
+ * Initialize Telegram WebApp if available
+ * Call this after the SDK script loads to properly initialize the WebApp
+ */
+export const initializeTelegramWebApp = (): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    if (window.Telegram?.WebApp) {
+      // Initialize the WebApp
+      window.Telegram.WebApp.ready();
+      // Expand the WebApp to full height
+      window.Telegram.WebApp.expand();
+    }
+  } catch (error) {
+    console.error('Error initializing Telegram WebApp:', error);
+  }
+};
+
+/**
  * Check if the app is running in a Telegram Mini App environment
  * @returns true if running in Telegram Mini App, false otherwise
  */
@@ -147,7 +168,8 @@ export const isTelegramMiniApp = (): boolean => {
 
 /**
  * Get raw initData from Telegram WebApp
- * @returns Raw initData string or null if not available
+ * Ensures hash is included from initDataUnsafe if missing from initData string
+ * @returns Raw initData string with hash or null if not available
  */
 export const getTelegramInitData = (): string | null => {
   if (typeof window === 'undefined') {
@@ -159,8 +181,26 @@ export const getTelegramInitData = (): string | null => {
   }
 
   try {
-    const initData = window.Telegram?.WebApp?.initData;
-    return initData && typeof initData === 'string' && initData.length > 0 ? initData : null;
+    let initData = window.Telegram?.WebApp?.initData;
+    
+    if (!initData || typeof initData !== 'string' || initData.length === 0) {
+      return null;
+    }
+
+    // Check if hash is missing from initData string
+    const params = new URLSearchParams(initData);
+    if (!params.has('hash')) {
+      // Get hash from initDataUnsafe
+      const hash = window.Telegram?.WebApp?.initDataUnsafe?.hash;
+      if (hash && typeof hash === 'string') {
+        // Append hash to initData (initData is already a query string, so use &)
+        initData = `${initData}&hash=${encodeURIComponent(hash)}`;
+      } else {
+        console.warn('Hash is missing from initData and not available in initDataUnsafe');
+      }
+    }
+
+    return initData;
   } catch (error) {
     console.error('Error getting Telegram initData:', error);
     return null;
