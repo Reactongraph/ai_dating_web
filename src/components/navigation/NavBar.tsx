@@ -30,12 +30,11 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
     skip: !isAuthenticated || (!user?.id && !user?._id), // Skip if not authenticated or no user ID
   });
 
-  // Check if banner is visible and adjust navbar position
   useEffect(() => {
     const checkBannerVisibility = () => {
-      // Check if banner element exists (not on homepage) and is visible
-      const banner = document.querySelector('[data-banner="chips"]');
-      setIsBannerVisible(!!banner);
+      // Check if banner element exists and is visible
+      const mobileTopBanner = document.querySelector('[data-banner="mobile-top"]');
+      setIsBannerVisible(!!mobileTopBanner);
     };
 
     checkBannerVisibility();
@@ -142,7 +141,9 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
   return (
     <>
       <nav
-        className={`fixed ${!isBannerVisible || pathname === '/' ? 'top-0' : 'top-[40px]'} right-0 left-0 md:left-16 h-16 bg-background-primary text-text-primary z-40 transition-all duration-300`}
+        className={`fixed ${
+          !isBannerVisible ? 'top-0' : 'top-[44px] md:top-[52px]'
+        } right-0 left-0 md:left-16 h-16 bg-background-primary text-text-primary z-40 transition-all duration-300`}
       >
         <div className="flex items-center justify-between h-full px-2 md:px-4">
           {/* Logo and Navigation Links */}

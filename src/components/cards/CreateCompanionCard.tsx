@@ -18,21 +18,21 @@ const CreateCompanionCard = ({
   backgroundImage = '/assets/cardgirl1.png',
 }: CreateCompanionCardProps) => {
   const CustomBtn = memo(() => (
-    <span className="sm:text-xs md:text-xs lg:text-sm xl:text-base 2xl:text-base flex gap-1 items-center">
+    <span className="text-[10px] sm:text-xs md:text-[10px] lg:text-sm xl:text-base 2xl:text-base flex gap-1 items-center">
       <Image
         src="/assets/wand2.svg"
         alt="Create AI Character"
         width={24}
         height={24}
-        className="brightness-0 invert sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-6 xl:h-6 2xl:w-7 2xl:h-7"
+        className="brightness-0 invert w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-3.5 md:h-3.5 lg:w-6 lg:h-6 xl:w-6 xl:h-6 2xl:w-7 2xl:h-7"
       />
-      <>{buttonText}</>
+      <span>{buttonText}</span>
     </span>
   ));
   CustomBtn.displayName = 'CustomBtn';
 
   const buttonClasses =
-    'inline-flex bg-gradient-to-r from-primary-500 to-primary-600 text-white sm:px-1 lg:px-2 xl:px-3 2xl:px-4 sm:py-1 lg:py-2 xl:py-2.5 2xl:py-3 rounded-xl font-medium items-center space-x-2';
+    'inline-flex bg-gradient-to-r from-primary-500 to-primary-600 text-white px-2.5 py-2 sm:px-3 sm:py-1.5 md:px-2 lg:px-4 lg:py-2.5 xl:px-6 xl:py-3 rounded-full font-bold items-center justify-center whitespace-nowrap shadow-lg hover:opacity-90 transition-opacity';
 
   const renderButton = () => {
     if (href) {
@@ -63,11 +63,13 @@ const CreateCompanionCard = ({
       className="relative h-[350px] sm:h-[300px] lg:h-[380px] xl:h-[400px] 2xl:h-[420px] flex-[1_1_calc(50%-4px)] sm:flex-[1_1_calc(50%-10px)] md:flex-[1_1_calc(50%-8px)] lg:flex-[1_1_280px] xl:flex-[1_1_300px] 2xl:flex-[1_1_320px] min-w-[150px] max-w-[400px] rounded-2xl overflow-hidden bg-cover bg-center"
       style={{ backgroundImage: `url("${backgroundImage}")` }}
     >
-      <div className="absolute inset-0 flex flex-col items-center justify-end p-4 sm:p-5 lg:p-6 xl:p-6 2xl:p-7 text-center bg-black/30">
-        <h3 className="sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-bold text-white mb-4 sm:mb-5 lg:mb-6 xl:mb-6 2xl:mb-7">
+      <div className="absolute inset-0 flex flex-col items-center justify-end p-3 sm:p-5 lg:p-6 xl:p-8 text-center bg-black/40">
+        <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-white mb-4 sm:mb-8">
           {title}
         </h3>
-        {renderButton()}
+        <div className="w-full flex justify-center pb-2">
+          {renderButton()}
+        </div>
       </div>
     </div>
   );

@@ -7,11 +7,19 @@ import HowToCreate from '@/components/home/HowToCreate';
 import ExperienceAndFAQ from '@/components/home/ExperienceAndFAQ';
 import GlobalLayout from '@/components/layouts/GlobalLayout';
 import { useMobileView } from '@/hooks/useMobileView';
+import MobileHeroCarousel from '@/components/home/MobileHeroCarousel';
 
 export default function Home() {
   const isMobileView = useMobileView();
   return (
     <GlobalLayout>
+      {/* Mobile only content */}
+      {isMobileView && (
+        <>
+          <MobileHeroCarousel />
+        </>
+      )}
+
       {/* Ad Banner test */}
       {/* <AdBanner
         text="Exclusive Discount on Premium New Users"

@@ -6,7 +6,7 @@ import { useMobileView } from '@/hooks/useMobileView';
 import NavBar from '@/components/navigation/NavBar';
 import Sidebar from '@/components/navigation/Sidebar';
 import Footer from '@/components/footer/Footer';
-import ChipsBanner from '@/components/common/ChipsBanner';
+import MobileTopBanner from '@/components/common/MobileTopBanner';
 
 interface GlobalLayoutProps {
   children: React.ReactNode;
@@ -37,8 +37,8 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
   // Sync banner visibility to adjust main content padding
   useEffect(() => {
     const checkBannerVisibility = () => {
-      const banner = document.querySelector('[data-banner="chips"]');
-      setIsBannerVisible(!!banner);
+      const mobileTopBanner = document.querySelector('[data-banner="mobile-top"]');
+      setIsBannerVisible(!!mobileTopBanner);
     };
 
     checkBannerVisibility();
@@ -51,8 +51,8 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Chips Banner - at the very top */}
-      <ChipsBanner />
+      {/* Promotional Top Banner */}
+      <MobileTopBanner />
 
       {/* Sidebar - Only on desktop */}
       {!isMobileView && (
@@ -69,7 +69,7 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
       {/* Main Content */}
       <main
         className={`${
-          isBannerVisible && pathname !== '/' ? 'pt-[108px]' : 'pt-17'
+          isBannerVisible ? 'pt-[108px] md:pt-[116px]' : 'pt-17'
         } ${!isMobileView ? 'pl-16' : ''} ${isMobileView && isBottomNavPage ? 'pb-24' : ''} flex-grow`}
       >
         {children}
