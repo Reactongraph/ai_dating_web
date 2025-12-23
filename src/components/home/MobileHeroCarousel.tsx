@@ -5,15 +5,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const carouselItems = [
   {
-    video: '/assets/videos/video0.mp4',
-    title: 'XMAS OFFERS',
-    subtitle: '50% FREE CHIPS',
-  },
-  {
     video: '/assets/videos/video1.mp4',
     title: 'NEW YEAR DEALS',
     subtitle: '70% EXTRA BONUS',
   },
+  {
+    video: '/assets/videos/video0.mp4',
+    title: 'XMAS OFFERS',
+    subtitle: '50% FREE CHIPS',
+  },
+
   {
     video: '/assets/videos/video2.mp4',
     title: 'EXCLUSIVE GIFTS',
@@ -102,4 +103,3 @@ const MobileHeroCarousel = () => {
 };
 
 export default MobileHeroCarousel;
-
