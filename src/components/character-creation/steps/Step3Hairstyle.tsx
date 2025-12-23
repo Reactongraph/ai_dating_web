@@ -14,11 +14,11 @@ const Step3Hairstyle: React.FC = () => {
 
   const ageOptions: CharacterFormData['age'][] = ['18+', '20s', '30s', '40s', '50s'];
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Hairstyle Selection */}
       <div>
-        <h2 className="text-2xl font-bold text-center mb-6">Choose hairstyle</h2>
-        <div className="grid grid-cols-4 gap-4 max-w-5xl mx-auto">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-4 md:mb-6">Choose hairstyle</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 max-w-5xl mx-auto">
           {hairStyles.map(option => (
             <div
               key={option._id}
@@ -30,18 +30,18 @@ const Step3Hairstyle: React.FC = () => {
               }
             >
               <div
-                className="relative h-32 bg-cover bg-center"
+                className="relative h-24 md:h-32 bg-cover bg-center"
                 style={{
                   backgroundImage: `url("${option.imageUrl || '/assets/hairstyles/default.jpg'}")`,
                 }}
               >
                 <div className="absolute inset-0 bg-black/20" />
-                <div className="absolute bottom-2 left-0 right-0 text-center">
-                  <h3 className="text-sm font-medium text-white">{option.name}</h3>
+                <div className="absolute bottom-2 left-0 right-0 text-center px-1">
+                  <h3 className="text-xs md:text-sm font-medium text-white truncate">{option.name}</h3>
                 </div>
                 {hairstyle === option.name.toLowerCase() && (
-                  <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="absolute top-2 right-2 w-4 h-4 md:w-5 md:h-5 bg-primary-500 rounded-full flex items-center justify-center">
+                    <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -58,8 +58,8 @@ const Step3Hairstyle: React.FC = () => {
 
       {/* Hair Color Selection */}
       <div>
-        <h2 className="text-2xl font-bold text-center mb-6">Hair color</h2>
-        <div className="grid grid-cols-4 gap-4 max-w-5xl mx-auto">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-4 md:mb-6">Hair color</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 max-w-5xl mx-auto">
           {hairColors.map(option => (
             <div
               key={option._id}
@@ -71,18 +71,18 @@ const Step3Hairstyle: React.FC = () => {
               }
             >
               <div
-                className="relative h-32 bg-cover bg-center"
+                className="relative h-24 md:h-32 bg-cover bg-center"
                 style={{
                   backgroundImage: `url(${option.imageUrl})` || option.name.toLowerCase(),
                 }}
               >
                 <div className="absolute inset-0 bg-black/20" />
-                <div className="absolute bottom-2 left-0 right-0 text-center">
-                  <h3 className="text-sm font-medium text-white">{option.name}</h3>
+                <div className="absolute bottom-2 left-0 right-0 text-center px-1">
+                  <h3 className="text-xs md:text-sm font-medium text-white truncate">{option.name}</h3>
                 </div>
                 {hairColor === option.name.toLowerCase() && (
-                  <div className="absolute top-2 right-2 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="absolute top-2 right-2 w-4 h-4 md:w-5 md:h-5 bg-primary-500 rounded-full flex items-center justify-center">
+                    <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -99,16 +99,16 @@ const Step3Hairstyle: React.FC = () => {
 
       {/* Age Selection */}
       <div>
-        <h2 className="text-2xl font-bold text-center mb-6">Choose age</h2>
-        <div className="flex justify-center flex-wrap gap-4">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-4 md:mb-6">Choose age</h2>
+        <div className="flex justify-center flex-wrap gap-2 md:gap-4 px-2">
           {ageOptions.map(option => (
             <button
               key={option}
               type="button"
               onClick={() => setValue('age', option)}
-              className={`px-6 py-3 rounded-lg text-lg font-medium transition-all ${
+              className={`px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-lg font-medium transition-all ${
                 age === option
-                  ? 'bg-primary-500 text-white border-2 border-primary-500'
+                  ? 'bg-primary-500 text-white border-2 border-primary-500 shadow-lg'
                   : 'bg-gray-700 text-white border-2 border-gray-600 hover:border-gray-400'
               }`}
             >

@@ -140,15 +140,15 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
   return (
     <div className="h-auto bg-black text-white flex flex-col">
       {/* Form Header */}
-      <div className="bg-black py-6 flex-shrink-0">
+      <div className="bg-black py-4 md:py-6 flex-shrink-0">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <button
               onClick={onPrevious}
               disabled={currentStep === 1}
-              className="text-white hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-white hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed p-1"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -158,10 +158,10 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
               </svg>
             </button>
 
-            <h1 className="text-3xl font-bold text-center">Create AI Character</h1>
+            <h1 className="text-xl md:text-3xl font-bold text-center truncate px-2">Create AI Character</h1>
 
-            <button onClick={onClose} className="text-white hover:text-gray-200">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onClick={onClose} className="text-white hover:text-gray-200 p-1">
+              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -175,13 +175,13 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-black py-6 flex-shrink-0">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center justify-center space-x-2">
+      <div className="bg-black py-2 md:py-6 flex-shrink-0 overflow-x-auto no-scrollbar">
+        <div className="min-w-max mx-auto px-4">
+          <div className="flex items-center justify-center space-x-1 md:space-x-2">
             {steps.map((step, index) => (
               <div key={step.step} className="flex items-center">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                  className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-sm font-medium ${
                     step.step <= currentStep
                       ? 'bg-primary-500 text-white'
                       : 'bg-gray-700 text-gray-400'
@@ -191,7 +191,7 @@ const CharacterCreationForm: React.FC<CharacterCreationFormProps> = ({
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`w-12 h-1 mx-2 ${
+                    className={`w-6 md:w-12 h-0.5 md:h-1 mx-1 md:mx-2 ${
                       step.step < currentStep ? 'bg-primary-500' : 'bg-gray-700'
                     }`}
                   />

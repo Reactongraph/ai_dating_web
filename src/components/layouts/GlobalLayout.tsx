@@ -69,8 +69,8 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
       {/* Main Content */}
       <main
         className={`${
-          isBannerVisible ? 'pt-[108px] md:pt-[116px]' : 'pt-17'
-        } ${!isMobileView ? 'pl-16' : ''} ${isMobileView && isBottomNavPage ? 'pb-24' : ''} flex-grow`}
+          isBannerVisible ? 'pt-[112px] md:pt-[120px]' : 'pt-18 md:pt-20'
+        } ${!isMobileView ? 'pl-16' : ''} ${isMobileView && isBottomNavPage ? 'pb-24' : ''} flex-grow overflow-x-hidden`}
       >
         {children}
       </main>
