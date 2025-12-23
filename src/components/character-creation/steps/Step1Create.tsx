@@ -37,16 +37,16 @@ const Step1Create: React.FC<Step1CreateProps> = ({ onRandomProfile }) => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Character Type Selection */}
       <div className="text-center">
-        <div className="flex justify-center space-x-4 mb-6">
+        <div className="flex justify-center space-x-3 md:space-x-4 mb-4 md:mb-6">
           {(['girl', 'guy'] as const).map(type => (
             <button
               key={type}
               type="button"
               onClick={() => setValue('characterType', type)}
-              className={`px-6 py-2 rounded-full text-lg font-medium transition-all ${
+              className={`px-5 md:px-6 py-1.5 md:py-2 rounded-full text-base md:text-lg font-medium transition-all ${
                 characterType === type
                   ? 'bg-white text-black border-2 border-white'
                   : 'bg-transparent text-white border-2 border-gray-600 hover:border-gray-400'
@@ -57,11 +57,11 @@ const Step1Create: React.FC<Step1CreateProps> = ({ onRandomProfile }) => {
           ))}
         </div>
 
-        <p className="text-gray-300 text-lg">Choose the style of your character</p>
+        <p className="text-gray-300 text-base md:text-lg">Choose the style of your character</p>
       </div>
 
       {/* Style Selection */}
-      <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
+      <div className="grid grid-cols-2 gap-4 md:gap-6 max-w-2xl mx-auto">
         {styles.map(styleOption => (
           <div
             key={styleOption._id}
@@ -73,18 +73,18 @@ const Step1Create: React.FC<Step1CreateProps> = ({ onRandomProfile }) => {
             }
           >
             <div
-              className="relative h-64 bg-cover bg-center"
+              className="relative h-48 md:h-64 bg-cover bg-center"
               style={{
                 backgroundImage: `url("${styleOption.imageUrl || '/assets/cardgirl1.png'}")`,
               }}
             >
               <div className="absolute inset-0 bg-black/20" />
-              <div className="absolute bottom-4 left-0 right-0 text-center">
-                <h3 className="text-xl font-semibold text-white">{styleOption.name}</h3>
+              <div className="absolute bottom-3 md:bottom-4 left-0 right-0 text-center">
+                <h3 className="text-lg md:text-xl font-semibold text-white">{styleOption.name}</h3>
               </div>
               {style === styleOption.name.toLowerCase() && (
-                <div className="absolute top-4 right-4 w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div className="absolute top-3 md:top-4 right-3 md:right-4 w-5 h-5 md:w-6 md:h-6 bg-primary-500 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -100,13 +100,14 @@ const Step1Create: React.FC<Step1CreateProps> = ({ onRandomProfile }) => {
 
       {/* Create Random Profile Button */}
       {characterType && style && (
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-6 md:mt-8">
           <button
             type="button"
             onClick={handleCreateRandomProfile}
-            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-full text-lg transition-all transform hover:scale-105 shadow-lg"
+            className="px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-full text-base md:text-lg transition-all transform active:scale-95 shadow-lg flex items-center gap-2"
           >
-            ✨ Create Random Profile
+            <span>✨</span>
+            <span>Create Random Profile</span>
           </button>
         </div>
       )}

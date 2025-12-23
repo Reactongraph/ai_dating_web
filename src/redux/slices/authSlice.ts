@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
 import { googleAuthApi } from '../services/googleAuthApi';
+import { telegramAuthApi } from '../services/telegramAuthApi';
 import { authApi, LoginResponse } from '../services/authApi';
 
 // Define a type for Google auth response
@@ -276,6 +277,59 @@ const authSlice = createSlice({
       .addMatcher(googleAuthApi.endpoints.googleLogin.matchRejected, (state, { error }) => {
         state.loading = false;
         state.error = error.message || 'Google login failed';
+      })
+      // Telegram Login success
+      .addMatcher(telegramAuthApi.endpoints.telegramLogin.matchFulfilled, (state, { payload }) => {
+        state.loading = false;
+
+        // Handle standard API response format (Telegram uses same format as Google)
+        if (payload.statusCode === 200 && payload.user && payload.accessToken) {
+          const accessToken =
+            typeof payload.accessToken === 'string'
+              ? payload.accessToken
+              : payload.accessToken.access_token;
+
+          const normalizedUser = normalizeUser(payload.user);
+          state.user = normalizedUser;
+          state.token = accessToken;
+          state.isAuthenticated = true;
+          state.requiresVerification = false;
+          state.realtimeImage = payload.realtimeImage?.length ? payload.realtimeImage[0] : null;
+
+          // Save token and user data to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('userData', JSON.stringify(normalizedUser));
+          }
+        } else if (payload.statusCode === 201 && payload.user && payload.accessToken) {
+          // Handle new user signup (201 status)
+          const accessToken =
+            typeof payload.accessToken === 'string'
+              ? payload.accessToken
+              : payload.accessToken.access_token;
+
+          const normalizedUser = normalizeUser(payload.user);
+          state.user = normalizedUser;
+          state.token = accessToken;
+          state.isAuthenticated = true;
+          state.requiresVerification = false;
+          state.realtimeImage = payload.realtimeImage?.length ? payload.realtimeImage[0] : null;
+
+          // Save token and user data to localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('userData', JSON.stringify(normalizedUser));
+          }
+        }
+      })
+      // Telegram Login error
+      .addMatcher(telegramAuthApi.endpoints.telegramLogin.matchRejected, (state, { error }) => {
+        state.loading = false;
+        // Don't set error for Telegram auto-login failures (user might not be in Telegram environment)
+        // Only log to console for debugging
+        if (error) {
+          console.warn('Telegram login failed:', error.message || 'Telegram login failed');
+        }
       })
       // Login success
       .addMatcher(authApi.endpoints.login.matchFulfilled, (state, { payload }) => {

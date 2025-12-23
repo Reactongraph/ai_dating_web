@@ -225,10 +225,10 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
       title="Create Your Account"
       subtitle="Sign up to start your AI journey."
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           <div>
-            <label htmlFor="firstName" className="block text-sm text-gray-400 mb-2">
+            <label htmlFor="firstName" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
               First Name
             </label>
             <input
@@ -242,15 +242,15 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type="text"
               id="firstName"
               placeholder="Enter your first name"
-              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+              className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
             />
             {errors.firstName && (
-              <p className="mt-1 text-sm text-red-500">{errors.firstName.message}</p>
+              <p className="mt-1 text-[10px] md:text-sm text-red-500">{errors.firstName.message}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="lastName" className="block text-sm text-gray-400 mb-2">
+            <label htmlFor="lastName" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
               Last Name
             </label>
             <input
@@ -258,13 +258,13 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type="text"
               id="lastName"
               placeholder="Enter your last name"
-              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+              className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm text-gray-400 mb-2">
+          <label htmlFor="email" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
             Email
           </label>
           <input
@@ -278,14 +278,14 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
             type="email"
             id="email"
             placeholder="Enter your email"
-            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+            className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
           />
-          {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+          {errors.email && <p className="mt-1 text-[10px] md:text-sm text-red-500">{errors.email.message}</p>}
         </div>
 
         {/* Phone Number */}
         <div>
-          <label htmlFor="phoneNumber" className="block text-sm text-gray-400 mb-2">
+          <label htmlFor="phoneNumber" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
             Phone Number (Optional)
           </label>
           <div className="flex gap-2">
@@ -294,7 +294,7 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               <select
                 {...register('countryCode')}
                 id="countryCode"
-                className="w-full bg-gray-2a text-white px-2 sm:px-3 py-3 text-sm sm:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan appearance-none pr-8"
+                className="w-full bg-gray-2a text-white px-2 sm:px-3 py-2.5 md:py-3 text-xs md:text-base rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan appearance-none pr-7 md:pr-8"
               >
                 <option value="+1">+1 (US)</option>
                 <option value="+44">+44 (UK)</option>
@@ -317,9 +317,9 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
                 <option value="+234">+234 (NG)</option>
                 <option value="+20">+20 (EG)</option>
               </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+              <div className="absolute inset-y-0 right-0 flex items-center pr-1.5 md:pr-2 pointer-events-none">
                 <svg
-                  className="w-4 h-4 text-gray-400"
+                  className="w-3 h-3 md:w-4 md:h-4 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -340,43 +340,45 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
                 type="tel"
                 id="phoneNumber"
                 placeholder="Enter your phone number"
-                className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+                className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
               />
             </div>
           </div>
         </div>
 
-        {/* Date of Birth */}
-        <div>
-          <label htmlFor="dateOfBirth" className="block text-sm text-gray-400 mb-2">
-            Date of Birth (Optional)
-          </label>
-          <input
-            {...register('dateOfBirth')}
-            type="date"
-            id="dateOfBirth"
-            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          {/* Date of Birth */}
+          <div>
+            <label htmlFor="dateOfBirth" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
+              Date of Birth (Optional)
+            </label>
+            <input
+              {...register('dateOfBirth')}
+              type="date"
+              id="dateOfBirth"
+              className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="gender" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
+              Gender (Optional)
+            </label>
+            <select
+              {...register('gender')}
+              id="gender"
+              className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
+            >
+              <option value="">Select gender</option>
+              <option value="man">Male</option>
+              <option value="woman">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
         </div>
 
         <div>
-          <label htmlFor="gender" className="block text-sm text-gray-400 mb-2">
-            Gender (Optional)
-          </label>
-          <select
-            {...register('gender')}
-            id="gender"
-            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
-          >
-            <option value="">Select gender</option>
-            <option value="man">Male</option>
-            <option value="woman">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="password" className="block text-sm text-gray-400 mb-2">
+          <label htmlFor="password" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
             Password
           </label>
           <div className="relative">
@@ -391,23 +393,23 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type={showPassword ? 'text' : 'password'}
               id="password"
               placeholder="Create a password"
-              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+              className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
             >
-              {showPassword ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+              {showPassword ? <IoEyeOffOutline size={18} className="md:w-[20px] md:h-[20px]" /> : <IoEyeOutline size={18} className="md:w-[20px] md:h-[20px]" />}
             </button>
           </div>
           {errors.password && (
-            <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+            <p className="mt-1 text-[10px] md:text-sm text-red-500">{errors.password.message}</p>
           )}
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm text-gray-400 mb-2">
+          <label htmlFor="confirmPassword" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
             Confirm Password
           </label>
           <div className="relative">
@@ -419,18 +421,18 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               type={showConfirmPassword ? 'text' : 'password'}
               id="confirmPassword"
               placeholder="Confirm your password"
-              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+              className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
             >
-              {showConfirmPassword ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+              {showConfirmPassword ? <IoEyeOffOutline size={18} className="md:w-[20px] md:h-[20px]" /> : <IoEyeOutline size={18} className="md:w-[20px] md:h-[20px]" />}
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>
+            <p className="mt-1 text-[10px] md:text-sm text-red-500">{errors.confirmPassword.message}</p>
           )}
         </div>
 
@@ -442,22 +444,22 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
               })}
               id="agreeToTerms"
               type="checkbox"
-              className="w-4 h-4 accent-accent-cyan cursor-pointer"
+              className="w-4 h-4 accent-accent-cyan cursor-pointer rounded bg-gray-2a border-gray-700"
             />
           </div>
-          <div className="ml-3 text-sm">
+          <div className="ml-3 text-xs md:text-sm">
             <label htmlFor="agreeToTerms" className="text-gray-400 cursor-pointer">
               I agree to the{' '}
-              <a href="/terms" className="text-accent-cyan hover:underline">
+              <a href="/terms" className="text-accent-cyan font-medium hover:underline">
                 Terms of Service
               </a>{' '}
               and{' '}
-              <a href="/privacy" className="text-accent-cyan hover:underline">
+              <a href="/privacy" className="text-accent-cyan font-medium hover:underline">
                 Privacy Policy
               </a>
             </label>
             {errors.agreeToTerms && (
-              <p className="mt-1 text-sm text-red-500">{errors.agreeToTerms.message}</p>
+              <p className="mt-1 text-[10px] md:text-sm text-red-500">{errors.agreeToTerms.message}</p>
             )}
           </div>
         </div>
@@ -467,17 +469,17 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
         <button
           type="submit"
           disabled={isLoading || isGoogleLoading || requiresVerification}
-          className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-bold py-2.5 md:py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg"
         >
           {isLoading ? 'Creating Account...' : 'SIGN UP'}
         </button>
 
-        <div className="relative">
+        <div className="relative my-2 md:my-4">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-700"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-1a text-gray-400">Or continue with</span>
+          <div className="relative flex justify-center text-[10px] md:text-sm uppercase tracking-wider">
+            <span className="px-3 bg-gray-1a text-gray-400">Or continue with</span>
           </div>
         </div>
 
@@ -492,15 +494,15 @@ const SignupModal = ({ isOpen, onClose, onLoginClick }: SignupModalProps) => {
             });
           }}
           disabled={isGoogleLoading}
-          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-2.5 md:py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
         >
-          <FcGoogle size={20} />
+          <FcGoogle size={18} className="md:w-[20px] md:h-[20px]" />
           <span>{isGoogleLoading ? 'Signing up...' : 'Sign up with Google'}</span>
         </button>
 
-        <p className="text-center text-gray-400">
+        <p className="text-center text-gray-400 text-xs md:text-sm mt-2">
           Already have an account?{' '}
-          <button type="button" onClick={onLoginClick} className="text-accent-cyan hover:underline">
+          <button type="button" onClick={onLoginClick} className="text-accent-cyan font-semibold hover:underline">
             Login
           </button>
         </p>

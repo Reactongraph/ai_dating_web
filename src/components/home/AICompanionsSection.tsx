@@ -6,6 +6,7 @@ import CreateCompanionCard from '@/components/cards/CreateCompanionCard';
 import CategoryTabs from '@/components/navigation/CategoryTabs';
 import { useChatInitiation } from '@/hooks/useChatInitiation';
 import { useBotProfilesWithLikes } from '@/hooks/useBotProfilesWithLikes';
+import useMobileView from '@/hooks/useMobileView';
 
 const companionCategories = [
   {
@@ -23,6 +24,7 @@ const companionCategories = [
 const AICompanionsSection = () => {
   const [activeCategory, setActiveCategory] = useState('girls');
   const { startChat } = useChatInitiation();
+  const isMobileView = useMobileView();
 
   // Get the current bot type based on active category
   const currentBotType =
@@ -44,23 +46,27 @@ const AICompanionsSection = () => {
   return (
     <section>
       {/* Banner Title */}
-      <div
-        className="relative w-full bg-cover bg-center"
-        style={{ backgroundImage: 'url("/assets/meetai.png")' }}
-      >
-        <div className="max-w-7xl mx-auto px-4  sm:py-2 text-center">
-          <h2 className="text-xl sm:text-xl md:text-2xl font-bold text-white">
-            Meet Your AI Companions
-          </h2>
+      {!isMobileView && (
+        <div
+          className="relative w-full bg-cover bg-center"
+          style={{ backgroundImage: 'url("/assets/meetai.png")' }}
+        >
+          <div className="max-w-7xl mx-auto px-4  sm:py-2 text-center">
+            <h2 className="text-xl sm:text-xl md:text-2xl font-bold text-white">
+              Meet Your AI Companions
+            </h2>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Content */}
       <div className="bg-black mt-2 sm:mt-0 px-2 sm:px-2">
         <div className="max-w-7xl mx-auto sm:py-10 md:py-6">
-          <p className="text-gray-400 md:text-lg sm:text-xs text-center  sm:mb-8 md:mb-3">
-            From friendly to flirty — dive into a world of personalities crafted just for you.
-          </p>
+          {!isMobileView && (
+            <p className="text-gray-400 md:text-lg sm:text-xs text-center  sm:mb-8 md:mb-3">
+              From friendly to flirty — dive into a world of personalities crafted just for you.
+            </p>
+          )}
 
           {/* Tabs Navigation */}
           <div className="flex justify-center mb-8 sm:mb-8 md:mb-8">

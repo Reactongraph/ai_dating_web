@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useMobileView } from '@/hooks/useMobileView';
 import NavBar from '@/components/navigation/NavBar';
 import Sidebar from '@/components/navigation/Sidebar';
-import ChipsBanner from '@/components/common/ChipsBanner';
+import MobileTopBanner from '@/components/common/MobileTopBanner';
 
 interface LayoutWithoutFooterProps {
   children: React.ReactNode;
@@ -11,23 +12,23 @@ interface LayoutWithoutFooterProps {
 
 const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isMobileView, setIsMobileView] = useState(false);
+  const isMobileView = useMobileView();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isBannerVisible, setIsBannerVisible] = useState(false);
 
-  // Check if we're on mobile view
+  // Sync banner visibility to adjust main content padding
   useEffect(() => {
-    const checkMobileView = () => {
-      setIsMobileView(window.innerWidth < 768);
+    const checkBannerVisibility = () => {
+      const mobileTopBanner = document.querySelector('[data-banner="mobile-top"]');
+      setIsBannerVisible(!!mobileTopBanner);
     };
 
-    // Initial check
-    checkMobileView();
+    checkBannerVisibility();
 
-    // Add event listener for window resize
-    window.addEventListener('resize', checkMobileView);
+    const observer = new MutationObserver(checkBannerVisibility);
+    observer.observe(document.body, { childList: true, subtree: true });
 
-    // Cleanup
-    return () => window.removeEventListener('resize', checkMobileView);
+    return () => observer.disconnect();
   }, []);
 
   const toggleSidebar = () => {
@@ -39,9 +40,9 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-black text-white">
-      {/* Chips Banner - at the very top */}
-      <ChipsBanner />
+    <div className="min-h-screen flex flex-col bg-black text-white">
+      {/* Promotional Top Banner */}
+      <MobileTopBanner />
 
       {/* Sidebar */}
       <Sidebar
@@ -55,7 +56,11 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
       <NavBar onToggleSidebar={toggleSidebar} isMobileOpen={isMobileSidebarOpen} />
 
       {/* Main Content Area - No Footer */}
-      <main className="pt-24 md:pl-16 flex-grow">{children}</main>
+      <main
+        className={`${isBannerVisible ? 'pt-[112px] md:pt-[120px]' : 'pt-18 md:pt-20'} md:pl-16 flex-grow overflow-x-hidden`}
+      >
+        {children}
+      </main>
     </div>
   );
 };

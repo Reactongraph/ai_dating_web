@@ -15,6 +15,7 @@ import storage from 'redux-persist/lib/storage';
 import { authApi } from './services/authApi';
 import { profileApi } from './services/profileApi';
 import { googleAuthApi } from './services/googleAuthApi';
+import { telegramAuthApi } from './services/telegramAuthApi';
 import { characterAttributesApi } from './services/characterAttributesApi';
 import { botProfilesApi } from './services/botProfilesApi';
 import { chatApi } from './services/chatApi';
@@ -52,6 +53,7 @@ const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   [profileApi.reducerPath]: profileApi.reducer,
   [googleAuthApi.reducerPath]: googleAuthApi.reducer,
+  [telegramAuthApi.reducerPath]: telegramAuthApi.reducer,
   [characterAttributesApi.reducerPath]: characterAttributesApi.reducer,
   [botProfilesApi.reducerPath]: botProfilesApi.reducer,
   [chatApi.reducerPath]: chatApi.reducer,
@@ -69,6 +71,7 @@ export const store = configureStore({
       authApi.middleware,
       profileApi.middleware,
       googleAuthApi.middleware,
+      telegramAuthApi.middleware,
       characterAttributesApi.middleware,
       botProfilesApi.middleware,
       chatApi.middleware,

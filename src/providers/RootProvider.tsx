@@ -6,6 +6,7 @@ import SnackbarProvider from './SnackbarProvider';
 import AuthInitializer from './AuthInitializer';
 import ContentModeInitializer from './ContentModeInitializer';
 import NextAuthProvider from './NextAuthProvider';
+import TelegramAutoLogin from './TelegramAutoLogin';
 
 interface RootProviderProps {
   children: ReactNode;
@@ -17,6 +18,7 @@ export function RootProvider({ children }: RootProviderProps) {
       <ReduxProvider>
         <SnackbarProvider>
           <AuthInitializer />
+          <TelegramAutoLogin />
           <ContentModeInitializer />
           {children}
         </SnackbarProvider>

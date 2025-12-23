@@ -51,33 +51,33 @@ const PhoneLoginModal = ({ isOpen, onClose, onOtpSent }: PhoneLoginModalProps) =
       title="Log In with Your Mobile Number"
       subtitle="No Password Needed – Just Your Phone Number"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
         <div>
           <div className="relative">
             <PhoneInput
               country={'in'}
               value={phoneNumber}
               onChange={handlePhoneChange}
-              inputClass="!w-full !h-12 !bg-gray-2a !text-white !border-0 !pl-[52px] !rounded-lg"
+              inputClass="!w-full !h-11 md:!h-12 !bg-gray-2a !text-white !border-0 !pl-[52px] !rounded-lg !text-sm md:!text-base"
               buttonClass="!bg-gray-2a !border-0 !rounded-l-lg"
               dropdownClass="!bg-gray-2a !text-white"
               containerClass="!bg-gray-2a rounded-lg"
             />
           </div>
           {errors.phoneNumber && (
-            <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>
+            <p className="mt-1 text-[10px] md:text-sm text-red-500">{errors.phoneNumber.message}</p>
           )}
         </div>
 
         <div>
-          <p className="text-sm text-gray-400 mb-6">
+          <p className="text-xs md:text-sm text-gray-400 mb-4 md:mb-6">
             Add your mobile number. We will send you a verification code to verify your mobile
             number.
           </p>
           <button
             type="submit"
             disabled={isSubmitting || !phoneNumber}
-            className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-bold py-2.5 md:py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg"
           >
             {isSubmitting ? 'Sending...' : 'SEND OTP'}
           </button>

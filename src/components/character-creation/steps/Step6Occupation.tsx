@@ -41,11 +41,11 @@ const Step6Occupation: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Occupation Selection */}
       <div>
-        <h2 className="text-2xl font-bold text-center mb-6">Choose occupation</h2>
-        <div className="grid grid-cols-5 gap-3 max-w-5xl mx-auto">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-4 md:mb-6">Choose occupation</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-3 max-w-5xl mx-auto px-2">
           {occupations.map(option => (
             <button
               key={option._id}
@@ -53,9 +53,9 @@ const Step6Occupation: React.FC = () => {
               onClick={() =>
                 setValue('occupation', option.name.toLowerCase() as CharacterFormData['occupation'])
               }
-              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 md:px-4 py-2 md:py-3 rounded-lg text-xs md:text-sm font-medium transition-all ${
                 occupation === option.name.toLowerCase()
-                  ? 'bg-primary-500 text-white border-2 border-primary-500'
+                  ? 'bg-primary-500 text-white border-2 border-primary-500 shadow-md'
                   : 'bg-gray-700 text-white border-2 border-gray-600 hover:border-gray-400'
               }`}
             >
@@ -67,18 +67,18 @@ const Step6Occupation: React.FC = () => {
 
       {/* Hobbies Selection */}
       <div>
-        <h2 className="text-2xl font-bold text-center mb-2">Choose hobbies</h2>
-        <p className="text-center text-gray-300 mb-6">You can choose up to 3 variants</p>
-        <div className="grid grid-cols-5 gap-3 max-w-5xl mx-auto">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-1 md:mb-2">Choose hobbies</h2>
+        <p className="text-center text-gray-300 text-xs md:text-sm mb-4 md:mb-6 px-4">You can choose up to 3 variants</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-3 max-w-5xl mx-auto px-2">
           {hobbyOptions.map(hobby => (
             <button
               key={hobby}
               type="button"
               onClick={() => handleHobbyToggle(hobby)}
               disabled={!hobbies.includes(hobby) && hobbies.length >= 3}
-              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+              className={`px-3 md:px-4 py-2 md:py-3 rounded-lg text-xs md:text-sm font-medium transition-all ${
                 hobbies.includes(hobby)
-                  ? 'bg-primary-500 text-white border-2 border-primary-500'
+                  ? 'bg-primary-500 text-white border-2 border-primary-500 shadow-md'
                   : 'bg-gray-700 text-white border-2 border-gray-600 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed'
               }`}
             >
@@ -89,7 +89,7 @@ const Step6Occupation: React.FC = () => {
 
         {/* Selected Hobbies Count */}
         <div className="text-center mt-4">
-          <span className="text-gray-300">Selected: {hobbies.length}/3</span>
+          <span className="text-xs md:text-sm text-gray-400 font-medium">Selected: <span className="text-primary-400">{hobbies.length}</span>/3</span>
         </div>
       </div>
 

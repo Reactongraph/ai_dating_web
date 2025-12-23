@@ -125,9 +125,9 @@ const LoginModal = ({ isOpen, onClose, onSignupClick, onForgotPasswordClick }: L
       title="Log In with Your Account"
       subtitle="Log in to access your world with us."
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
         <div>
-          <label htmlFor="email" className="block text-sm text-gray-400 mb-2">
+          <label htmlFor="email" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
             Email id
           </label>
           <input
@@ -141,13 +141,13 @@ const LoginModal = ({ isOpen, onClose, onSignupClick, onForgotPasswordClick }: L
             type="email"
             id="email"
             placeholder="Enter your email"
-            className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+            className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
           />
-          {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+          {errors.email && <p className="mt-1 text-[10px] md:text-sm text-red-500">{errors.email.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm text-gray-400 mb-2">
+          <label htmlFor="password" className="block text-xs md:text-sm text-gray-400 mb-1.5 md:mb-2">
             Password
           </label>
           <div className="relative">
@@ -162,27 +162,26 @@ const LoginModal = ({ isOpen, onClose, onSignupClick, onForgotPasswordClick }: L
               type={showPassword ? 'text' : 'password'}
               id="password"
               placeholder="Enter your password"
-              className="w-full bg-gray-2a text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan"
+              className="w-full bg-gray-2a text-white px-4 py-2.5 md:py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-cyan text-sm md:text-base"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
             >
-              {showPassword ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+              {showPassword ? <IoEyeOffOutline size={18} className="md:w-[20px] md:h-[20px]" /> : <IoEyeOutline size={18} className="md:w-[20px] md:h-[20px]" />}
             </button>
           </div>
           {errors.password && (
-            <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+            <p className="mt-1 text-[10px] md:text-sm text-red-500">{errors.password.message}</p>
           )}
-          {/* Error and verification messages are now handled by the Snackbar component */}
         </div>
 
         <div className="flex justify-end">
           <button
             type="button"
             onClick={onForgotPasswordClick}
-            className="text-accent-cyan text-sm hover:underline"
+            className="text-accent-cyan text-xs md:text-sm hover:underline"
           >
             Forgot Password?
           </button>
@@ -191,17 +190,17 @@ const LoginModal = ({ isOpen, onClose, onSignupClick, onForgotPasswordClick }: L
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-accent-cyan to-accent-cyan-dark text-black font-bold py-2.5 md:py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-lg"
         >
           {isLoading ? 'Logging in...' : 'LOGIN'}
         </button>
 
-        <div className="relative">
+        <div className="relative my-2 md:my-4">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-700"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-1a text-gray-400">Or continue with</span>
+          <div className="relative flex justify-center text-[10px] md:text-sm uppercase tracking-wider">
+            <span className="px-3 bg-gray-1a text-gray-400">Or continue with</span>
           </div>
         </div>
 
@@ -216,18 +215,18 @@ const LoginModal = ({ isOpen, onClose, onSignupClick, onForgotPasswordClick }: L
             });
           }}
           disabled={isGoogleLoading}
-          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center space-x-2 border border-gray-700 text-white px-4 py-2.5 md:py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
         >
-          <FcGoogle size={20} />
+          <FcGoogle size={18} className="md:w-[20px] md:h-[20px]" />
           <span>{isGoogleLoading ? 'Logging in...' : 'Login with Google'}</span>
         </button>
 
-        <p className="text-center text-gray-400">
+        <p className="text-center text-gray-400 text-xs md:text-sm mt-2">
           Don&apos;t have an account?{' '}
           <button
             type="button"
             onClick={onSignupClick}
-            className="text-accent-cyan hover:underline"
+            className="text-accent-cyan font-semibold hover:underline"
           >
             Signup
           </button>
