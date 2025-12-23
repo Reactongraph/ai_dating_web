@@ -40,7 +40,7 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-black text-white">
+    <div className="min-h-screen flex flex-col bg-black text-white">
       {/* Promotional Top Banner */}
       <MobileTopBanner />
 

@@ -50,7 +50,7 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
   }, [pathname]);
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Promotional Top Banner */}
       <MobileTopBanner />
 
