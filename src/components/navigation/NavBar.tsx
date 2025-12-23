@@ -147,8 +147,8 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
         <div className="flex items-center justify-between h-full px-2 md:px-4">
           {/* Logo and Navigation Links */}
           <div className="flex items-center space-x-2 md:space-x-8">
-            {/* Mobile menu toggle */}
-            <button
+            {/* Mobile menu toggle - Hidden since sidebar is removed for mobile */}
+            {/* <button
               onClick={onToggleSidebar}
               className="md:hidden p-2 rounded-lg text-text-secondary hover:text-white hover:bg-white-1a transition-colors"
             >
@@ -169,7 +169,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                   />
                 )}
               </svg>
-            </button>
+            </button> */}
             <Link href="/" className="text-xl font-bold">
               <Image
                 src="/assets/daily_love.png"

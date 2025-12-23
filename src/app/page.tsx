@@ -1,11 +1,15 @@
+'use client';
+
 // import AdBanner from '@/components/home/AdBanner';
 import HeroSection from '@/components/home/HeroSection';
 import AICompanionsSection from '@/components/home/AICompanionsSection';
 import HowToCreate from '@/components/home/HowToCreate';
 import ExperienceAndFAQ from '@/components/home/ExperienceAndFAQ';
 import GlobalLayout from '@/components/layouts/GlobalLayout';
+import { useMobileView } from '@/hooks/useMobileView';
 
 export default function Home() {
+  const isMobileView = useMobileView();
   return (
     <GlobalLayout>
       {/* Ad Banner test */}
@@ -17,28 +21,30 @@ export default function Home() {
       /> */}
 
       {/* Hero Section */}
-      <HeroSection
-        title={{
-          main: 'Create your Perfect',
-          highlight: {
-            text: 'AI',
-            color: 'text-primary-500',
-          },
-          rest: ' girlfriend',
-        }}
-        subtitle="From chats to charm — design the AI girlfriend of your dreams."
-        buttonText="Create AI Character"
-        imageSrc="/assets/girlBanner.png"
-      />
+      {!isMobileView && (
+        <HeroSection
+          title={{
+            main: 'Create your Perfect',
+            highlight: {
+              text: 'AI',
+              color: 'text-primary-500',
+            },
+            rest: ' girlfriend',
+          }}
+          subtitle="From chats to charm — design the AI girlfriend of your dreams."
+          buttonText="Create AI Character"
+          imageSrc="/assets/girlBanner.png"
+        />
+      )}
 
       {/* AI Companions Section */}
       <AICompanionsSection />
 
       {/* How To Create Section */}
-      <HowToCreate />
+      {!isMobileView && <HowToCreate />}
 
       {/* Experience and FAQ Section */}
-      <ExperienceAndFAQ />
+      {!isMobileView && <ExperienceAndFAQ />}
     </GlobalLayout>
   );
 }

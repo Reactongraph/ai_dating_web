@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useMobileView } from '@/hooks/useMobileView';
 import NavBar from '@/components/navigation/NavBar';
 import Sidebar from '@/components/navigation/Sidebar';
 import ChipsBanner from '@/components/common/ChipsBanner';
@@ -11,24 +12,8 @@ interface LayoutWithoutFooterProps {
 
 const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isMobileView, setIsMobileView] = useState(false);
+  const isMobileView = useMobileView();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-
-  // Check if we're on mobile view
-  useEffect(() => {
-    const checkMobileView = () => {
-      setIsMobileView(window.innerWidth < 768);
-    };
-
-    // Initial check
-    checkMobileView();
-
-    // Add event listener for window resize
-    window.addEventListener('resize', checkMobileView);
-
-    // Cleanup
-    return () => window.removeEventListener('resize', checkMobileView);
-  }, []);
 
   const toggleSidebar = () => {
     if (isMobileView) {
