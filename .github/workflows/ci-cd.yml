@@ -2,7 +2,7 @@ name: CI/CD - Next.js Deploy (daily_love)
 
 on:
   push:
-    branches: ['staging']
+    branches: ['master']
   workflow_dispatch:
 
 jobs:
@@ -25,14 +25,14 @@ jobs:
 
       - name: Build Next.js App
         env:
-          NODE_ENV: staging
-        run: yarn build:staging
+          NODE_ENV: production
+        run: yarn build:production
 
   deploy:
     name: Deploy to EC2 Server
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/staging'
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - name: SSH & Deploy to EC2
@@ -53,22 +53,22 @@ jobs:
             nvm install 24
             nvm use 24
 
-            PROJECT_DIR="/home/ubuntu/daily_love/staging/ai_dating_web"
-            APP="daily_love_frontend_staging"
-            PORT=4003
+            PROJECT_DIR="/home/ubuntu/daily_love/ai_dating_web"
+            APP="daily_love_frontend"
+            PORT=4001
 
             echo ">>> Switching to project directory"
             cd $PROJECT_DIR
 
             echo ">>> Pulling latest code"
             git fetch --all --prune
-            git reset --hard origin/staging
+            git reset --hard origin/master
 
             echo ">>> Installing dependencies"
             yarn install --frozen-lockfile
 
             echo ">>> Building Next.js"
-            NODE_ENV=staging yarn build:staging
+            NODE_ENV=production yarn build:production
 
             echo ">>> Ensuring PM2 is installed"
             if ! command -v pm2 >/dev/null 2>&1; then
