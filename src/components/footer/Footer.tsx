@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { FaDiscord, FaXTwitter, FaInstagram, FaReddit } from 'react-icons/fa6';
 import { IoLanguage } from 'react-icons/io5';
+import { motion } from 'framer-motion';
 
 const Footer = () => {
   const pathname = usePathname();
@@ -61,18 +62,43 @@ const Footer = () => {
 
             {/* Create Avatar (Center) */}
             <div className="flex flex-col items-center justify-end w-24 h-12 relative pb-1">
-              <Link
-                href="/create-character"
-                className="absolute -top-8 flex flex-col items-center justify-center bg-gradient-to-r from-primary-500 to-primary-600 w-14 h-14 rounded-full shadow-lg border-4 border-background-primary z-50 transform active:scale-95 transition-transform"
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="absolute -top-8 z-50"
               >
-                <Image
-                  src="/assets/wand2.svg"
-                  alt="Create"
-                  width={24}
-                  height={24}
-                  className="brightness-0 invert"
+                <Link
+                  href="/create-character"
+                  className="flex flex-col items-center justify-center bg-gradient-to-r from-primary-500 to-primary-600 w-14 h-14 rounded-full shadow-[0_0_15px_rgba(59,185,255,0.5)] border-4 border-background-primary transform active:scale-95 transition-transform"
+                >
+                  <Image
+                    src="/assets/wand2.svg"
+                    alt="Create"
+                    width={24}
+                    height={24}
+                    className="brightness-0 invert"
+                  />
+                </Link>
+                {/* Bubble ripple effect */}
+                <motion.div
+                  animate={{
+                    scale: [1, 1.4],
+                    opacity: [0.3, 0],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeOut',
+                  }}
+                  className="absolute inset-0 bg-primary-500 rounded-full -z-10"
                 />
-              </Link>
+              </motion.div>
               <span className="text-[12px] font-bold text-primary-500 whitespace-nowrap">
                 Create Avatar
               </span>
