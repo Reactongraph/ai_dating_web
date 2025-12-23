@@ -57,7 +57,7 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
 
       {/* Main Content Area - No Footer */}
       <main
-        className={`${isBannerVisible ? 'pt-[108px] md:pt-[116px]' : 'pt-17'} md:pl-16 flex-grow`}
+        className={`${isBannerVisible ? 'pt-[112px] md:pt-[120px]' : 'pt-18 md:pt-20'} md:pl-16 flex-grow overflow-x-hidden`}
       >
         {children}
       </main>
