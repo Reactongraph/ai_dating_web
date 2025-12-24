@@ -1,0 +1,86 @@
+name: CI/CD - Next.js Deploy (daily_love)
+
+on:
+  push:
+    branches: ['staging']
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Next.js App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (Node 24)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build Next.js App
+        env:
+          NODE_ENV: staging
+        run: yarn build:staging
+
+  deploy:
+    name: Deploy to EC2 Server
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+
+    steps:
+      - name: SSH & Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script_stop: true
+          script: |
+            set -e
+
+            echo ">>> Loading NVM (Node 24)"
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            nvm install 24
+            nvm use 24
+
+            PROJECT_DIR="/home/ubuntu/daily_love/staging/ai_dating_web"
+            APP="daily_love_frontend_staging"
+            PORT=4003
+
+            echo ">>> Switching to project directory"
+            cd $PROJECT_DIR
+
+            echo ">>> Pulling latest code"
+            git fetch --all --prune
+            git reset --hard origin/staging
+
+            echo ">>> Installing dependencies"
+            yarn install --frozen-lockfile
+
+            echo ">>> Building Next.js"
+            NODE_ENV=staging yarn build:staging
+
+            echo ">>> Ensuring PM2 is installed"
+            if ! command -v pm2 >/dev/null 2>&1; then
+              npm install -g pm2
+            fi
+
+            echo ">>> Starting or Reloading PM2 app on port $PORT"
+            if pm2 describe $APP > /dev/null 2>&1; then
+              pm2 restart $APP --update-env
+            else
+              pm2 start npm --name "$APP" -- start -- -p $PORT
+            fi
+
+            pm2 save
+            pm2 status
