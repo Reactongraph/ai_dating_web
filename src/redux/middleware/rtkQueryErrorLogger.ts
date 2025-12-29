@@ -1,6 +1,7 @@
 import { isRejectedWithValue } from '@reduxjs/toolkit';
 import type { Middleware, AnyAction } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
+import { clearCredentials } from '../slices/authSlice';
 
 /**
  * RTK Query error payload type
@@ -26,8 +27,9 @@ interface RTKQueryMetaArg {
 /**
  * RTK Query error logging middleware
  * Catches all RTK Query errors and displays toast notifications
+ * Automatically logs out users on 401 unauthorized errors
  */
-export const rtkQueryErrorLogger: Middleware = () => next => (action: AnyAction) => {
+export const rtkQueryErrorLogger: Middleware = store => next => (action: AnyAction) => {
   // Check if this is a rejected action from RTK Query
   if (isRejectedWithValue(action)) {
     const payload = action.payload as RTKQueryErrorPayload | undefined;
@@ -102,6 +104,10 @@ export const rtkQueryErrorLogger: Middleware = () => next => (action: AnyAction)
     // (they handle errors in their own UI)
     const silentEndpoints = ['login', 'signup', 'googleLogin', 'updateProfile', 'generateAvatar'];
 
+    // List of endpoints that should NOT trigger automatic logout on 401
+    // (these endpoints might legitimately return 401 during authentication flow)
+    const authEndpoints = ['login', 'signup', 'googleLogin', 'telegramLogin', 'verifySession', 'verifyToken'];
+
     // Check if this endpoint should be silent
     // RTK Query stores endpoint name in different places depending on the action type
     const metaArg = action.meta?.arg as RTKQueryMetaArg | undefined;
@@ -121,8 +127,34 @@ export const rtkQueryErrorLogger: Middleware = () => next => (action: AnyAction)
 
     const shouldShowToast = !silentEndpoints.includes(endpointName) && !isSignup;
 
+    // Handle 401 unauthorized errors - automatically log out user
+    // Skip logout for auth-related endpoints (login, signup, etc.) as they might legitimately return 401
+    let shouldSkipErrorToast = false;
+    if (status === 401 && !authEndpoints.includes(endpointName)) {
+      const state = store.getState() as { auth: { isAuthenticated: boolean } };
+      
+      // Only logout if user is currently authenticated
+      if (state.auth.isAuthenticated) {
+        console.warn('Token expired or invalid. Automatically logging out user.');
+        store.dispatch(clearCredentials());
+        
+        // Show logout message (skip the error toast since we're showing this info message)
+        toast.info('Your session has expired. Please login again.', {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        
+        shouldSkipErrorToast = true; // Don't show the error toast for 401 when we auto-logout
+      }
+    }
+
     // Show toast notification for errors (except for endpoints that handle their own errors)
-    if (shouldShowToast) {
+    // Skip error toast for 401 errors that triggered auto-logout
+    if (shouldShowToast && !shouldSkipErrorToast) {
       toast.error(errorMessage, {
         position: 'top-right',
         autoClose: 5000,
