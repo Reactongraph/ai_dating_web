@@ -2,6 +2,7 @@ import { isRejectedWithValue } from '@reduxjs/toolkit';
 import type { Middleware, AnyAction } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { clearCredentials } from '../slices/authSlice';
+import { signOut } from 'next-auth/react';
 
 /**
  * RTK Query error payload type
@@ -27,26 +28,61 @@ interface RTKQueryMetaArg {
 /**
  * RTK Query error logging middleware
  * Catches all RTK Query errors and displays toast notifications
- * Automatically logs out users on 401 unauthorized errors
+ * Automatically logs out users on 401 unauthorized and 403 forbidden errors (JWT failures)
  */
 export const rtkQueryErrorLogger: Middleware = store => next => (action: AnyAction) => {
   // Check if this is a rejected action from RTK Query
   if (isRejectedWithValue(action)) {
     const payload = action.payload as RTKQueryErrorPayload | undefined;
 
-    // Log the full action for debugging
-    // console.log('RTK Query Rejection Details:', {
-    //   type: action.type,
-    //   payload,
-    //   meta: action.meta,
-    //   error: action.error,
-    // });
-
     // Extract error information
     const status = payload?.status;
     const data = payload?.data;
     const error = payload?.error;
     const name = payload?.name;
+
+    // CRITICAL: Handle 401/403 errors IMMEDIATELY before any other checks
+    // This ensures logout happens even if other conditions might prevent it
+    // Check status from multiple possible locations
+    const errorStatus = status || (payload as any)?.status || (data as any)?.statusCode;
+    
+    if (errorStatus === 401 || errorStatus === 403) {
+      // Extract endpoint name quickly for auth endpoint check
+      const metaArg = action.meta?.arg as RTKQueryMetaArg | undefined;
+      const endpointName = metaArg?.endpointName || (action.meta?.arg as any)?.endpointName;
+      const authEndpoints = ['login', 'signup', 'googleLogin', 'telegramLogin', 'verifySession', 'verifyToken'];
+      const isAuthEndpoint = endpointName && authEndpoints.includes(endpointName);
+      
+      if (!isAuthEndpoint) {
+        // Clear Redux credentials
+        store.dispatch(clearCredentials());
+        
+        // Clear localStorage immediately
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('userData');
+          
+          // Show logout message
+          toast.info('Your session has expired. Redirecting...', {
+            position: 'top-right',
+            autoClose: 2000,
+          });
+          
+          // Force redirect immediately
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 100);
+          
+          // Sign out from NextAuth in background
+          signOut({
+            redirect: false,
+            callbackUrl: '/',
+          }).catch(() => {
+            // Silently handle signOut errors - redirect is already handled above
+          });
+        }
+      }
+    }
 
     // Ignore certain types of errors that shouldn't show toasts:
     // 1. Query cancellation/abortion (happens during navigation/unmounting)
@@ -110,15 +146,39 @@ export const rtkQueryErrorLogger: Middleware = store => next => (action: AnyActi
 
     // Check if this endpoint should be silent
     // RTK Query stores endpoint name in different places depending on the action type
+    // Try multiple ways to extract the endpoint name
     const metaArg = action.meta?.arg as RTKQueryMetaArg | undefined;
-    const endpointName =
-      metaArg?.endpointName ||
-      metaArg?.type ||
-      action.type?.split('/')?.[0]?.replace('executeQuery', '') ||
-      action.type?.split('/')?.[0]?.replace('executeMutation', '');
-
-    // Also check the action type pattern (e.g., "authApi/executeMutation/rejected")
     const actionTypeParts = action.type?.split('/') || [];
+    
+    // Extract endpoint name - RTK Query stores it in action.meta.arg.endpointName
+    let endpointName: string | undefined = 
+      metaArg?.endpointName ||
+      (action.meta?.arg as any)?.endpointName; // Try with any type as fallback
+    
+    // If not found in meta, try to extract from action type
+    // RTK Query action types can be: "apiName/endpoints/endpointName/executeQuery/rejected"
+    if (!endpointName && actionTypeParts.length >= 3) {
+      // Pattern: "apiName/endpoints/endpointName/executeQuery/rejected"
+      if (actionTypeParts[1] === 'endpoints') {
+        endpointName = actionTypeParts[2];
+      }
+      // Pattern: "apiName/executeQuery/rejected" - endpoint name might be in a different format
+      else if (actionTypeParts[1] === 'executeQuery' || actionTypeParts[1] === 'executeMutation') {
+        // Try to get from the action type itself
+        endpointName = actionTypeParts[0]?.replace('Api', '').toLowerCase();
+      }
+    }
+    
+    // Additional extraction: check if endpoint name is in the originalArg
+    if (!endpointName && (action.meta?.arg as any)?.originalArgs) {
+      // Sometimes RTK Query stores it differently
+      const originalArg = (action.meta?.arg as any)?.originalArgs;
+      if (originalArg && typeof originalArg === 'object') {
+        // Try to find endpoint name in various places
+        endpointName = originalArg.endpointName || originalArg.type;
+      }
+    }
+    
     const actionType = action.type || '';
     const isSignup =
       endpointName === 'signup' ||
@@ -127,28 +187,50 @@ export const rtkQueryErrorLogger: Middleware = store => next => (action: AnyActi
 
     const shouldShowToast = !silentEndpoints.includes(endpointName) && !isSignup;
 
-    // Handle 401 unauthorized errors - automatically log out user
+    // Handle 401 unauthorized and 403 forbidden errors - automatically log out user
     // Skip logout for auth-related endpoints (login, signup, etc.) as they might legitimately return 401
+    // 403 errors typically indicate JWT validation failure or invalid session
     let shouldSkipErrorToast = false;
-    if (status === 401 && !authEndpoints.includes(endpointName)) {
-      const state = store.getState() as { auth: { isAuthenticated: boolean } };
+    if (status === 401 || status === 403) {
+      // Only skip logout for explicit auth endpoints
+      const isAuthEndpoint = endpointName && authEndpoints.includes(endpointName);
       
-      // Only logout if user is currently authenticated
-      if (state.auth.isAuthenticated) {
-        console.warn('Token expired or invalid. Automatically logging out user.');
+      // For 401/403 errors, always logout unless it's an auth endpoint
+      // This handles cases where endpoint name extraction fails
+      if (!isAuthEndpoint) {
+        // Clear Redux credentials
         store.dispatch(clearCredentials());
         
-        // Show logout message (skip the error toast since we're showing this info message)
-        toast.info('Your session has expired. Please login again.', {
-          position: 'top-right',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        // Clear localStorage immediately
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('userData');
+          
+          // Show logout message
+          toast.info('Your session has expired. Redirecting...', {
+            position: 'top-right',
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          
+          // Force redirect immediately
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 100);
+          
+          // Sign out from NextAuth in background
+          signOut({
+            redirect: false,
+            callbackUrl: '/',
+          }).catch(() => {
+            // Silently handle signOut errors - redirect is already handled above
+          });
+        }
         
-        shouldSkipErrorToast = true; // Don't show the error toast for 401 when we auto-logout
+        shouldSkipErrorToast = true; // Don't show the error toast for 401/403 when we auto-logout
       }
     }
 
@@ -165,13 +247,6 @@ export const rtkQueryErrorLogger: Middleware = store => next => (action: AnyActi
       });
     }
 
-    // Log error for debugging
-    console.error('RTK Query Error:', {
-      endpoint: endpointName,
-      status,
-      message: errorMessage,
-      payload,
-    });
   }
 
   return next(action);

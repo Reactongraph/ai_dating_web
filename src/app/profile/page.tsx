@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import LayoutWithoutFooter from '@/components/layouts/LayoutWithoutFooter';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
   useUploadProfilePictureMutation,
 } from '@/redux/services/profileApi';
+import { clearCredentials } from '@/redux/slices/authSlice';
 import { useSnackbar } from '@/providers';
+import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 
 interface ProfileFormData {
@@ -26,7 +28,32 @@ export default function ProfilePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const { showSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
+
+  // Helper function to handle logout when user is missing
+  const handleLogout = () => {
+    // Clear Redux credentials
+    dispatch(clearCredentials());
+    
+    // Clear localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('userData');
+      
+      // Sign out from NextAuth and redirect
+      signOut({
+        redirect: true,
+        callbackUrl: '/',
+      }).catch(err => {
+        console.error('Error signing out:', err);
+        // Fallback: redirect manually if signOut fails
+        if (typeof window !== 'undefined') {
+          window.location.href = '/';
+        }
+      });
+    }
+  };
 
   // Get userId from auth state
   const userId = user?._id || '';
@@ -134,7 +161,8 @@ export default function ProfilePage() {
 
       // Immediately upload the image when file is selected
       if (!userId) {
-        showSnackbar('Please login again.', 'error');
+        showSnackbar('Your session has expired. Redirecting to login...', 'error');
+        handleLogout();
         return;
       }
 
@@ -196,7 +224,8 @@ export default function ProfilePage() {
   // Handle profile update
   const onSubmit = async (data: ProfileFormData) => {
     if (!userId) {
-      showSnackbar(' Please login again.', 'error');
+      showSnackbar('Your session has expired. Redirecting to login...', 'error');
+      handleLogout();
       return;
     }
 
