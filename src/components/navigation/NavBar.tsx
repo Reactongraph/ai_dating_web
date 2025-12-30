@@ -54,21 +54,10 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
     dispatch(openAuthModal({ mode: 'signup' }));
   };
 
-  // Sync content mode with user's NSFW preference from profile data
+  // Always ensure content mode is set to 'sfw' on mount
   useEffect(() => {
-    if (isAuthenticated && profileData?.user) {
-      // Check if user has isNsfw property in their profile
-      const userIsNsfw = (profileData.user as { isNsfw?: boolean }).isNsfw;
-      if (userIsNsfw !== undefined) {
-        // Set content mode based on user's preference
-        dispatch(setMode(userIsNsfw ? 'nsfw' : 'sfw'));
-        // Also set age verification in localStorage if user has NSFW enabled
-        if (userIsNsfw) {
-          localStorage.setItem('ageVerified', 'true');
-        }
-      }
-    }
-  }, [isAuthenticated, profileData, dispatch]);
+    dispatch(setMode('sfw'));
+  }, [dispatch]);
 
   const handleToggleContentMode = async () => {
     // If switching from SFW to NSFW, check if user has already verified
@@ -217,14 +206,14 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
               <span
                 className={`text-xs font-medium  sm:block ${contentMode === 'sfw' ? 'text-green-400' : 'text-gray-400'}`}
               >
-                SFW
+                General
               </span>
               <button
                 onClick={handleToggleContentMode}
                 className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
                   contentMode === 'nsfw' ? 'bg-red-600' : 'bg-green-600'
                 }`}
-                aria-label={`Switch to ${contentMode === 'sfw' ? 'NSFW' : 'SFW'} mode`}
+                aria-label={`Switch to ${contentMode === 'sfw' ? 'Adult' : 'General22'} mode`}
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -235,6 +224,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
               <span
                 className={`text-xs font-medium  sm:block ${contentMode === 'nsfw' ? 'text-red-400' : 'text-gray-400'}`}
               >
+                {/*
                 <svg
                   width="30"
                   height="30"
@@ -254,16 +244,18 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                         stopColor={contentMode === 'nsfw' ? '#dc2626' : '#4b5563'}
                       />
                     </linearGradient>
-                  </defs>
+                  </defs>*/}
                   {/* Outer circle with gradient */}
+                  {/*
                   <circle
                     cx="20"
                     cy="20"
                     r="18"
                     fill="url(#eighteenPlusGradient)"
                     opacity={contentMode === 'nsfw' ? '1' : '0.6'}
-                  />
+                  />*/}
                   {/* Inner circle for depth */}
+                  {/*
                   <circle
                     cx="20"
                     cy="20"
@@ -272,8 +264,9 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                     stroke="white"
                     strokeWidth="0.5"
                     opacity="0.3"
-                  />
+                  />*/}
                   {/* 18+ text */}
+                  {/*
                   <text
                     x="20"
                     y="25"
@@ -285,7 +278,8 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                   >
                     18+
                   </text>
-                </svg>
+                </svg>*/}
+                Adult
               </span>
             </div>
 
