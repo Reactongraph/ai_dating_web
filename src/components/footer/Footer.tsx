@@ -11,7 +11,7 @@ const Footer = () => {
   const [showComingSoon, setShowComingSoon] = useState(false);
 
   // Routes where bottom navigation should be visible on mobile
-  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat'];
+  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat', '/create-character'];
   const isBottomNavPage = bottomNavRoutes.some(route =>
     route === '/' ? pathname === '/' : pathname.startsWith(route),
   );
@@ -132,7 +132,7 @@ const Footer = () => {
             {/* Wallet */}
             <button
               onClick={handleWalletClick}
-              className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto ${
+              className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto cursor-pointer ${
                 isActive('/my-ai') ? 'text-primary-500' : 'text-text-secondary'
               }`}
             >
