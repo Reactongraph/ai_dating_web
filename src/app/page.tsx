@@ -14,11 +14,11 @@ export default function Home() {
   return (
     <GlobalLayout>
       {/* Mobile only content */}
-      {isMobileView && (
+      {/* {isMobileView && (
         <>
           <MobileHeroCarousel />
         </>
-      )}
+      )} */}
 
       {/* Ad Banner test */}
       {/* <AdBanner
@@ -29,7 +29,7 @@ export default function Home() {
       /> */}
 
       {/* Hero Section */}
-      {!isMobileView && (
+      {/* {!isMobileView && ( */}
         <HeroSection
           title={{
             main: 'Create your Perfect',
@@ -43,7 +43,7 @@ export default function Home() {
           buttonText="Create AI Character"
           imageSrc="/assets/girlBanner.png"
         />
-      )}
+      {/* )} */}
 
       {/* AI Companions Section */}
       <AICompanionsSection />

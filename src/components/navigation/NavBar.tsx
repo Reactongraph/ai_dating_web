@@ -56,8 +56,19 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
 
   // Always ensure content mode is set to 'sfw' on mount
   useEffect(() => {
-    dispatch(setMode('sfw'));
-  }, [dispatch]);
+    if (isAuthenticated && profileData?.user) {
+      // Check if user has isNsfw property in their profile
+      const userIsNsfw = (profileData.user as { isNsfw?: boolean }).isNsfw;
+      if (userIsNsfw !== undefined) {
+        // Set content mode based on user's preference
+        dispatch(setMode(userIsNsfw ? 'nsfw' : 'sfw'));
+        // Also set age verification in localStorage if user has NSFW enabled
+        if (userIsNsfw) {
+          localStorage.setItem('ageVerified', 'true');
+        }
+      }
+    }
+  }, [isAuthenticated, profileData, dispatch]);
 
   const handleToggleContentMode = async () => {
     // If switching from SFW to NSFW, check if user has already verified
