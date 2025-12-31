@@ -11,14 +11,16 @@ import MobileHeroCarousel from '@/components/home/MobileHeroCarousel';
 
 export default function Home() {
   const isMobileView = useMobileView();
+  const isNsfwMode = typeof window !== 'undefined' && localStorage.getItem('contentMode') === 'nsfw';
+  
   return (
     <GlobalLayout>
       {/* Mobile only content */}
-      {/* {isMobileView && (
+      {isMobileView && isNsfwMode && (
         <>
           <MobileHeroCarousel />
         </>
-      )} */}
+      )}
 
       {/* Ad Banner test */}
       {/* <AdBanner
@@ -29,7 +31,7 @@ export default function Home() {
       /> */}
 
       {/* Hero Section */}
-      {/* {!isMobileView && ( */}
+      {!isMobileView && (
         <HeroSection
           title={{
             main: 'Create your Perfect',
@@ -43,7 +45,7 @@ export default function Home() {
           buttonText="Create AI Character"
           imageSrc="/assets/girlBanner.png"
         />
-      {/* )} */}
+      )}
 
       {/* AI Companions Section */}
       <AICompanionsSection />
