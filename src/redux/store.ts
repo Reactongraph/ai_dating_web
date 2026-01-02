@@ -19,6 +19,7 @@ import { telegramAuthApi } from './services/telegramAuthApi';
 import { characterAttributesApi } from './services/characterAttributesApi';
 import { botProfilesApi } from './services/botProfilesApi';
 import { chatApi } from './services/chatApi';
+import { walletApi } from './services/walletApi';
 
 import authReducer from './slices/authSlice';
 import characterAttributesReducer from './slices/characterAttributesSlice';
@@ -57,6 +58,7 @@ const rootReducer = combineReducers({
   [characterAttributesApi.reducerPath]: characterAttributesApi.reducer,
   [botProfilesApi.reducerPath]: botProfilesApi.reducer,
   [chatApi.reducerPath]: chatApi.reducer,
+  [walletApi.reducerPath]: walletApi.reducer,
 });
 
 export const store = configureStore({
@@ -75,6 +77,7 @@ export const store = configureStore({
       characterAttributesApi.middleware,
       botProfilesApi.middleware,
       chatApi.middleware,
+      walletApi.middleware,
     ),
 });
 

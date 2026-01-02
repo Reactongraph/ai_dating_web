@@ -11,7 +11,7 @@ const Footer = () => {
   const [showComingSoon, setShowComingSoon] = useState(false);
 
   // Routes where bottom navigation should be visible on mobile
-  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat', '/create-character'];
+  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat', '/create-character', '/wallet'];
   const isBottomNavPage = bottomNavRoutes.some(route =>
     route === '/' ? pathname === '/' : pathname.startsWith(route),
   );
@@ -130,10 +130,10 @@ const Footer = () => {
             </Link>
 
             {/* Wallet */}
-            <button
-              onClick={handleWalletClick}
-              className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto cursor-pointer ${
-                isActive('/my-ai') ? 'text-primary-500' : 'text-text-secondary'
+            <Link
+              href="/wallet"
+              className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto ${
+                isActive('/wallet') ? 'text-primary-500' : 'text-text-secondary'
               }`}
             >
               <div className="relative">
@@ -145,10 +145,10 @@ const Footer = () => {
                     d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                   />
                 </svg>
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></span>
               </div>
               <span className="text-[10px] mt-1 font-medium">Wallet</span>
-            </button>
+              <span className="text-[10px] mt-1 font-medium">Wallet</span>
+            </Link>
           </div>
         </div>
       )}
