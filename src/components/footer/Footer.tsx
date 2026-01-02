@@ -147,7 +147,6 @@ const Footer = () => {
                 </svg>
               </div>
               <span className="text-[10px] mt-1 font-medium">Wallet</span>
-              <span className="text-[10px] mt-1 font-medium">Wallet</span>
             </Link>
           </div>
         </div>

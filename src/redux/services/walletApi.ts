@@ -84,6 +84,31 @@ export interface CompleteAddMoneyResponse {
   message: string;
 }
 
+export interface TelegramStarsInvoiceRequest {
+  amount: number;
+}
+
+export interface TelegramStarsInvoiceResponse {
+  success: boolean;
+  data: {
+    transactionId: string;
+    invoiceUrl: string;
+    amount: number;
+    currency: string;
+    starsAmount?: number;
+    conversionInfo?: {
+      usdAmount: number;
+      starsAmount: number;
+      rate: string;
+      baseRates: {
+        starToInr: number;
+        inrToUsd: number;
+      };
+    };
+  };
+  message: string;
+}
+
 export const walletApi = createApi({
   reducerPath: 'walletApi',
   baseQuery: fetchBaseQuery({
@@ -163,6 +188,15 @@ export const walletApi = createApi({
       }),
       invalidatesTags: ['Wallet', 'WalletTransactions'],
     }),
+
+    // Create Telegram Stars invoice
+    createTelegramStarsInvoice: builder.mutation<TelegramStarsInvoiceResponse, TelegramStarsInvoiceRequest>({
+      query: body => ({
+        url: '/wallet/telegram-stars/create-invoice',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
@@ -173,4 +207,5 @@ export const {
   useCreateAddMoneyIntentMutation,
   useCompleteAddMoneyMutation,
   useAddMoneyDirectMutation,
+  useCreateTelegramStarsInvoiceMutation,
 } = walletApi;

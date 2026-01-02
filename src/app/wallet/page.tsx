@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetWalletQuery, useGetWalletTransactionsQuery } from '@/redux/services/walletApi';
+import { useGetWalletQuery, useGetWalletTransactionsQuery, useCreateTelegramStarsInvoiceMutation, useCompleteAddMoneyMutation } from '@/redux/services/walletApi';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -230,6 +230,10 @@ export default function WalletPage() {
 function AddMoneyModal({ onClose }: { onClose: () => void }) {
   const [amount, setAmount] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  const [createTelegramStarsInvoice] = useCreateTelegramStarsInvoiceMutation();
+  const [completeAddMoney] = useCompleteAddMoneyMutation();
 
   const paymentMethods = [
     { id: 'stars', name: 'Telegram Stars', icon: '⭐', available: true },
@@ -238,11 +242,85 @@ function AddMoneyModal({ onClose }: { onClose: () => void }) {
     { id: 'net_banking', name: 'Net Banking', icon: '🏦', available: true },
   ];
 
-  const handleSubmit = () => {
-    // TODO: Implement payment processing
-    console.log('Adding money:', amount, selectedMethod);
-    alert('Payment integration coming soon!');
-    onClose();
+  const handleSubmit = async () => {
+    if (!amount || !selectedMethod || parseFloat(amount) <= 0) return;
+
+    setIsProcessing(true);
+
+    try {
+      if (selectedMethod === 'stars') {
+        // Telegram Stars payment flow
+        // Convert amount to USD (amount is entered in USD by user)
+        const amountInUSD = parseFloat(amount);
+        
+        const response = await createTelegramStarsInvoice({
+          amount: amountInUSD,
+        }).unwrap();
+
+        const invoiceUrl = response.data.invoiceUrl;
+        const transactionId = response.data.transactionId;
+        const starsAmount = response.data.starsAmount || 0;
+
+        console.log(`Payment: $${amountInUSD} USD = ${starsAmount} Stars`);
+        console.log('Invoice URL:', invoiceUrl);
+
+        // Check if Telegram WebApp is available
+        if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+          console.log('Opening invoice in Telegram WebApp...');
+          
+          try {
+            // Use openInvoice method with the full URL
+            window.Telegram.WebApp.openInvoice(invoiceUrl, (status) => {
+              console.log('Payment status:', status);
+              
+              if (status === 'paid') {
+                // Payment successful, complete the transaction
+                completeAddMoney({
+                  transactionId,
+                }).unwrap()
+                  .then(() => {
+                    alert('Payment successful! Your wallet has been updated.');
+                    onClose();
+                  })
+                  .catch((error) => {
+                    console.error('Error completing payment:', error);
+                    alert('Payment verification failed. Please contact support.');
+                  });
+              } else if (status === 'cancelled') {
+                alert('Payment was cancelled.');
+              } else if (status === 'failed') {
+                alert('Payment failed. Please try again.');
+              }
+              
+              setIsProcessing(false);
+            });
+          } catch (error) {
+            console.error('Error opening invoice:', error);
+            // Fallback to opening as Telegram link
+            window.Telegram.WebApp.openTelegramLink(invoiceUrl);
+            alert('Invoice opened. Please complete the payment. Your wallet will be updated automatically.');
+            setIsProcessing(false);
+            onClose();
+          }
+        } else {
+          console.log('Telegram WebApp not available, opening in browser...');
+          // Fallback: open in browser
+          window.open(invoiceUrl, '_blank');
+          alert('Please complete the payment in the opened window. Your wallet will be updated automatically.');
+          onClose();
+          setIsProcessing(false);
+        }
+      } else {
+        // Other payment methods (coming soon)
+        alert(`${paymentMethods.find(m => m.id === selectedMethod)?.name} integration coming soon!`);
+        setIsProcessing(false);
+        onClose();
+      }
+    } catch (error: any) {
+      console.error('Payment error:', error);
+      alert(error?.data?.message || 'Failed to process payment. Please try again.');
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -287,6 +365,16 @@ function AddMoneyModal({ onClose }: { onClose: () => void }) {
               </button>
             ))}
           </div>
+          {selectedMethod === 'stars' && amount && parseFloat(amount) > 0 && (
+            <div className="mt-3 p-3 bg-primary-500/10 border border-primary-500/20 rounded-lg">
+              <p className="text-sm text-text-secondary">
+                ⭐ You will pay: <span className="font-semibold text-primary-500">{Math.ceil(parseFloat(amount) * 44.5)} Stars</span>
+              </p>
+              <p className="text-xs text-text-secondary mt-1">
+                Rate: 1 USD = 44.5 Stars (1 Star = 2 INR, 89 INR = 1 USD)
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="mb-6">
@@ -321,10 +409,24 @@ function AddMoneyModal({ onClose }: { onClose: () => void }) {
 
         <button
           onClick={handleSubmit}
-          disabled={!amount || !selectedMethod || parseFloat(amount) <= 0}
-          className="w-full bg-primary-500 text-white font-semibold py-3 rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!amount || !selectedMethod || parseFloat(amount) <= 0 || isProcessing}
+          className="w-full bg-primary-500 text-white font-semibold py-3 rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
-          Continue to Payment
+          {isProcessing ? (
+            <>
+              <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Processing...
+            </>
+          ) : (
+            'Continue to Payment'
+          )}
         </button>
       </motion.div>
     </div>
