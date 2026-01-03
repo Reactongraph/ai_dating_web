@@ -347,11 +347,11 @@ function AddMoneyModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-background-elevated rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto"
+        className="bg-background-elevated rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto relative z-[10000]"
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Add Money</h2>
