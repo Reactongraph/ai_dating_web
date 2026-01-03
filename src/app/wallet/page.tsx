@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetWalletQuery, useGetWalletTransactionsQuery, useCreateTelegramStarsInvoiceMutation, useCompleteAddMoneyMutation } from '@/redux/services/walletApi';
+import { useGetWalletQuery, useGetWalletTransactionsQuery, useCreateTelegramStarsInvoiceMutation, useCompleteAddMoneyMutation, useFailTransactionMutation } from '@/redux/services/walletApi';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -234,6 +234,7 @@ function AddMoneyModal({ onClose }: { onClose: () => void }) {
   
   const [createTelegramStarsInvoice] = useCreateTelegramStarsInvoiceMutation();
   const [completeAddMoney] = useCompleteAddMoneyMutation();
+  const [failTransaction] = useFailTransactionMutation();
 
   const paymentMethods = [
     { id: 'stars', name: 'Telegram Stars', icon: '⭐', available: true },
@@ -285,14 +286,36 @@ function AddMoneyModal({ onClose }: { onClose: () => void }) {
                   .catch((error) => {
                     console.error('Error completing payment:', error);
                     alert('Payment verification failed. Please contact support.');
+                  })
+                  .finally(() => {
+                    setIsProcessing(false);
                   });
               } else if (status === 'cancelled') {
+                // Mark transaction as failed
+                failTransaction({
+                  transactionId,
+                  reason: 'Payment cancelled by user',
+                }).catch((error) => {
+                  console.error('Error marking transaction as cancelled:', error);
+                });
                 alert('Payment was cancelled.');
+                setIsProcessing(false);
               } else if (status === 'failed') {
+                // Mark transaction as failed
+                failTransaction({
+                  transactionId,
+                  reason: 'Payment failed',
+                }).catch((error) => {
+                  console.error('Error marking transaction as failed:', error);
+                });
                 alert('Payment failed. Please try again.');
+                setIsProcessing(false);
+              } else {
+                // Handle any other status
+                console.warn('Unknown payment status:', status);
+                alert('Payment status unknown. Please check your wallet or contact support.');
+                setIsProcessing(false);
               }
-              
-              setIsProcessing(false);
             });
           } catch (error) {
             console.error('Error opening invoice:', error);

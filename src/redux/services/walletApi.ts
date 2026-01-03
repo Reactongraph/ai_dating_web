@@ -176,6 +176,19 @@ export const walletApi = createApi({
       invalidatesTags: ['Wallet', 'WalletTransactions'],
     }),
 
+    // Fail a pending transaction
+    failTransaction: builder.mutation<
+      { success: boolean; data: { transaction: WalletTransaction }; message: string },
+      { transactionId: string; reason?: string }
+    >({
+      query: body => ({
+        url: '/wallet/fail-transaction',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['WalletTransactions'],
+    }),
+
     // Add money directly (for testing)
     addMoneyDirect: builder.mutation<
       CompleteAddMoneyResponse,
@@ -206,6 +219,7 @@ export const {
   useGetTransactionByIdQuery,
   useCreateAddMoneyIntentMutation,
   useCompleteAddMoneyMutation,
+  useFailTransactionMutation,
   useAddMoneyDirectMutation,
   useCreateTelegramStarsInvoiceMutation,
 } = walletApi;
