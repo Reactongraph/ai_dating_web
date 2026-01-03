@@ -265,18 +265,13 @@ function AddMoneyModal({ onClose }: { onClose: () => void }) {
         console.log(`Payment: $${amountInUSD} USD = ${starsAmount} Stars`);
         console.log('Invoice URL:', invoiceUrl);
 
-        // Extract invoice slug from URL (format: https://t.me/$<slug>)
-        // openInvoice expects just the slug without the URL prefix
-        const invoiceSlug = invoiceUrl.replace('https://t.me/', '');
-        console.log('Invoice slug:', invoiceSlug);
-
         // Check if Telegram WebApp is available
         if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
           console.log('Opening invoice in Telegram WebApp...');
           
           try {
             // Use openInvoice method with just the slug (not full URL)
-            window.Telegram.WebApp.openInvoice(invoiceSlug, (status) => {
+            window.Telegram.WebApp.openInvoice(invoiceUrl, (status) => {
               console.log('Payment status:', status);
               
               if (status === 'paid') {
