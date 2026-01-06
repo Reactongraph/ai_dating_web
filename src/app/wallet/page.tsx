@@ -1,9 +1,9 @@
 'use client';
 
-import { useGetWalletQuery, useGetWalletTransactionsQuery, useCreateTelegramStarsInvoiceMutation, useCompleteAddMoneyMutation, useFailTransactionMutation } from '@/redux/services/walletApi';
+import { useGetWalletQuery, useGetWalletTransactionsQuery } from '@/redux/services/walletApi';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import AddMoneyModal from '@/components/modals/AddMoneyModal';
 
 export default function WalletPage() {
   const [showAddMoney, setShowAddMoney] = useState(false);
@@ -41,46 +41,59 @@ export default function WalletPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold">My Wallet</h1>
-          <p className="text-text-secondary mt-1">Manage your balance and transactions</p>
+          <p className="text-text-secondary mt-1">Manage your credits and transactions</p>
         </div>
 
-        {/* Wallet Balance Card */}
+        {/* Wallet Credits Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-6 mb-6 shadow-lg"
         >
           <div className="flex justify-between items-start mb-4">
-            <div>
-              <p className="text-white/80 text-sm mb-1">Available Balance</p>
+            <div className="flex-1">
+              <p className="text-white/80 text-sm mb-1">Available Credits</p>
               {walletLoading ? (
                 <div className="h-10 w-32 bg-white/20 rounded animate-pulse" />
               ) : (
-                <h2 className="text-4xl font-bold text-white">
-                  {formatCurrency(walletData?.data.balance || 0)}
-                </h2>
+                <div>
+                  <h2 className="text-4xl font-bold text-white">{walletData?.data.credits || 0}</h2>
+                  {/* <p className="text-white/60 text-xs mt-1">
+                    Balance: ${walletData?.data.balance?.toFixed(2) || '0.00'}
+                  </p> */}
+                </div>
               )}
             </div>
             <div className="bg-white/20 p-3 rounded-full">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </div>
           </div>
-          
+
           <button
             onClick={() => setShowAddMoney(true)}
             className="w-full bg-white text-primary-600 font-semibold py-3 rounded-lg hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
             </svg>
-            Add Money
+            Add Credits
           </button>
         </motion.div>
 
@@ -121,11 +134,14 @@ export default function WalletPage() {
         {/* Transactions List */}
         <div className="bg-background-elevated rounded-xl p-4">
           <h3 className="text-xl font-semibold mb-4">Transaction History</h3>
-          
+
           {transactionsLoading ? (
             <div className="space-y-3">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center gap-3 p-3 bg-background-primary rounded-lg">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 p-3 bg-background-primary rounded-lg"
+                >
                   <div className="w-10 h-10 bg-white-1a rounded-full animate-pulse" />
                   <div className="flex-1">
                     <div className="h-4 w-32 bg-white-1a rounded animate-pulse mb-2" />
@@ -138,7 +154,12 @@ export default function WalletPage() {
           ) : transactionsData?.data.transactions.length === 0 ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-background-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-8 h-8 text-text-secondary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -151,7 +172,7 @@ export default function WalletPage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {transactionsData?.data.transactions.map((transaction) => (
+              {transactionsData?.data.transactions.map(transaction => (
                 <motion.div
                   key={transaction._id}
                   initial={{ opacity: 0 }}
@@ -164,26 +185,51 @@ export default function WalletPage() {
                     }`}
                   >
                     {transaction.type === 'credit' ? (
-                      <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      <svg
+                        className="w-5 h-5 text-green-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
                       </svg>
                     ) : (
-                      <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                      <svg
+                        className="w-5 h-5 text-red-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M20 12H4"
+                        />
                       </svg>
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{transaction.description}</p>
-                    <p className="text-sm text-text-secondary">{formatDate(transaction.createdAt)}</p>
+                    <p className="text-sm text-text-secondary">
+                      {formatDate(transaction.createdAt)}
+                    </p>
                   </div>
-                  
+
                   <div className="text-right">
                     <p
                       className={`font-semibold ${transaction.type === 'credit' ? 'text-green-500' : 'text-red-500'}`}
                     >
                       {transaction.type === 'credit' ? '+' : '-'}
+                      {transaction.credits} credits
+                    </p>
+                    <p className="text-xs text-text-secondary">
                       {formatCurrency(transaction.amount)}
                     </p>
                     <p className="text-xs text-text-secondary capitalize">{transaction.status}</p>
@@ -197,7 +243,7 @@ export default function WalletPage() {
           {transactionsData && transactionsData.data.pages > 1 && (
             <div className="flex justify-center gap-2 mt-6">
               <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="px-4 py-2 bg-background-primary rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white-1a transition-colors"
               >
@@ -207,7 +253,7 @@ export default function WalletPage() {
                 Page {page} of {transactionsData.data.pages}
               </span>
               <button
-                onClick={() => setPage((p) => Math.min(transactionsData.data.pages, p + 1))}
+                onClick={() => setPage(p => Math.min(transactionsData.data.pages, p + 1))}
                 disabled={page === transactionsData.data.pages}
                 className="px-4 py-2 bg-background-primary rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white-1a transition-colors"
               >
@@ -219,239 +265,7 @@ export default function WalletPage() {
       </div>
 
       {/* Add Money Modal */}
-      {showAddMoney && (
-        <AddMoneyModal onClose={() => setShowAddMoney(false)} />
-      )}
-    </div>
-  );
-}
-
-// Add Money Modal Component
-function AddMoneyModal({ onClose }: { onClose: () => void }) {
-  const [amount, setAmount] = useState('');
-  const [selectedMethod, setSelectedMethod] = useState<string>('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  
-  const [createTelegramStarsInvoice] = useCreateTelegramStarsInvoiceMutation();
-  const [completeAddMoney] = useCompleteAddMoneyMutation();
-  const [failTransaction] = useFailTransactionMutation();
-
-  const paymentMethods = [
-    { id: 'stars', name: 'Telegram Stars', icon: '⭐', available: true },
-    { id: 'upi', name: 'UPI', icon: '💳', available: true },
-    { id: 'card', name: 'Credit/Debit Card', icon: '💳', available: true },
-    { id: 'net_banking', name: 'Net Banking', icon: '🏦', available: true },
-  ];
-
-  const handleSubmit = async () => {
-    if (!amount || !selectedMethod || parseFloat(amount) <= 0) return;
-
-    setIsProcessing(true);
-
-    try {
-      if (selectedMethod === 'stars') {
-        // Telegram Stars payment flow
-        // Convert amount to USD (amount is entered in USD by user)
-        const amountInUSD = parseFloat(amount);
-        
-        const response = await createTelegramStarsInvoice({
-          amount: amountInUSD,
-        }).unwrap();
-
-        const invoiceUrl = response.data.invoiceUrl;
-        const transactionId = response.data.transactionId;
-        const starsAmount = response.data.starsAmount || 0;
-
-        console.log(`Payment: $${amountInUSD} USD = ${starsAmount} Stars`);
-        console.log('Invoice URL:', invoiceUrl);
-
-        // Check if Telegram WebApp is available
-        if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-          console.log('Opening invoice in Telegram WebApp...');
-          
-          try {
-            // Use openInvoice method with just the slug (not full URL)
-            window.Telegram.WebApp.openInvoice(invoiceUrl, (status) => {
-              console.log('Payment status:', status);
-              
-              if (status === 'paid') {
-                // Payment successful, complete the transaction
-                completeAddMoney({
-                  transactionId,
-                }).unwrap()
-                  .then(() => {
-                    alert('Payment successful! Your wallet has been updated.');
-                    onClose();
-                  })
-                  .catch((error) => {
-                    console.error('Error completing payment:', error);
-                    alert('Payment verification failed. Please contact support.');
-                  })
-                  .finally(() => {
-                    setIsProcessing(false);
-                  });
-              } else if (status === 'cancelled') {
-                // Mark transaction as failed
-                failTransaction({
-                  transactionId,
-                  reason: 'Payment cancelled by user',
-                }).catch((error) => {
-                  console.error('Error marking transaction as cancelled:', error);
-                });
-                alert('Payment was cancelled.');
-                setIsProcessing(false);
-              } else if (status === 'failed') {
-                // Mark transaction as failed
-                failTransaction({
-                  transactionId,
-                  reason: 'Payment failed',
-                }).catch((error) => {
-                  console.error('Error marking transaction as failed:', error);
-                });
-                alert('Payment failed. Please try again.');
-                setIsProcessing(false);
-              } else {
-                // Handle any other status
-                console.warn('Unknown payment status:', status);
-                alert('Payment status unknown. Please check your wallet or contact support.');
-                setIsProcessing(false);
-              }
-            });
-          } catch (error) {
-            console.error('Error opening invoice:', error);
-            // Fallback to opening as Telegram link
-            window.Telegram.WebApp.openTelegramLink(invoiceUrl);
-            alert('Invoice opened. Please complete the payment. Your wallet will be updated automatically.');
-            setIsProcessing(false);
-            onClose();
-          }
-        } else {
-          console.log('Telegram WebApp not available, opening in browser...');
-          // Fallback: open in browser
-          window.open(invoiceUrl, '_blank');
-          alert('Please complete the payment in the opened window. Your wallet will be updated automatically.');
-          onClose();
-          setIsProcessing(false);
-        }
-      } else {
-        // Other payment methods (coming soon)
-        alert(`${paymentMethods.find(m => m.id === selectedMethod)?.name} integration coming soon!`);
-        setIsProcessing(false);
-        onClose();
-      }
-    } catch (error: any) {
-      console.error('Payment error:', error);
-      alert(error?.data?.message || 'Failed to process payment. Please try again.');
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 pb-24">
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-background-elevated rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto relative z-[10000] mb-4"
-      >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Add Money</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white-1a rounded-lg transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Enter Amount</label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-semibold text-text-secondary">$</span>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              className="w-full bg-background-primary border border-white-1a rounded-lg pl-10 pr-4 py-3 text-xl font-semibold focus:outline-none focus:border-primary-500"
-            />
-          </div>
-          <div className="flex gap-2 mt-3">
-            {[10, 25, 50, 100].map((preset) => (
-              <button
-                key={preset}
-                onClick={() => setAmount(preset.toString())}
-                className="flex-1 px-3 py-2 bg-background-primary hover:bg-white-1a rounded-lg text-sm font-medium transition-colors"
-              >
-                ${preset}
-              </button>
-            ))}
-          </div>
-          {selectedMethod === 'stars' && amount && parseFloat(amount) > 0 && (
-            <div className="mt-3 p-3 bg-primary-500/10 border border-primary-500/20 rounded-lg">
-              <p className="text-sm text-text-secondary">
-                ⭐ You will pay: <span className="font-semibold text-primary-500">{Math.ceil(parseFloat(amount) * 44.5)} Stars</span>
-              </p>
-              <p className="text-xs text-text-secondary mt-1">
-                Rate: 1 USD = 44.5 Stars (1 Star = 2 INR, 89 INR = 1 USD)
-              </p>
-            </div>
-          )}
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-3">Select Payment Method</label>
-          <div className="space-y-2">
-            {paymentMethods.map((method) => (
-              <button
-                key={method.id}
-                onClick={() => setSelectedMethod(method.id)}
-                disabled={!method.available}
-                className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 transition-all ${
-                  selectedMethod === method.id
-                    ? 'border-primary-500 bg-primary-500/10'
-                    : 'border-white-1a bg-background-primary hover:bg-white-1a'
-                } ${!method.available && 'opacity-50 cursor-not-allowed'}`}
-              >
-                <span className="text-2xl">{method.icon}</span>
-                <span className="font-medium flex-1 text-left">{method.name}</span>
-                {selectedMethod === method.id && (
-                  <svg className="w-5 h-5 text-primary-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <button
-          onClick={handleSubmit}
-          disabled={!amount || !selectedMethod || parseFloat(amount) <= 0 || isProcessing}
-          className="w-full bg-primary-500 text-white font-semibold py-3 rounded-lg hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          {isProcessing ? (
-            <>
-              <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              Processing...
-            </>
-          ) : (
-            'Continue to Payment'
-          )}
-        </button>
-      </motion.div>
+      <AddMoneyModal isOpen={showAddMoney} onClose={() => setShowAddMoney(false)} />
     </div>
   );
 }

@@ -218,7 +218,6 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         return;
       }
 
-
       isProcessingRef.current = true;
       setIsSendingMessage(true);
 
@@ -335,12 +334,21 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         } else {
           throw new Error('Invalid response from bot');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error sending message:', error);
         // Remove the optimistic message on error
         setMessages(prev => prev.filter(msg => msg.id !== userMessage.id));
         setIsTyping(false);
-        showSnackbar('Failed to send message', 'error');
+
+        // Handle specific error codes
+        if (error?.status === 402 || error?.data?.statusCode === 402) {
+          showSnackbar(
+            error?.data?.message || 'Insufficient credits. Please top up your wallet.',
+            'error',
+          );
+        } else {
+          showSnackbar('Failed to send message', 'error');
+        }
       } finally {
         setIsSendingMessage(false);
         isProcessingRef.current = false;
