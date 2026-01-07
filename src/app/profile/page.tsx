@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import LayoutWithoutFooter from '@/components/layouts/LayoutWithoutFooter';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
   useUploadProfilePictureMutation,
 } from '@/redux/services/profileApi';
+import { clearCredentials } from '@/redux/slices/authSlice';
 import { useSnackbar } from '@/providers';
+import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 
 interface ProfileFormData {
@@ -26,7 +28,32 @@ export default function ProfilePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const { showSnackbar } = useSnackbar();
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
+
+  // Helper function to handle logout when user is missing
+  const handleLogout = () => {
+    // Clear Redux credentials
+    dispatch(clearCredentials());
+
+    // Clear localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('userData');
+
+      // Sign out from NextAuth and redirect
+      signOut({
+        redirect: true,
+        callbackUrl: '/',
+      }).catch(err => {
+        console.error('Error signing out:', err);
+        // Fallback: redirect manually if signOut fails
+        if (typeof window !== 'undefined') {
+          window.location.href = '/';
+        }
+      });
+    }
+  };
 
   // Get userId from auth state
   const userId = user?._id || '';
@@ -134,7 +161,8 @@ export default function ProfilePage() {
 
       // Immediately upload the image when file is selected
       if (!userId) {
-        showSnackbar('Please login again.', 'error');
+        showSnackbar('Your session has expired. Redirecting to login...', 'error');
+        handleLogout();
         return;
       }
 
@@ -196,7 +224,8 @@ export default function ProfilePage() {
   // Handle profile update
   const onSubmit = async (data: ProfileFormData) => {
     if (!userId) {
-      showSnackbar(' Please login again.', 'error');
+      showSnackbar('Your session has expired. Redirecting to login...', 'error');
+      handleLogout();
       return;
     }
 
@@ -487,22 +516,40 @@ export default function ProfilePage() {
               {/* Subscription Plan */}
               <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <div className="flex justify-between items-center">
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-sm sm:text-base font-medium">Current Plan</h3>
                     <p className="text-cyan-400">
-                      {profileData?.subscriber?.isPremiumSubscriber
-                        ? 'Premium'
-                        : profileData?.subscriber?.isPlusSubscriber
-                          ? 'Plus'
-                          : 'Free'}
+                      {profileData?.subscriber?.isPremiumSubscriber ? 'Premium' : 'Free'}
                     </p>
+                    {profileData?.subscriptionDetails?.isActive && (
+                      <div className="mt-1 text-xs text-gray-400">
+                        <p>
+                          {profileData.subscriptionDetails.planValidity === 1
+                            ? 'Monthly'
+                            : profileData.subscriptionDetails.planValidity === 6
+                              ? 'Half-Yearly'
+                              : profileData.subscriptionDetails.planValidity === 12
+                                ? 'Annual'
+                                : `${profileData.subscriptionDetails.planValidity} months`}
+                        </p>
+                        <p>
+                          Expires:{' '}
+                          {new Date(
+                            profileData.subscriptionDetails.expiryDate,
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  <button
-                    type="button"
-                    className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-black px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded-md hover:opacity-90 transition-opacity"
-                  >
-                    Upgrade to Premium
-                  </button>
+                  {!profileData?.subscriber?.isPremiumSubscriber && (
+                    <button
+                      type="button"
+                      onClick={() => (window.location.href = '/subscriptions')}
+                      className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-black px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded-md hover:opacity-90 transition-opacity"
+                    >
+                      Upgrade to Premium
+                    </button>
+                  )}
                 </div>
               </div>
 

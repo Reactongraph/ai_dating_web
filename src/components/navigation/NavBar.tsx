@@ -224,7 +224,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                 className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 ${
                   contentMode === 'nsfw' ? 'bg-red-600' : 'bg-green-600'
                 }`}
-                aria-label={`Switch to ${contentMode === 'sfw' ? 'Adult' : 'General22'} mode`}
+                aria-label={`Switch to ${contentMode === 'sfw' ? 'Adult' : 'General'} mode`}
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -235,8 +235,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
               <span
                 className={`text-xs font-medium  sm:block ${contentMode === 'nsfw' ? 'text-red-400' : 'text-gray-400'}`}
               >
-                {/*
-                <svg
+                {/* <svg
                   width="30"
                   height="30"
                   viewBox="0 0 40 40"
@@ -255,18 +254,14 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                         stopColor={contentMode === 'nsfw' ? '#dc2626' : '#4b5563'}
                       />
                     </linearGradient>
-                  </defs>*/}
-                  {/* Outer circle with gradient */}
-                  {/*
+                  </defs>
                   <circle
                     cx="20"
                     cy="20"
                     r="18"
                     fill="url(#eighteenPlusGradient)"
                     opacity={contentMode === 'nsfw' ? '1' : '0.6'}
-                  />*/}
-                  {/* Inner circle for depth */}
-                  {/*
+                  />
                   <circle
                     cx="20"
                     cy="20"
@@ -275,9 +270,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                     stroke="white"
                     strokeWidth="0.5"
                     opacity="0.3"
-                  />*/}
-                  {/* 18+ text */}
-                  {/*
+                  />
                   <text
                     x="20"
                     y="25"
@@ -286,11 +279,10 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                     fontSize="14"
                     fontWeight="bold"
                     fontFamily="Arial, sans-serif"
-                  >
-                    18+
-                  </text>
-                </svg>*/}
+                  > */}
                 Adult
+                {/* </text>
+                </svg> */}
               </span>
             </div>
 

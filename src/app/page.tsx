@@ -8,17 +8,22 @@ import ExperienceAndFAQ from '@/components/home/ExperienceAndFAQ';
 import GlobalLayout from '@/components/layouts/GlobalLayout';
 import { useMobileView } from '@/hooks/useMobileView';
 import MobileHeroCarousel from '@/components/home/MobileHeroCarousel';
+import { useAppSelector } from '@/redux/hooks';
+import { selectContentMode } from '@/redux/slices/contentModeSlice';
 
 export default function Home() {
   const isMobileView = useMobileView();
+  const contentMode = useAppSelector(selectContentMode);
+
   return (
     <GlobalLayout>
       {/* Mobile only content */}
-      {/* {isMobileView && (
+
+      {isMobileView && contentMode === 'nsfw' && (
         <>
           <MobileHeroCarousel />
         </>
-      )} */}
+      )}
 
       {/* Ad Banner test */}
       {/* <AdBanner
@@ -30,19 +35,19 @@ export default function Home() {
 
       {/* Hero Section */}
       {/* {!isMobileView && ( */}
-        <HeroSection
-          title={{
-            main: 'Create your Perfect',
-            highlight: {
-              text: 'AI',
-              color: 'text-primary-500',
-            },
-            rest: ' girlfriend',
-          }}
-          subtitle="From chats to charm — design the AI girlfriend of your dreams."
-          buttonText="Create AI Character"
-          imageSrc="/assets/girlBanner.png"
-        />
+      <HeroSection
+        title={{
+          main: 'Create your Perfect',
+          highlight: {
+            text: 'AI',
+            color: 'text-primary-500',
+          },
+          rest: ' girlfriend',
+        }}
+        subtitle="From chats to charm — design the AI girlfriend of your dreams."
+        buttonText="Create AI Character"
+        imageSrc="/assets/girlBanner.png"
+      />
       {/* )} */}
 
       {/* AI Companions Section */}

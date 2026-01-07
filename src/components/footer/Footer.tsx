@@ -4,12 +4,14 @@ import { usePathname } from 'next/navigation';
 import { FaDiscord, FaXTwitter, FaInstagram, FaReddit } from 'react-icons/fa6';
 import { IoLanguage } from 'react-icons/io5';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 const Footer = () => {
   const pathname = usePathname();
+  const [showComingSoon, setShowComingSoon] = useState(false);
 
   // Routes where bottom navigation should be visible on mobile
-  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat'];
+  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat', '/create-character', '/wallet', '/subscriptions'];
   const isBottomNavPage = bottomNavRoutes.some(route =>
     route === '/' ? pathname === '/' : pathname.startsWith(route),
   );
@@ -18,16 +20,21 @@ const Footer = () => {
     return pathname === path || (path !== '/' && pathname.startsWith(path));
   };
 
+  const handleWalletClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowComingSoon(true);
+    setTimeout(() => setShowComingSoon(false), 2000);
+  };
+
   return (
     <>
       {/* Mobile Bottom Navigation Bar */}
       {isBottomNavPage && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background-primary border-t border-white-1a z-50 px-2 py-2">
-          <div className="flex justify-between items-center max-w-md mx-auto relative">
-            {/* Explore */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background-primary border-t border-white-1a z-50 px-2 py-2 pointer-events-auto">
+          <div className="flex justify-between items-center max-w-md mx-auto relative pointer-events-auto">{/* Explore */}
             <Link
               href="/explore"
-              className={`flex flex-col items-center justify-center w-16 transition-colors ${
+              className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto ${
                 isActive('/explore') ? 'text-primary-500' : 'text-text-secondary'
               }`}
             >
@@ -45,7 +52,7 @@ const Footer = () => {
             {/* Collection */}
             <Link
               href="/collection"
-              className={`flex flex-col items-center justify-center w-16 transition-colors ${
+              className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto ${
                 isActive('/collection') ? 'text-primary-500' : 'text-text-secondary'
               }`}
             >
@@ -61,7 +68,7 @@ const Footer = () => {
             </Link>
 
             {/* Create Avatar (Center) */}
-            <div className="flex flex-col items-center justify-end w-24 h-12 relative pb-1">
+            <div className="flex flex-col items-center justify-end w-24 h-12 relative pb-1 pointer-events-auto">
               <motion.div
                 animate={{
                   scale: [1, 1.1, 1],
@@ -71,11 +78,11 @@ const Footer = () => {
                   repeat: Infinity,
                   ease: 'easeInOut',
                 }}
-                className="absolute -top-8 z-50"
+                className="absolute -top-8 z-50 pointer-events-auto"
               >
                 <Link
                   href="/create-character"
-                  className="flex flex-col items-center justify-center bg-gradient-to-r from-primary-500 to-primary-600 w-14 h-14 rounded-full shadow-[0_0_15px_rgba(59,185,255,0.5)] border-4 border-background-primary transform active:scale-95 transition-transform"
+                  className="flex flex-col items-center justify-center bg-gradient-to-r from-primary-500 to-primary-600 w-14 h-14 rounded-full shadow-[0_0_15px_rgba(59,185,255,0.5)] border-4 border-background-primary transform active:scale-95 transition-transform pointer-events-auto"
                 >
                   <Image
                     src="/assets/wand2.svg"
@@ -96,7 +103,7 @@ const Footer = () => {
                     repeat: Infinity,
                     ease: 'easeOut',
                   }}
-                  className="absolute inset-0 bg-primary-500 rounded-full -z-10"
+                  className="absolute inset-0 bg-primary-500 rounded-full -z-10 pointer-events-none"
                 />
               </motion.div>
               <span className="text-[12px] font-bold text-primary-500 whitespace-nowrap">
@@ -107,7 +114,7 @@ const Footer = () => {
             {/* Chat */}
             <Link
               href="/chat"
-              className={`flex flex-col items-center justify-center w-16 transition-colors ${
+              className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto ${
                 isActive('/chat') ? 'text-primary-500' : 'text-text-secondary'
               }`}
             >
@@ -122,11 +129,11 @@ const Footer = () => {
               <span className="text-[10px] mt-1 font-medium">Chat</span>
             </Link>
 
-            {/* My AI */}
+            {/* Wallet */}
             <Link
-              href="/my-ai"
-              className={`flex flex-col items-center justify-center w-16 transition-colors ${
-                isActive('/my-ai') ? 'text-primary-500' : 'text-text-secondary'
+              href="/wallet"
+              className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto ${
+                isActive('/wallet') ? 'text-primary-500' : 'text-text-secondary'
               }`}
             >
               <div className="relative">
@@ -135,14 +142,39 @@ const Footer = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                   />
                 </svg>
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary-500 rounded-full"></span>
               </div>
-              <span className="text-[10px] mt-1 font-medium">My AI</span>
+              <span className="text-[10px] mt-1 font-medium">Wallet</span>
             </Link>
           </div>
+        </div>
+      )}
+
+      {/* Coming Soon Popup */}
+      {showComingSoon && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            className="bg-gradient-to-br from-secondary-700 to-secondary-800 rounded-2xl p-8 shadow-2xl border border-white-1a max-w-sm mx-4"
+          >
+            <div className="text-center">
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 0.5, repeat: 1 }}
+                className="text-6xl mb-4"
+              >
+                🚀
+              </motion.div>
+              <h3 className="text-2xl font-bold text-white mb-2">Coming Soon!</h3>
+              <p className="text-text-secondary">
+                Wallet feature is under development. Stay tuned!
+              </p>
+            </div>
+          </motion.div>
         </div>
       )}
 

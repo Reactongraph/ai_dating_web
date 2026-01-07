@@ -48,9 +48,14 @@ interface TelegramAuthResponse {
     likeCount?: number;
     subscriber?: {
       isPremiumSubscriber: boolean;
-      isPlusSubscriber: boolean;
-      isBoostSubscriber: boolean;
-      isSuperLikeSubscriber: boolean;
+    };
+    subscriptionDetails?: {
+      planId: string;
+      planValidity: number; // in months
+      startDate: string;
+      expiryDate: string;
+      isActive: boolean;
+      reminderSent: boolean;
     };
     isPremiumSubscriber?: boolean;
     incognitoMode?: boolean;
@@ -84,4 +89,3 @@ export const telegramAuthApi = createApi({
 });
 
 export const { useTelegramLoginMutation } = telegramAuthApi;
-

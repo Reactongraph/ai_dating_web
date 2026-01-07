@@ -5,6 +5,7 @@ import { useMobileView } from '@/hooks/useMobileView';
 import NavBar from '@/components/navigation/NavBar';
 import Sidebar from '@/components/navigation/Sidebar';
 import MobileTopBanner from '@/components/common/MobileTopBanner';
+import Footer from '@/components/footer/Footer';
 
 interface LayoutWithoutFooterProps {
   children: React.ReactNode;
@@ -57,10 +58,13 @@ const LayoutWithoutFooter = ({ children }: LayoutWithoutFooterProps) => {
 
       {/* Main Content Area - No Footer */}
       <main
-        className={`${isBannerVisible ? 'pt-[112px] md:pt-[120px]' : 'pt-18 md:pt-20'} md:pl-16 flex-grow overflow-x-hidden`}
+        className={`${isBannerVisible ? 'pt-[112px] md:pt-[120px]' : 'pt-18 md:pt-20'} md:pl-16 flex-grow overflow-x-hidden ${isMobileView ? 'pb-24' : ''}`}
       >
         {children}
       </main>
+
+      {/* Footer - Mobile Bottom Navigation */}
+      <Footer />
     </div>
   );
 };
