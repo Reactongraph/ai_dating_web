@@ -19,7 +19,17 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Routes where bottom navigation is visible on mobile
-  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat'];
+  const bottomNavRoutes = [
+    '/',
+    '/girls',
+    '/guys',
+    '/collection',
+    '/my-ai',
+    '/explore',
+    '/chat',
+    '/subscriptions',
+    '/wallet',
+  ];
   const isBottomNavPage = bottomNavRoutes.some(route =>
     route === '/' ? pathname === '/' : pathname.startsWith(route),
   );
@@ -52,7 +62,7 @@ const GlobalLayout = ({ children }: GlobalLayoutProps) => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Promotional Top Banner */}
-      <MobileTopBanner />
+      {/* <MobileTopBanner /> */}
 
       {/* Sidebar - Only on desktop */}
       {!isMobileView && (

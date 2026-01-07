@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export interface Wallet {
   balance: number;
+  credits: number;
   currency: string;
   walletId: string;
 }
@@ -13,14 +14,25 @@ export interface WalletTransaction {
   walletId: string;
   type: 'credit' | 'debit';
   amount: number;
+  credits: number;
   currency: string;
   status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
-  paymentMethod?: 'stars' | 'upi' | 'card' | 'credit_card' | 'debit_card' | 'net_banking' | 'wallet' | 'other';
+  paymentMethod?:
+    | 'stars'
+    | 'upi'
+    | 'card'
+    | 'credit_card'
+    | 'debit_card'
+    | 'net_banking'
+    | 'wallet'
+    | 'other';
   description: string;
   orderId?: string;
   paymentGatewayTransactionId?: string;
   balanceBefore: number;
   balanceAfter: number;
+  creditsBefore: number;
+  creditsAfter: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,6 +41,7 @@ export interface WalletResponse {
   success: boolean;
   data: {
     balance: number;
+    credits: number;
     currency: string;
     walletId: string;
   };
@@ -203,7 +216,10 @@ export const walletApi = createApi({
     }),
 
     // Create Telegram Stars invoice
-    createTelegramStarsInvoice: builder.mutation<TelegramStarsInvoiceResponse, TelegramStarsInvoiceRequest>({
+    createTelegramStarsInvoice: builder.mutation<
+      TelegramStarsInvoiceResponse,
+      TelegramStarsInvoiceRequest
+    >({
       query: body => ({
         url: '/wallet/telegram-stars/create-invoice',
         method: 'POST',

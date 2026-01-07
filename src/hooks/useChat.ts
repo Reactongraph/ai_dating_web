@@ -12,6 +12,7 @@ import {
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { selectContentMode } from '@/redux/slices/contentModeSlice';
 import { useSnackbar } from '@/providers';
+import { useRouter } from 'next/navigation';
 
 interface UseChatProps {
   chatId?: string;
@@ -23,6 +24,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
   const messagesRef = useRef<ChatMessage[]>([]);
   const isProcessingRef = useRef(false);
 
@@ -33,6 +35,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   const contentMode = useAppSelector(selectContentMode); // Get contentMode from navbar
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   // Update ref whenever messages change
   useEffect(() => {
@@ -218,7 +221,6 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         return;
       }
 
-
       isProcessingRef.current = true;
       setIsSendingMessage(true);
 
@@ -335,12 +337,28 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
         } else {
           throw new Error('Invalid response from bot');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error sending message:', error);
         // Remove the optimistic message on error
         setMessages(prev => prev.filter(msg => msg.id !== userMessage.id));
         setIsTyping(false);
-        showSnackbar('Failed to send message', 'error');
+
+        // Handle specific error codes
+        if (error?.status === 402 || error?.data?.statusCode === 402) {
+          // Check if user is premium - if so, navigate to wallet, else show subscription modal
+          const isPremiumUser = user?.subscriber?.isPremiumSubscriber || user?.isPremiumSubscriber;
+
+          if (isPremiumUser) {
+            // Premium user - navigate to wallet to add credits
+            router.push('/wallet');
+            showSnackbar('Insufficient credits. Please add more credits to continue.', 'info');
+          } else {
+            // Free user - show modal to subscribe
+            setShowCreditsModal(true);
+          }
+        } else {
+          showSnackbar('Failed to send message', 'error');
+        }
       } finally {
         setIsSendingMessage(false);
         isProcessingRef.current = false;
@@ -451,6 +469,8 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
     isLoadingHistory,
     isSendingMessage,
     isTyping,
+    showCreditsModal,
+    setShowCreditsModal,
     sendMessage: sendChatMessage,
     loadChatHistory,
     markMessagesAsRead,
