@@ -12,6 +12,7 @@ import {
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { selectContentMode } from '@/redux/slices/contentModeSlice';
 import { useSnackbar } from '@/providers';
+import { useRouter } from 'next/navigation';
 
 interface UseChatProps {
   chatId?: string;
@@ -34,6 +35,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   const contentMode = useAppSelector(selectContentMode); // Get contentMode from navbar
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   // Update ref whenever messages change
   useEffect(() => {
@@ -343,7 +345,17 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
         // Handle specific error codes
         if (error?.status === 402 || error?.data?.statusCode === 402) {
-          setShowCreditsModal(true);
+          // Check if user is premium - if so, navigate to wallet, else show subscription modal
+          const isPremiumUser = user?.subscriber?.isPremiumSubscriber || user?.isPremiumSubscriber;
+
+          if (isPremiumUser) {
+            // Premium user - navigate to wallet to add credits
+            router.push('/wallet');
+            showSnackbar('Insufficient credits. Please add more credits to continue.', 'info');
+          } else {
+            // Free user - show modal to subscribe
+            setShowCreditsModal(true);
+          }
         } else {
           showSnackbar('Failed to send message', 'error');
         }

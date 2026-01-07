@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/redux/hooks';
 
 interface InsufficientCreditsModalProps {
   isOpen: boolean;
@@ -13,13 +14,22 @@ export default function InsufficientCreditsModal({
   onClose,
 }: InsufficientCreditsModalProps) {
   const router = useRouter();
+  const user = useAppSelector(state => state.auth.user);
 
   if (!isOpen) return null;
 
   const handleSubscribe = () => {
-    // Get current path to return to after subscription
-    const currentPath = window.location.pathname + window.location.search;
-    router.push(`/subscriptions?returnTo=${encodeURIComponent(currentPath)}`);
+    // Check if user is premium subscriber
+    const isPremiumUser = user?.subscriber?.isPremiumSubscriber || user?.isPremiumSubscriber;
+
+    if (isPremiumUser) {
+      // Premium user - navigate to wallet to add credits
+      router.push('/wallet');
+    } else {
+      // Free user - navigate to subscription page
+      const currentPath = window.location.pathname + window.location.search;
+      router.push(`/subscriptions?returnTo=${encodeURIComponent(currentPath)}`);
+    }
     onClose();
   };
 
@@ -49,8 +59,9 @@ export default function InsufficientCreditsModal({
 
         <h2 className="text-2xl font-bold mb-3 text-white">Insufficient Credits</h2>
         <p className="text-text-secondary mb-8">
-          You don&apos;t have enough credits to send this message. Subscribe to a plan to continue
-          your conversation.
+          {user?.subscriber?.isPremiumSubscriber || user?.isPremiumSubscriber
+            ? 'You don\u2019t have enough credits to send this message. Add more credits to continue your conversation.'
+            : 'You don\u2019t have enough credits to send this message. Subscribe to a plan to continue your conversation.'}
         </p>
 
         <div className="space-y-3">
@@ -58,7 +69,9 @@ export default function InsufficientCreditsModal({
             onClick={handleSubscribe}
             className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary-500/25 active:scale-[0.98]"
           >
-            Subscribe Now
+            {user?.subscriber?.isPremiumSubscriber || user?.isPremiumSubscriber
+              ? 'Add Credits'
+              : 'Subscribe Now'}
           </button>
           <button
             onClick={onClose}

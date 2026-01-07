@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useGetSubscriptionPlansQuery } from '@/redux/services/subscriptionApi';
 import { useCustomSnackbar } from '@/providers/SnackbarProvider';
-import AddMoneyModal from '@/components/modals/AddMoneyModal';
+import SubscriptionPurchaseModal from '@/components/modals/SubscriptionPurchaseModal';
 
 const SubscriptionPage = () => {
   const router = useRouter();
@@ -15,13 +15,12 @@ const SubscriptionPage = () => {
 
   const { data: plansData, isLoading } = useGetSubscriptionPlansQuery();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
-  const [showAddMoney, setShowAddMoney] = useState(false);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const { showSnackbar } = useCustomSnackbar();
 
-  const getSelectedPlanAmount = () => {
-    if (!plansData?.subscriptionPlans || !selectedPlanId) return '';
-    const plan = plansData.subscriptionPlans.find(p => p._id === selectedPlanId);
-    return plan?.planSchedule[0]?.planPrice.toString() || '';
+  const getSelectedPlan = () => {
+    if (!plansData?.subscriptionPlans || !selectedPlanId) return null;
+    return plansData.subscriptionPlans.find(p => p._id === selectedPlanId);
   };
 
   const handleComingSoon = () => {
@@ -251,8 +250,15 @@ const SubscriptionPage = () => {
 
           <div className="space-y-4">
             <button
-              onClick={() => setShowAddMoney(true)}
-              className="w-full h-16 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:opacity-90 transition-all active:scale-[0.98]"
+              onClick={() => {
+                if (!selectedPlanId) {
+                  showSnackbar('Please select a subscription plan', 'warning');
+                  return;
+                }
+                setShowPurchaseModal(true);
+              }}
+              disabled={!selectedPlanId}
+              className="w-full h-16 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="text-black font-black text-xl">Continue</span>
               <div className="bg-white/20 h-8 w-[1px] mx-1" />
@@ -414,20 +420,25 @@ const SubscriptionPage = () => {
           </div>
         </div>
       </div>
-      <AddMoneyModal
-        isOpen={showAddMoney}
-        onClose={() => setShowAddMoney(false)}
-        initialAmount={getSelectedPlanAmount()}
-        initialMethod="stars"
-        onSuccess={() => {
-          setShowAddMoney(false);
-          if (returnTo && returnTo.startsWith('/chat')) {
-            router.push(returnTo);
-          } else {
-            router.push('/'); // Navigate to home page if not coming from chat modal
-          }
-        }}
-      />
+      {getSelectedPlan() && (
+        <SubscriptionPurchaseModal
+          isOpen={showPurchaseModal}
+          onClose={() => setShowPurchaseModal(false)}
+          planId={getSelectedPlan()?._id || ''}
+          planName={getSelectedPlan()?.planName || ''}
+          planPrice={getSelectedPlan()?.planSchedule[0]?.planPrice || 0}
+          planValidity={getSelectedPlan()?.planSchedule[0]?.planValidity || 1}
+          onSuccess={() => {
+            setShowPurchaseModal(false);
+            showSnackbar('Subscription activated successfully! 🎉', 'success');
+            if (returnTo && returnTo.startsWith('/chat')) {
+              router.push(returnTo);
+            } else {
+              router.push('/'); // Navigate to home page if not coming from chat modal
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

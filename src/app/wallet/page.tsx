@@ -181,10 +181,28 @@ export default function WalletPage() {
                 >
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      transaction.type === 'credit' ? 'bg-green-500/20' : 'bg-red-500/20'
+                      transaction.type === 'subscription'
+                        ? 'bg-purple-500/20'
+                        : transaction.type === 'credit'
+                          ? 'bg-green-500/20'
+                          : 'bg-red-500/20'
                     }`}
                   >
-                    {transaction.type === 'credit' ? (
+                    {transaction.type === 'subscription' ? (
+                      <svg
+                        className="w-5 h-5 text-purple-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                        />
+                      </svg>
+                    ) : transaction.type === 'credit' ? (
                       <svg
                         className="w-5 h-5 text-green-500"
                         fill="none"
@@ -223,16 +241,32 @@ export default function WalletPage() {
                   </div>
 
                   <div className="text-right">
-                    <p
-                      className={`font-semibold ${transaction.type === 'credit' ? 'text-green-500' : 'text-red-500'}`}
-                    >
-                      {transaction.type === 'credit' ? '+' : '-'}
-                      {transaction.credits} credits
-                    </p>
-                    <p className="text-xs text-text-secondary">
-                      {formatCurrency(transaction.amount)}
-                    </p>
-                    <p className="text-xs text-text-secondary capitalize">{transaction.status}</p>
+                    {transaction.type === 'subscription' ? (
+                      <>
+                        <p className="font-semibold text-purple-500">Subscription</p>
+                        <p className="text-xs text-text-secondary">
+                          {formatCurrency(transaction.amount)}
+                        </p>
+                        <p className="text-xs text-text-secondary capitalize">
+                          {transaction.status}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p
+                          className={`font-semibold ${transaction.type === 'credit' ? 'text-green-500' : 'text-red-500'}`}
+                        >
+                          {transaction.type === 'credit' ? '+' : '-'}
+                          {transaction.credits} credits
+                        </p>
+                        <p className="text-xs text-text-secondary">
+                          {formatCurrency(transaction.amount)}
+                        </p>
+                        <p className="text-xs text-text-secondary capitalize">
+                          {transaction.status}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </motion.div>
               ))}

@@ -6,7 +6,7 @@ import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { clearCredentials } from '@/redux/slices/authSlice';
 import { useSnackbar } from '@/providers';
 import { signOut } from 'next-auth/react';
-import { RiVipCrownFill } from 'react-icons/ri';
+import { RiVipCrownFill, RiWallet3Fill } from 'react-icons/ri';
 
 interface DropdownOption {
   icon: React.ReactNode;
@@ -91,6 +91,8 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick, onSignupClick }: UserDrop
   };
 
   // Different options based on authentication status
+  const isPremiumUser = user?.subscriber?.isPremiumSubscriber || user?.isPremiumSubscriber;
+
   const options: DropdownOption[] =
     isAuthenticated && user
       ? [
@@ -104,13 +106,22 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick, onSignupClick }: UserDrop
           //   label: 'Account Settings',
           //   href: '/account-settings',
           // },
-          {
-            icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
-            label: 'Subscription',
-            href: '/subscriptions',
-            highlight: true,
-            badge: user?.subscriber?.isPremiumSubscriber ? 'PREMIUM' : '70%',
-          },
+          // Premium users see Wallet, Free users see Subscription
+          isPremiumUser
+            ? {
+                icon: <RiWallet3Fill className="w-5 h-5 text-green-400" />,
+                label: 'Wallet',
+                href: '/wallet',
+                highlight: true,
+                badge: 'PREMIUM',
+              }
+            : {
+                icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
+                label: 'Subscription',
+                href: '/subscriptions',
+                highlight: true,
+                badge: '70%',
+              },
           {
             icon: <FiLogOut className="w-5 h-5" />,
             label: 'Logout',

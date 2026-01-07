@@ -117,29 +117,31 @@ export default function AddMoneyModal({
           onClose();
           setIsProcessing(false);
         }
-      } else if (selectedMethod === 'upi') {
-        const amountInUSD = parseFloat(amount);
-        const intentResponse = await createAddMoneyIntent({
-          amount: amountInUSD,
-          paymentMethod: 'upi',
-        }).unwrap();
+      }
+      //  else if (selectedMethod === 'upi') {
+      //   const amountInUSD = parseFloat(amount);
+      //   const intentResponse = await createAddMoneyIntent({
+      //     amount: amountInUSD,
+      //     paymentMethod: 'upi',
+      //   }).unwrap();
 
-        const transactionId = intentResponse.data.transactionId;
+      //   const transactionId = intentResponse.data.transactionId;
 
-        await completeAddMoney({
-          transactionId,
-          paymentGatewayTransactionId: `SIMULATED_UPI_${Date.now()}`,
-          paymentGatewayResponse: { method: 'upi', status: 'success', simulated: true },
-        }).unwrap();
+      //   await completeAddMoney({
+      //     transactionId,
+      //     paymentGatewayTransactionId: `SIMULATED_UPI_${Date.now()}`,
+      //     paymentGatewayResponse: { method: 'upi', status: 'success', simulated: true },
+      //   }).unwrap();
 
-        showSnackbar('Money added successfully via UPI!', 'success');
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          onClose();
-        }
-        setIsProcessing(false);
-      } else {
+      //   showSnackbar('Money added successfully via UPI!', 'success');
+      //   if (onSuccess) {
+      //     onSuccess();
+      //   } else {
+      //     onClose();
+      //   }
+      //   setIsProcessing(false);
+      // }
+      else {
         showSnackbar(
           `${paymentMethods.find(m => m.id === selectedMethod)?.name} integration coming soon!`,
           'info',

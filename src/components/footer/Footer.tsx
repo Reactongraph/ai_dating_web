@@ -11,7 +11,7 @@ const Footer = () => {
   const [showComingSoon, setShowComingSoon] = useState(false);
 
   // Routes where bottom navigation should be visible on mobile
-  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat', '/create-character', '/wallet'];
+  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat', '/create-character', '/wallet', '/subscriptions'];
   const isBottomNavPage = bottomNavRoutes.some(route =>
     route === '/' ? pathname === '/' : pathname.startsWith(route),
   );
