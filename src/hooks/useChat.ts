@@ -23,6 +23,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
   const messagesRef = useRef<ChatMessage[]>([]);
   const isProcessingRef = useRef(false);
 
@@ -342,10 +343,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
         // Handle specific error codes
         if (error?.status === 402 || error?.data?.statusCode === 402) {
-          showSnackbar(
-            error?.data?.message || 'Insufficient credits. Please top up your wallet.',
-            'error',
-          );
+          setShowCreditsModal(true);
         } else {
           showSnackbar('Failed to send message', 'error');
         }
@@ -459,6 +457,8 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
     isLoadingHistory,
     isSendingMessage,
     isTyping,
+    showCreditsModal,
+    setShowCreditsModal,
     sendMessage: sendChatMessage,
     loadChatHistory,
     markMessagesAsRead,

@@ -3,11 +3,16 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useGetSubscriptionPlansQuery } from '@/redux/services/subscriptionApi';
 import { useCustomSnackbar } from '@/providers/SnackbarProvider';
 import AddMoneyModal from '@/components/modals/AddMoneyModal';
 
 const SubscriptionPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
+
   const { data: plansData, isLoading } = useGetSubscriptionPlansQuery();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [showAddMoney, setShowAddMoney] = useState(false);
@@ -413,6 +418,15 @@ const SubscriptionPage = () => {
         isOpen={showAddMoney}
         onClose={() => setShowAddMoney(false)}
         initialAmount={getSelectedPlanAmount()}
+        initialMethod="stars"
+        onSuccess={() => {
+          setShowAddMoney(false);
+          if (returnTo && returnTo.startsWith('/chat')) {
+            router.push(returnTo);
+          } else {
+            router.push('/'); // Navigate to home page if not coming from chat modal
+          }
+        }}
       />
     </div>
   );

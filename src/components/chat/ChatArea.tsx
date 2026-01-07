@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Chat } from '@/types/chat';
 import { useChat } from '@/hooks/useChat';
 import { useGetChatSuggestionsQuery, SuggestionContext } from '@/redux/services/chatApi';
+import InsufficientCreditsModal from '@/components/modals/InsufficientCreditsModal';
 
 interface ChatAreaProps {
   chat: Chat | null;
@@ -19,12 +20,20 @@ const ChatArea: React.FC<ChatAreaProps> = ({ chat, privacyMessage, onQuickSugges
   const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([]);
   const [clickedSuggestion, setClickedSuggestion] = useState<string | undefined>();
 
-  const { messages, isLoadingHistory, isSendingMessage, isTyping, sendMessage, historyError } =
-    useChat({
-      chatId: chat?.id,
-      botId: chat?.user.id,
-      channelName: chat?.channelName,
-    });
+  const {
+    messages,
+    isLoadingHistory,
+    isSendingMessage,
+    isTyping,
+    sendMessage,
+    historyError,
+    showCreditsModal,
+    setShowCreditsModal,
+  } = useChat({
+    chatId: chat?.id,
+    botId: chat?.user.id,
+    channelName: chat?.channelName,
+  });
 
   // Track if initial load is complete
   const initialLoadDoneRef = useRef<boolean>(false);
@@ -427,6 +436,12 @@ const ChatArea: React.FC<ChatAreaProps> = ({ chat, privacyMessage, onQuickSugges
           />
         </div>
       )}
+
+      {/* Insufficient Credits Modal */}
+      <InsufficientCreditsModal
+        isOpen={showCreditsModal}
+        onClose={() => setShowCreditsModal(false)}
+      />
     </div>
   );
 };

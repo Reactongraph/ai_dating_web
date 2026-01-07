@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { clearCredentials } from '@/redux/slices/authSlice';
 import { useSnackbar } from '@/providers';
 import { signOut } from 'next-auth/react';
+import { RiVipCrownFill } from 'react-icons/ri';
 
 interface DropdownOption {
   icon: React.ReactNode;
@@ -103,13 +104,13 @@ const UserDropdown = ({ isOpen, onClose, onLoginClick, onSignupClick }: UserDrop
           //   label: 'Account Settings',
           //   href: '/account-settings',
           // },
-          // {
-          //   icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
-          //   label: 'Subscription',
-          //   href: '/subscription',
-          //   highlight: true,
-          //   badge: user.subscriber?.isPremiumSubscriber ? 'PREMIUM' : '70%',
-          // },
+          {
+            icon: <RiVipCrownFill className="w-5 h-5 text-yellow-400" />,
+            label: 'Subscription',
+            href: '/subscriptions',
+            highlight: true,
+            badge: user?.subscriber?.isPremiumSubscriber ? 'PREMIUM' : '70%',
+          },
           {
             icon: <FiLogOut className="w-5 h-5" />,
             label: 'Logout',

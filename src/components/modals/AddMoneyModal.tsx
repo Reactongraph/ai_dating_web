@@ -14,11 +14,19 @@ interface AddMoneyModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialAmount?: string;
+  initialMethod?: string;
+  onSuccess?: () => void;
 }
 
-export default function AddMoneyModal({ isOpen, onClose, initialAmount }: AddMoneyModalProps) {
+export default function AddMoneyModal({
+  isOpen,
+  onClose,
+  initialAmount,
+  initialMethod,
+  onSuccess,
+}: AddMoneyModalProps) {
   const [amount, setAmount] = useState(initialAmount || '');
-  const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [selectedMethod, setSelectedMethod] = useState<string>(initialMethod || '');
   const [isProcessing, setIsProcessing] = useState(false);
 
   const { showSnackbar } = useCustomSnackbar();
@@ -33,6 +41,12 @@ export default function AddMoneyModal({ isOpen, onClose, initialAmount }: AddMon
       setAmount(initialAmount);
     }
   }, [initialAmount]);
+
+  useEffect(() => {
+    if (initialMethod) {
+      setSelectedMethod(initialMethod);
+    }
+  }, [initialMethod]);
 
   const paymentMethods = [
     { id: 'stars', name: 'Telegram Stars', icon: '⭐', available: true },
@@ -70,7 +84,11 @@ export default function AddMoneyModal({ isOpen, onClose, initialAmount }: AddMon
                   .unwrap()
                   .then(() => {
                     showSnackbar('Payment successful! Your wallet has been updated.', 'success');
-                    onClose();
+                    if (onSuccess) {
+                      onSuccess();
+                    } else {
+                      onClose();
+                    }
                   })
                   .catch(error => {
                     console.error('Error completing payment:', error);
@@ -115,10 +133,17 @@ export default function AddMoneyModal({ isOpen, onClose, initialAmount }: AddMon
         }).unwrap();
 
         showSnackbar('Money added successfully via UPI!', 'success');
-        onClose();
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          onClose();
+        }
         setIsProcessing(false);
       } else {
-        showSnackbar(`${paymentMethods.find(m => m.id === selectedMethod)?.name} integration coming soon!`, 'info');
+        showSnackbar(
+          `${paymentMethods.find(m => m.id === selectedMethod)?.name} integration coming soon!`,
+          'info',
+        );
         setIsProcessing(false);
       }
     } catch (error: any) {
@@ -254,4 +279,3 @@ export default function AddMoneyModal({ isOpen, onClose, initialAmount }: AddMon
     </div>
   );
 }
-
