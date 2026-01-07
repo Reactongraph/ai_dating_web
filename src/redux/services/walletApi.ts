@@ -12,11 +12,11 @@ export interface WalletTransaction {
   transactionId: string;
   userId: string;
   walletId: string;
-  type: 'credit' | 'debit';
+  type: 'credit' | 'debit' | 'subscription';
   amount: number;
   credits: number;
   currency: string;
-  status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
+  status: 'pending' | 'completed' | 'success' | 'failed' | 'cancelled' | 'refunded';
   paymentMethod?:
     | 'stars'
     | 'upi'
