@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -17,6 +17,9 @@ const SubscriptionPage = () => {
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const { showSnackbar } = useCustomSnackbar();
+
+  // Timer state - time remaining in seconds
+  const [timeRemaining, setTimeRemaining] = useState<number>(0);
 
   const getSelectedPlan = () => {
     if (!plansData?.subscriptionPlans || !selectedPlanId) return null;
@@ -47,6 +50,70 @@ const SubscriptionPage = () => {
       setSelectedPlanId(bestPlan._id);
     }
   }, [plansData, selectedPlanId]);
+
+  // Initialize and run 2-day countdown timer
+  useEffect(() => {
+    const TIMER_DURATION = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
+    const STORAGE_KEY = 'subscription_timer_end';
+
+    // Get or set the timer end time
+    const getEndTime = () => {
+      if (typeof window === 'undefined') return Date.now() + TIMER_DURATION;
+
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const endTime = parseInt(stored, 10);
+        // Check if timer has expired
+        if (endTime > Date.now()) {
+          return endTime;
+        }
+      }
+      // Set new timer
+      const newEndTime = Date.now() + TIMER_DURATION;
+      localStorage.setItem(STORAGE_KEY, newEndTime.toString());
+      return newEndTime;
+    };
+
+    const endTime = getEndTime();
+
+    // Update timer every second
+    const updateTimer = () => {
+      const now = Date.now();
+      const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+
+      if (remaining === 0) {
+        // Timer expired, reset for another 2 days
+        const newEndTime = Date.now() + TIMER_DURATION;
+        localStorage.setItem(STORAGE_KEY, newEndTime.toString());
+        setTimeRemaining(Math.floor(TIMER_DURATION / 1000));
+      } else {
+        setTimeRemaining(remaining);
+      }
+    };
+
+    // Initial update
+    updateTimer();
+
+    // Set up interval
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Format time for display
+  const getFormattedTime = () => {
+    const hours = Math.floor(timeRemaining / 3600);
+    const minutes = Math.floor((timeRemaining % 3600) / 60);
+    const seconds = timeRemaining % 60;
+
+    return {
+      hours: hours.toString().padStart(2, '0'),
+      minutes: minutes.toString().padStart(2, '0'),
+      seconds: seconds.toString().padStart(2, '0'),
+    };
+  };
+
+  const formattedTime = getFormattedTime();
 
   return (
     <div className="min-h-screen bg-black text-white pb-20 overflow-x-hidden">
@@ -103,7 +170,7 @@ const SubscriptionPage = () => {
 
         {/* Timer UI */}
         <div className="flex justify-center md:justify-center gap-2 mb-8">
-          {['00', '00', '00'].map((val, i) => (
+          {[formattedTime.hours, formattedTime.minutes, formattedTime.seconds].map((val, i) => (
             <div key={i} className="flex items-center gap-2">
               <div className="bg-background-elevated border border-white-1a rounded-md px-3 py-2 font-mono font-bold text-xl md:text-2xl min-w-[50px] md:min-w-[60px] text-center">
                 {val}
@@ -166,43 +233,29 @@ const SubscriptionPage = () => {
                         )}
                       </div>
 
-                      {/* Price and Per Month in One Line */}
+                      {/* Price and Credits in One Row */}
                       <div className="mb-3">
-                        <div className="flex items-center justify-center gap-2 flex-wrap">
+                        <div className="flex items-center justify-center gap-1.5 flex-wrap">
                           {originalPrice && (
-                            <span className="text-gray-500 line-through text-sm">
+                            <span className="text-gray-500 line-through text-xs sm:text-sm whitespace-nowrap">
                               ${originalPrice}
                             </span>
                           )}
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-2xl md:text-3xl font-black text-white">
+                          <div className="flex items-baseline gap-1 whitespace-nowrap">
+                            <span className="text-xl sm:text-2xl md:text-3xl font-black text-white">
                               ${schedule.perMonthPlanPrice}
                             </span>
-                            <span className="text-gray-400 text-xs font-medium">/month</span>
+                            <span className="text-gray-400 text-[10px] sm:text-xs font-medium">
+                              /month
+                            </span>
+                            {schedule.credits > 0 && (
+                              <p className="text-yellow-400 text-[10px] sm:text-xs font-semibold ml-1">
+                                {schedule.credits} Credits
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>
-
-                      {/* Credits Info */}
-                      {schedule.credits > 0 && (
-                        <div className="mb-2 flex items-center justify-center gap-1.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-3 py-1.5 rounded-full border border-yellow-500/30">
-                          <svg
-                            className="w-4 h-4 text-yellow-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                            <path
-                              fillRule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          <span className="text-yellow-400 text-xs font-bold">
-                            {schedule.credits} Credits
-                          </span>
-                        </div>
-                      )}
                     </div>
 
                     {/* Buy Buttons - In a Row */}
