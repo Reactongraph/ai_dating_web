@@ -26,14 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background-primary`}
       >
         {/* Telegram WebApp SDK - Load before interactive to ensure it's available early */}
-        <Script
-          src="https://telegram.org/js/telegram-web-app.js"
-          strategy="beforeInteractive"
-        />
+        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
         <RootProvider>{children}</RootProvider>
       </body>
     </html>
