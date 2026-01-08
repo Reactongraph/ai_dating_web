@@ -2,8 +2,40 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { selectContentMode } from '@/redux/slices/contentModeSlice';
+import { useAppSelector } from '@/redux/hooks';
 
-const carouselItems = [
+const carouselItemsSfw = [
+  {
+    video: '/assets/videos/sfw4.mp4',
+    title: 'NEW YEAR DEALS',
+    subtitle: '70% EXTRA BONUS',
+  },
+  {
+    video: '/assets/videos/sfw2.mp4',
+    title: 'XMAS OFFERS',
+    subtitle: '50% FREE CHIPS',
+  },
+
+  {
+    video: '/assets/videos/sfw3.mp4',
+    title: 'EXCLUSIVE GIFTS',
+    subtitle: 'FOR NEW USERS',
+  },
+
+  {
+    video: '/assets/videos/video5.mp4',
+    title: 'HOLIDAY MAGIC',
+    subtitle: 'JOIN THE FUN',
+  },
+  {
+    video: '/assets/videos/video6.mp4',
+    title: 'SECRET SANTA',
+    subtitle: 'GET YOUR GIFT',
+  },
+];
+
+const carouselItemsNsfw = [
   {
     video: '/assets/videos/video1.mp4',
     title: 'NEW YEAR DEALS',
@@ -44,6 +76,8 @@ const carouselItems = [
 
 const MobileHeroCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const contentMode = useAppSelector(selectContentMode);
+  const carouselItems = contentMode === 'sfw' ? carouselItemsSfw : carouselItemsNsfw;
 
   useEffect(() => {
     const timer = setInterval(() => {
