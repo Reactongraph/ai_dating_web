@@ -57,7 +57,9 @@ export default function WalletPage() {
                 <div className="h-10 w-32 bg-white/20 rounded animate-pulse" />
               ) : (
                 <div>
-                  <h2 className="text-4xl font-bold text-white">{walletData?.data.credits || 0}</h2>
+                  <h2 className="text-4xl font-bold text-white">
+                    {(walletData?.data.credits || 0).toFixed(4)}
+                  </h2>
                   {/* <p className="text-white/60 text-xs mt-1">
                     Balance: ${walletData?.data.balance?.toFixed(2) || '0.00'}
                   </p> */}

@@ -51,7 +51,7 @@ const SubscriptionPage = () => {
   return (
     <div className="min-h-screen bg-black text-white pb-20 overflow-x-hidden">
       {/* Hero Section */}
-      <div className="relative pt-16 pb-10 px-6 text-center overflow-hidden">
+      {/* <div className="relative pt-16 pb-10 px-6 text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/20 via-black to-black -z-10" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[400px] bg-[radial-gradient(circle_at_center,rgba(59,185,255,0.15)_0%,transparent_70%)] -z-10" />
 
@@ -71,7 +71,6 @@ const SubscriptionPage = () => {
           Get started with confidence and full control over your plan.
         </motion.p>
 
-        {/* Character Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -86,11 +85,11 @@ const SubscriptionPage = () => {
               className="object-contain"
               priority
             />
-            {/* Gradient Overlay for image transition */}
+
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-full w-full" />
           </div>
         </motion.div>
-      </div>
+      </div> */}
 
       <div className="max-w-5xl mx-auto px-5">
         <div className="text-center mb-10">
@@ -120,7 +119,7 @@ const SubscriptionPage = () => {
             ? [1, 2, 3].map(i => (
                 <div
                   key={i}
-                  className="h-32 md:h-48 bg-background-elevated rounded-2xl animate-pulse border border-white-1a"
+                  className="h-96 bg-background-elevated rounded-2xl animate-pulse border border-white-1a"
                 />
               ))
             : plansData?.subscriptionPlans.map(plan => {
@@ -132,21 +131,31 @@ const SubscriptionPage = () => {
                 return (
                   <motion.div
                     key={plan._id}
-                    onClick={() => setSelectedPlanId(plan._id)}
-                    className={`relative cursor-pointer transition-all duration-300 flex flex-col justify-center ${
+                    whileHover={{ y: -5 }}
+                    className={`relative transition-all duration-500 flex flex-col ${
                       isSelected
-                        ? 'bg-gradient-to-b from-cyan-500/10 via-background-elevated to-purple-500/10 border-cyan-500 md:scale-105 z-10'
-                        : 'bg-background-elevated border-white-1a hover:border-white-1a/30'
-                    } border-2 rounded-2xl p-6 overflow-hidden min-h-[140px] md:min-h-[180px]`}
+                        ? 'bg-gradient-to-br from-cyan-600/30 via-background-elevated to-purple-600/30 border-cyan-400 shadow-[0_0_40px_rgba(34,211,238,0.3)] md:scale-105 z-10'
+                        : 'bg-white/5 backdrop-blur-md border-white-1a hover:border-white/20 hover:bg-white/[0.08]'
+                    } border-2 rounded-[2rem] p-6 overflow-hidden group`}
                   >
+                    {isSelected && (
+                      <>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/20 blur-[50px] -mr-16 -mt-16" />
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/20 blur-[50px] -ml-16 -mb-16" />
+                      </>
+                    )}
                     {isBestSeller && (
                       <div className="absolute top-0 left-0 bg-cyan-500 text-black text-[10px] font-black px-4 py-1 rounded-br-xl uppercase">
                         Best Seller
                       </div>
                     )}
 
-                    <div className="flex flex-col md:items-center text-center">
-                      <div className="mb-2">
+                    <div
+                      onClick={() => setSelectedPlanId(plan._id)}
+                      className="flex flex-col md:items-center text-center cursor-pointer flex-grow"
+                    >
+                      {/* Plan Duration and Discount */}
+                      <div className="mb-3">
                         <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
                           {getDurationText(schedule.planValidity)}
                         </h3>
@@ -157,31 +166,96 @@ const SubscriptionPage = () => {
                         )}
                       </div>
 
-                      <div className="mt-2">
-                        <div className="flex items-center justify-start md:justify-center gap-2">
+                      {/* Price and Per Month in One Line */}
+                      <div className="mb-3">
+                        <div className="flex items-center justify-center gap-2 flex-wrap">
                           {originalPrice && (
                             <span className="text-gray-500 line-through text-sm">
                               ${originalPrice}
                             </span>
                           )}
-                          <div className="flex items-baseline text-white">
-                            <span className="text-2xl md:text-3xl font-black">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-2xl md:text-3xl font-black text-white">
                               ${schedule.perMonthPlanPrice}
                             </span>
+                            <span className="text-gray-400 text-xs font-medium">/month</span>
                           </div>
                         </div>
-                        <p className="text-gray-500 text-[10px] font-bold uppercase tracking-tighter">
-                          per month
-                        </p>
                       </div>
+
+                      {/* Credits Info */}
+                      {schedule.credits > 0 && (
+                        <div className="mb-2 flex items-center justify-center gap-1.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-3 py-1.5 rounded-full border border-yellow-500/30">
+                          <svg
+                            className="w-4 h-4 text-yellow-400"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span className="text-yellow-400 text-xs font-bold">
+                            {schedule.credits} Credits
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Buy Buttons - In a Row */}
+                    <div className="flex gap-2 mt-4">
+                      {/* Stars Button - Primary */}
+                      <button
+                        onClick={() => {
+                          setSelectedPlanId(plan._id);
+                          setShowPurchaseModal(true);
+                        }}
+                        className="flex-1 h-12 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl flex flex-col items-center justify-center shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:opacity-90 transition-all active:scale-[0.98]"
+                      >
+                        <span className="text-black font-black text-lg">⭐</span>
+                        <span className="text-black font-bold text-[9px] uppercase">Stars</span>
+                      </button>
+
+                      {/* UPI Button */}
+                      <button
+                        onClick={() => {
+                          setSelectedPlanId(plan._id);
+                          handleComingSoon();
+                        }}
+                        className="flex-1 h-12 bg-background-elevated border border-white-1a rounded-xl flex flex-col items-center justify-center hover:bg-white/5 transition-all"
+                      >
+                        <span className="text-white italic font-bold text-sm tracking-tighter">
+                          UPI
+                        </span>
+                        <span className="text-gray-400 font-medium text-[8px] uppercase">
+                          Payment
+                        </span>
+                      </button>
+
+                      {/* Card Button */}
+                      <button
+                        onClick={() => {
+                          setSelectedPlanId(plan._id);
+                          handleComingSoon();
+                        }}
+                        className="flex-1 h-12 bg-background-elevated border border-white-1a rounded-xl flex flex-col items-center justify-center gap-1 hover:bg-white/5 transition-all"
+                      >
+                        <div className="w-8 h-5 bg-white rounded-sm flex items-center justify-center">
+                          <span className="text-blue-800 font-black text-[8px]">VISA</span>
+                        </div>
+                        <span className="text-gray-400 font-medium text-[8px] uppercase">Card</span>
+                      </button>
                     </div>
                   </motion.div>
                 );
               })}
         </div>
 
-        {/* Info Rows and Action Buttons Side by Side on Desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-12">
+        {/* Info Rows and Security Badges */}
+        <div className="max-w-2xl mx-auto mb-12">
           <div className="space-y-6">
             <div className="space-y-4 px-1">
               <div className="flex items-center gap-3">
@@ -214,8 +288,8 @@ const SubscriptionPage = () => {
               </div>
             </div>
 
-            {/* Security Badges Integrated Here for Desktop */}
-            <div className="flex items-center gap-8 py-6 border-y border-white-1a">
+            {/* Security Badges */}
+            <div className="flex items-center justify-center gap-8 py-6 border-y border-white-1a">
               <div className="text-center">
                 <p className="text-gray-500 text-[8px] font-black uppercase mb-1">Verified By</p>
                 <div className="text-white font-black text-sm italic tracking-tighter">VISA</div>
@@ -246,77 +320,9 @@ const SubscriptionPage = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-4">
-            <button
-              onClick={() => {
-                if (!selectedPlanId) {
-                  showSnackbar('Please select a subscription plan', 'warning');
-                  return;
-                }
-                setShowPurchaseModal(true);
-              }}
-              disabled={!selectedPlanId}
-              className="w-full h-16 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="text-black font-black text-xl">Continue</span>
-              <div className="bg-white/20 h-8 w-[1px] mx-1" />
-              <div className="flex items-center gap-2">
-                <span className="text-black font-black text-2xl tracking-tighter">⭐ Stars</span>
-              </div>
-            </button>
-
-            <button
-              onClick={handleComingSoon}
-              className="w-full h-14 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
-            >
-              <span className="text-white font-bold text-sm">Continue with</span>
-              <div className="flex items-center gap-1">
-                <span className="text-white italic font-black text-xl tracking-tighter">UPI</span>
-                <div className="w-4 h-4 bg-orange-500 rounded-sm rotate-45 flex items-center justify-center -ml-1">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                </div>
-              </div>
-            </button>
-
-            <div className="flex gap-3">
-              <button
-                onClick={handleComingSoon}
-                className="flex-[2] h-14 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
-              >
-                <span className="text-white font-bold text-sm">Continue with</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-6 bg-white rounded-sm flex items-center justify-center">
-                    <span className="text-blue-800 font-black text-[10px]">VISA</span>
-                  </div>
-                  <div className="w-10 h-6 bg-white rounded-sm flex items-center justify-center">
-                    <div className="flex -space-x-2">
-                      <div className="w-4 h-4 bg-red-500 rounded-full" />
-                      <div className="w-4 h-4 bg-orange-500 rounded-full" />
-                    </div>
-                  </div>
-                </div>
-              </button>
-              <button
-                onClick={handleComingSoon}
-                className="flex-1 h-14 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
-              >
-                <div className="flex -space-x-1.5">
-                  <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-[12px] font-bold">
-                    ₿
-                  </div>
-                  <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center text-[12px] font-bold">
-                    ₮
-                  </div>
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-[12px] font-bold">
-                    Ξ
-                  </div>
-                </div>
-              </button>
-            </div>
             <div className="text-center">
-              <p className="text-gray-500 text-[11px] font-bold tracking-tight uppercase mt-2">
+              <p className="text-gray-500 text-[11px] font-bold tracking-tight uppercase">
                 Billed every period. Cancel anytime.
               </p>
             </div>
