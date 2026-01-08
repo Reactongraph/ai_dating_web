@@ -19,13 +19,17 @@ const CreateCharacterPageContent = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [showCloseModal, setShowCloseModal] = useState(false);
 
+  // Get character type from URL params (e.g., ?type=guy or ?type=girl)
+  const typeParam = searchParams?.get('type');
+  const characterGender = typeParam === 'guy' ? 'guy' : 'girl';
+
   // Load all character attributes in parallel
   const { isLoading } = useCharacterAttributes();
 
   const methods = useForm<CharacterFormData>({
     defaultValues: {
       // Step 1: Create
-      characterType: 'girl',
+      characterType: characterGender as 'girl' | 'guy',
       style: 'realistic',
 
       // Step 2: Ethnicity and Eye Color
@@ -57,7 +61,6 @@ const CreateCharacterPageContent = () => {
 
       // Step 9: Summary
       name: '',
-      model: 'lustify-sdxl',
     },
   });
 
@@ -144,7 +147,7 @@ const CreateCharacterPageContent = () => {
     // Reset form data
     methods.reset({
       // Step 1: Create
-      characterType: 'girl',
+      characterType: characterGender as 'girl' | 'guy',
       style: 'realistic',
 
       // Step 2: Ethnicity and Eye Color
@@ -195,6 +198,13 @@ const CreateCharacterPageContent = () => {
   }
 
   if (!showForm) {
+    // Determine background image and title based on character gender
+    const backgroundImage = characterGender === 'guy' ? '/assets/boy.png' : '/assets/cardgirl1.png';
+    const cardTitle =
+      characterGender === 'guy'
+        ? 'Ready to build your perfect AI boyfriend?'
+        : 'Ready to build your perfect AI companion?';
+
     return (
       <div className="h-full bg-black text-white flex flex-col">
         {/* Landing Header */}
@@ -214,7 +224,8 @@ const CreateCharacterPageContent = () => {
               <CreateCompanionCard
                 onClick={handleStartCreating}
                 buttonText="Start Creating"
-                title="Ready to build your perfect AI companion?"
+                title={cardTitle}
+                backgroundImage={backgroundImage}
               />
             </div>
           </div>
