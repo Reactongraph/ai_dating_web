@@ -154,7 +154,8 @@ const SubscriptionPage = () => {
                       onClick={() => setSelectedPlanId(plan._id)}
                       className="flex flex-col md:items-center text-center cursor-pointer flex-grow"
                     >
-                      <div className="mb-2">
+                      {/* Plan Duration and Discount */}
+                      <div className="mb-3">
                         <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
                           {getDurationText(schedule.planValidity)}
                         </h3>
@@ -165,64 +166,87 @@ const SubscriptionPage = () => {
                         )}
                       </div>
 
-                      <div className="mt-2 mb-4">
-                        <div className="flex items-center justify-start md:justify-center gap-2">
+                      {/* Price and Per Month in One Line */}
+                      <div className="mb-3">
+                        <div className="flex items-center justify-center gap-2 flex-wrap">
                           {originalPrice && (
                             <span className="text-gray-500 line-through text-sm">
                               ${originalPrice}
                             </span>
                           )}
-                          <div className="flex items-baseline text-white">
-                            <span className="text-2xl md:text-3xl font-black">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-2xl md:text-3xl font-black text-white">
                               ${schedule.perMonthPlanPrice}
                             </span>
+                            <span className="text-gray-400 text-xs font-medium">/month</span>
                           </div>
                         </div>
-                        <p className="text-gray-500 text-[10px] font-bold uppercase tracking-tighter">
-                          per month
-                        </p>
                       </div>
+
+                      {/* Credits Info */}
+                      {schedule.credits > 0 && (
+                        <div className="mb-2 flex items-center justify-center gap-1.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-3 py-1.5 rounded-full border border-yellow-500/30">
+                          <svg
+                            className="w-4 h-4 text-yellow-400"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span className="text-yellow-400 text-xs font-bold">
+                            {schedule.credits} Credits
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Buy Buttons */}
-                    <div className="space-y-3 mt-4">
+                    {/* Buy Buttons - In a Row */}
+                    <div className="flex gap-2 mt-4">
+                      {/* Stars Button - Primary */}
                       <button
                         onClick={() => {
                           setSelectedPlanId(plan._id);
                           setShowPurchaseModal(true);
                         }}
-                        className="w-full h-12 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:opacity-90 transition-all active:scale-[0.98]"
+                        className="flex-1 h-12 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl flex flex-col items-center justify-center shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:opacity-90 transition-all active:scale-[0.98]"
                       >
-                        <span className="text-black font-bold text-sm">Buy with</span>
-                        <span className="text-black font-black text-lg tracking-tighter">⭐</span>
+                        <span className="text-black font-black text-lg">⭐</span>
+                        <span className="text-black font-bold text-[9px] uppercase">Stars</span>
                       </button>
 
+                      {/* UPI Button */}
                       <button
                         onClick={() => {
                           setSelectedPlanId(plan._id);
                           handleComingSoon();
                         }}
-                        className="w-full h-10 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
+                        className="flex-1 h-12 bg-background-elevated border border-white-1a rounded-xl flex flex-col items-center justify-center hover:bg-white/5 transition-all"
                       >
-                        <span className="text-white font-medium text-xs">Buy with</span>
                         <span className="text-white italic font-bold text-sm tracking-tighter">
                           UPI
                         </span>
+                        <span className="text-gray-400 font-medium text-[8px] uppercase">
+                          Payment
+                        </span>
                       </button>
 
+                      {/* Card Button */}
                       <button
                         onClick={() => {
                           setSelectedPlanId(plan._id);
                           handleComingSoon();
                         }}
-                        className="w-full h-10 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
+                        className="flex-1 h-12 bg-background-elevated border border-white-1a rounded-xl flex flex-col items-center justify-center gap-1 hover:bg-white/5 transition-all"
                       >
-                        <span className="text-white font-medium text-xs">Buy with</span>
-                        <div className="flex items-center gap-1">
-                          <div className="w-8 h-5 bg-white rounded-sm flex items-center justify-center">
-                            <span className="text-blue-800 font-black text-[8px]">VISA</span>
-                          </div>
+                        <div className="w-8 h-5 bg-white rounded-sm flex items-center justify-center">
+                          <span className="text-blue-800 font-black text-[8px]">VISA</span>
                         </div>
+                        <span className="text-gray-400 font-medium text-[8px] uppercase">Card</span>
                       </button>
                     </div>
                   </motion.div>
