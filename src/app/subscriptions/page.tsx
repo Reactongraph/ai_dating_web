@@ -51,7 +51,7 @@ const SubscriptionPage = () => {
   return (
     <div className="min-h-screen bg-black text-white pb-20 overflow-x-hidden">
       {/* Hero Section */}
-      <div className="relative pt-16 pb-10 px-6 text-center overflow-hidden">
+      {/* <div className="relative pt-16 pb-10 px-6 text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary-900/20 via-black to-black -z-10" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[400px] bg-[radial-gradient(circle_at_center,rgba(59,185,255,0.15)_0%,transparent_70%)] -z-10" />
 
@@ -71,7 +71,6 @@ const SubscriptionPage = () => {
           Get started with confidence and full control over your plan.
         </motion.p>
 
-        {/* Character Image */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -86,11 +85,11 @@ const SubscriptionPage = () => {
               className="object-contain"
               priority
             />
-            {/* Gradient Overlay for image transition */}
+
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent h-full w-full" />
           </div>
         </motion.div>
-      </div>
+      </div> */}
 
       <div className="max-w-5xl mx-auto px-5">
         <div className="text-center mb-10">
@@ -133,12 +132,19 @@ const SubscriptionPage = () => {
                   <motion.div
                     key={plan._id}
                     onClick={() => setSelectedPlanId(plan._id)}
-                    className={`relative cursor-pointer transition-all duration-300 flex flex-col justify-center ${
+                    whileHover={{ y: -5 }}
+                    className={`relative cursor-pointer transition-all duration-500 flex flex-col justify-center ${
                       isSelected
-                        ? 'bg-gradient-to-b from-cyan-500/10 via-background-elevated to-purple-500/10 border-cyan-500 md:scale-105 z-10'
-                        : 'bg-background-elevated border-white-1a hover:border-white-1a/30'
-                    } border-2 rounded-2xl p-6 overflow-hidden min-h-[140px] md:min-h-[180px]`}
+                        ? 'bg-gradient-to-br from-cyan-600/30 via-background-elevated to-purple-600/30 border-cyan-400 shadow-[0_0_40px_rgba(34,211,238,0.3)] md:scale-105 z-10'
+                        : 'bg-white/5 backdrop-blur-md border-white-1a hover:border-white/20 hover:bg-white/[0.08]'
+                    } border-2 rounded-[2rem] p-8 overflow-hidden min-h-[160px] md:min-h-[200px] group`}
                   >
+                    {isSelected && (
+                      <>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/20 blur-[50px] -mr-16 -mt-16" />
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/20 blur-[50px] -ml-16 -mb-16" />
+                      </>
+                    )}
                     {isBestSeller && (
                       <div className="absolute top-0 left-0 bg-cyan-500 text-black text-[10px] font-black px-4 py-1 rounded-br-xl uppercase">
                         Best Seller

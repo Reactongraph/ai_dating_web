@@ -54,7 +54,7 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
     dispatch(openAuthModal({ mode: 'signup' }));
   };
 
-  // Sync content mode with user's NSFW preference from profile data
+  // Always ensure content mode is set to 'sfw' on mount
   useEffect(() => {
     if (isAuthenticated && profileData?.user) {
       // Check if user has isNsfw property in their profile
@@ -280,8 +280,8 @@ const NavBar = ({ onToggleSidebar, isMobileOpen }: NavBarProps) => {
                     fontWeight="bold"
                     fontFamily="Arial, sans-serif"
                   > */}
-                    Adult
-                  {/* </text>
+                Adult
+                {/* </text>
                 </svg> */}
               </span>
             </div>
