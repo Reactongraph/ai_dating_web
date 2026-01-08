@@ -515,37 +515,173 @@ export default function ProfilePage() {
 
               {/* Subscription Plan */}
               <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h3 className="text-sm sm:text-base font-medium">Current Plan</h3>
-                    <p className="text-cyan-400">
+                    <h3 className="text-sm sm:text-base font-medium mb-1">Current Plan</h3>
+                    <p className="text-cyan-400 font-semibold">
                       {profileData?.subscriber?.isPremiumSubscriber ? 'Premium' : 'Free'}
                     </p>
-                    {profileData?.subscriptionDetails?.isActive && (
-                      <div className="mt-1 text-xs text-gray-400">
-                        <p>
-                          {profileData.subscriptionDetails.planValidity === 1
-                            ? 'Monthly'
-                            : profileData.subscriptionDetails.planValidity === 6
-                              ? 'Half-Yearly'
-                              : profileData.subscriptionDetails.planValidity === 12
-                                ? 'Annual'
-                                : `${profileData.subscriptionDetails.planValidity} months`}
-                        </p>
-                        <p>
-                          Expires:{' '}
-                          {new Date(
-                            profileData.subscriptionDetails.expiryDate,
-                          ).toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
+
+                    {profileData?.subscriber?.isPremiumSubscriber &&
+                      profileData?.subscriptionDetails?.isActive && (
+                        <div className="mt-3 space-y-2">
+                          {/* Plan Name and Details */}
+                          {(() => {
+                            const planData = profileData.subscriptionDetails.planId as {
+                              planName?: string;
+                              planSchedule?: Array<{
+                                planValidity?: number;
+                                planPrice?: number;
+                                credits?: number;
+                                perMonthPlanPrice?: number;
+                              }>;
+                            };
+
+                            return (
+                              <>
+                                {planData?.planName && (
+                                  <div className="bg-gray-800 p-2 rounded-md">
+                                    <p className="text-xs text-gray-400">Plan Type</p>
+                                    <p className="text-sm text-white font-medium">
+                                      {planData.planName}
+                                    </p>
+                                    {planData.planSchedule &&
+                                      planData.planSchedule[0]?.planValidity && (
+                                        <p className="text-xs text-gray-400 mt-0.5">
+                                          {planData.planSchedule[0].planValidity === 1
+                                            ? 'Monthly'
+                                            : planData.planSchedule[0].planValidity === 6
+                                              ? 'Half-Yearly (6 months)'
+                                              : planData.planSchedule[0].planValidity === 12
+                                                ? 'Annual (12 months)'
+                                                : `${planData.planSchedule[0].planValidity} months`}
+                                        </p>
+                                      )}
+                                  </div>
+                                )}
+
+                                {/* Credits Info */}
+                                {planData?.planSchedule?.[0]?.credits && (
+                                  <div className="flex items-center gap-2 text-xs">
+                                    <svg
+                                      className="w-3.5 h-3.5 text-yellow-400"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                    <span className="text-gray-300">
+                                      {planData.planSchedule[0].credits} Credits included
+                                    </span>
+                                  </div>
+                                )}
+                              </>
+                            );
+                          })()}
+
+                          {/* Subscription Dates */}
+                          <div className="space-y-1.5 text-xs text-gray-400 pt-2 border-t border-gray-800">
+                            {profileData.subscriptionDetails.startDate && (
+                              <p className="flex items-center gap-1.5">
+                                <svg
+                                  className="w-3 h-3 text-green-400"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                                <span>
+                                  Active since:{' '}
+                                  {new Date(
+                                    profileData.subscriptionDetails.startDate,
+                                  ).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })}
+                                </span>
+                              </p>
+                            )}
+
+                            {profileData.subscriptionDetails.expiryDate && (
+                              <>
+                                <p className="flex items-center gap-1.5">
+                                  <svg
+                                    className="w-3 h-3 text-orange-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                  </svg>
+                                  <span>
+                                    Expires:{' '}
+                                    {new Date(
+                                      profileData.subscriptionDetails.expiryDate,
+                                    ).toLocaleDateString('en-US', {
+                                      year: 'numeric',
+                                      month: 'short',
+                                      day: 'numeric',
+                                    })}
+                                  </span>
+                                </p>
+                                <p className="flex items-center gap-1.5">
+                                  <svg
+                                    className="w-3 h-3 text-cyan-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                  </svg>
+                                  <span>
+                                    {(() => {
+                                      const now = new Date();
+                                      const expiry = new Date(
+                                        profileData.subscriptionDetails.expiryDate,
+                                      );
+                                      const daysLeft = Math.ceil(
+                                        (expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+                                      );
+                                      return daysLeft > 0
+                                        ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining`
+                                        : 'Expired';
+                                    })()}
+                                  </span>
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      )}
                   </div>
+
                   {!profileData?.subscriber?.isPremiumSubscriber && (
                     <button
                       type="button"
                       onClick={() => (window.location.href = '/subscriptions')}
-                      className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-black px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded-md hover:opacity-90 transition-opacity"
+                      className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-black px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm rounded-md hover:opacity-90 transition-opacity flex-shrink-0"
                     >
                       Upgrade to Premium
                     </button>
@@ -600,7 +736,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Delete Account */}
-              <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
+              {/* <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <div className="flex justify-between items-center">
                   <p className="text-gray-400 text-xs sm:text-sm">
                     If you no longer wish to use this account, you can delete it along with all
@@ -613,7 +749,7 @@ export default function ProfilePage() {
                     Delete Account
                   </button>
                 </div>
-              </div>
+              </div> */}
 
               {/* Update Button */}
               <div className="flex justify-center mb-6">

@@ -11,7 +11,19 @@ const Footer = () => {
   const [showComingSoon, setShowComingSoon] = useState(false);
 
   // Routes where bottom navigation should be visible on mobile
-  const bottomNavRoutes = ['/', '/girls', '/guys', '/collection', '/my-ai', '/explore', '/chat', '/create-character', '/wallet', '/subscriptions'];
+  const bottomNavRoutes = [
+    '/',
+    '/girls',
+    '/guys',
+    '/collection',
+    '/my-ai',
+    '/explore',
+    '/chat',
+    '/create-character',
+    '/wallet',
+    '/subscriptions',
+    '/profile',
+  ];
   const isBottomNavPage = bottomNavRoutes.some(route =>
     route === '/' ? pathname === '/' : pathname.startsWith(route),
   );
@@ -31,7 +43,8 @@ const Footer = () => {
       {/* Mobile Bottom Navigation Bar */}
       {isBottomNavPage && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background-primary border-t border-white-1a z-50 px-2 py-2 pointer-events-auto">
-          <div className="flex justify-between items-center max-w-md mx-auto relative pointer-events-auto">{/* Explore */}
+          <div className="flex justify-between items-center max-w-md mx-auto relative pointer-events-auto">
+            {/* Explore */}
             <Link
               href="/explore"
               className={`flex flex-col items-center justify-center w-16 transition-colors pointer-events-auto ${

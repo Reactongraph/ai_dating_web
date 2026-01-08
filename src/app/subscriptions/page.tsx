@@ -119,7 +119,7 @@ const SubscriptionPage = () => {
             ? [1, 2, 3].map(i => (
                 <div
                   key={i}
-                  className="h-32 md:h-48 bg-background-elevated rounded-2xl animate-pulse border border-white-1a"
+                  className="h-96 bg-background-elevated rounded-2xl animate-pulse border border-white-1a"
                 />
               ))
             : plansData?.subscriptionPlans.map(plan => {
@@ -131,13 +131,12 @@ const SubscriptionPage = () => {
                 return (
                   <motion.div
                     key={plan._id}
-                    onClick={() => setSelectedPlanId(plan._id)}
                     whileHover={{ y: -5 }}
-                    className={`relative cursor-pointer transition-all duration-500 flex flex-col justify-center ${
+                    className={`relative transition-all duration-500 flex flex-col ${
                       isSelected
                         ? 'bg-gradient-to-br from-cyan-600/30 via-background-elevated to-purple-600/30 border-cyan-400 shadow-[0_0_40px_rgba(34,211,238,0.3)] md:scale-105 z-10'
                         : 'bg-white/5 backdrop-blur-md border-white-1a hover:border-white/20 hover:bg-white/[0.08]'
-                    } border-2 rounded-[2rem] p-8 overflow-hidden min-h-[160px] md:min-h-[200px] group`}
+                    } border-2 rounded-[2rem] p-6 overflow-hidden group`}
                   >
                     {isSelected && (
                       <>
@@ -151,7 +150,10 @@ const SubscriptionPage = () => {
                       </div>
                     )}
 
-                    <div className="flex flex-col md:items-center text-center">
+                    <div
+                      onClick={() => setSelectedPlanId(plan._id)}
+                      className="flex flex-col md:items-center text-center cursor-pointer flex-grow"
+                    >
                       <div className="mb-2">
                         <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
                           {getDurationText(schedule.planValidity)}
@@ -163,7 +165,7 @@ const SubscriptionPage = () => {
                         )}
                       </div>
 
-                      <div className="mt-2">
+                      <div className="mt-2 mb-4">
                         <div className="flex items-center justify-start md:justify-center gap-2">
                           {originalPrice && (
                             <span className="text-gray-500 line-through text-sm">
@@ -181,13 +183,55 @@ const SubscriptionPage = () => {
                         </p>
                       </div>
                     </div>
+
+                    {/* Buy Buttons */}
+                    <div className="space-y-3 mt-4">
+                      <button
+                        onClick={() => {
+                          setSelectedPlanId(plan._id);
+                          setShowPurchaseModal(true);
+                        }}
+                        className="w-full h-12 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:opacity-90 transition-all active:scale-[0.98]"
+                      >
+                        <span className="text-black font-bold text-sm">Buy with</span>
+                        <span className="text-black font-black text-lg tracking-tighter">⭐</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setSelectedPlanId(plan._id);
+                          handleComingSoon();
+                        }}
+                        className="w-full h-10 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
+                      >
+                        <span className="text-white font-medium text-xs">Buy with</span>
+                        <span className="text-white italic font-bold text-sm tracking-tighter">
+                          UPI
+                        </span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setSelectedPlanId(plan._id);
+                          handleComingSoon();
+                        }}
+                        className="w-full h-10 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
+                      >
+                        <span className="text-white font-medium text-xs">Buy with</span>
+                        <div className="flex items-center gap-1">
+                          <div className="w-8 h-5 bg-white rounded-sm flex items-center justify-center">
+                            <span className="text-blue-800 font-black text-[8px]">VISA</span>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
                   </motion.div>
                 );
               })}
         </div>
 
-        {/* Info Rows and Action Buttons Side by Side on Desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start mb-12">
+        {/* Info Rows and Security Badges */}
+        <div className="max-w-2xl mx-auto mb-12">
           <div className="space-y-6">
             <div className="space-y-4 px-1">
               <div className="flex items-center gap-3">
@@ -220,8 +264,8 @@ const SubscriptionPage = () => {
               </div>
             </div>
 
-            {/* Security Badges Integrated Here for Desktop */}
-            <div className="flex items-center gap-8 py-6 border-y border-white-1a">
+            {/* Security Badges */}
+            <div className="flex items-center justify-center gap-8 py-6 border-y border-white-1a">
               <div className="text-center">
                 <p className="text-gray-500 text-[8px] font-black uppercase mb-1">Verified By</p>
                 <div className="text-white font-black text-sm italic tracking-tighter">VISA</div>
@@ -252,77 +296,9 @@ const SubscriptionPage = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-4">
-            <button
-              onClick={() => {
-                if (!selectedPlanId) {
-                  showSnackbar('Please select a subscription plan', 'warning');
-                  return;
-                }
-                setShowPurchaseModal(true);
-              }}
-              disabled={!selectedPlanId}
-              className="w-full h-16 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-xl flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="text-black font-black text-xl">Continue</span>
-              <div className="bg-white/20 h-8 w-[1px] mx-1" />
-              <div className="flex items-center gap-2">
-                <span className="text-black font-black text-2xl tracking-tighter">⭐ Stars</span>
-              </div>
-            </button>
-
-            <button
-              onClick={handleComingSoon}
-              className="w-full h-14 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
-            >
-              <span className="text-white font-bold text-sm">Continue with</span>
-              <div className="flex items-center gap-1">
-                <span className="text-white italic font-black text-xl tracking-tighter">UPI</span>
-                <div className="w-4 h-4 bg-orange-500 rounded-sm rotate-45 flex items-center justify-center -ml-1">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                </div>
-              </div>
-            </button>
-
-            <div className="flex gap-3">
-              <button
-                onClick={handleComingSoon}
-                className="flex-[2] h-14 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-3 hover:bg-white/5 transition-all"
-              >
-                <span className="text-white font-bold text-sm">Continue with</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-6 bg-white rounded-sm flex items-center justify-center">
-                    <span className="text-blue-800 font-black text-[10px]">VISA</span>
-                  </div>
-                  <div className="w-10 h-6 bg-white rounded-sm flex items-center justify-center">
-                    <div className="flex -space-x-2">
-                      <div className="w-4 h-4 bg-red-500 rounded-full" />
-                      <div className="w-4 h-4 bg-orange-500 rounded-full" />
-                    </div>
-                  </div>
-                </div>
-              </button>
-              <button
-                onClick={handleComingSoon}
-                className="flex-1 h-14 bg-background-elevated border border-white-1a rounded-xl flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
-              >
-                <div className="flex -space-x-1.5">
-                  <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-[12px] font-bold">
-                    ₿
-                  </div>
-                  <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center text-[12px] font-bold">
-                    ₮
-                  </div>
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-[12px] font-bold">
-                    Ξ
-                  </div>
-                </div>
-              </button>
-            </div>
             <div className="text-center">
-              <p className="text-gray-500 text-[11px] font-bold tracking-tight uppercase mt-2">
+              <p className="text-gray-500 text-[11px] font-bold tracking-tight uppercase">
                 Billed every period. Cancel anytime.
               </p>
             </div>
