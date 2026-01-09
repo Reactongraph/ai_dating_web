@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
@@ -14,6 +14,12 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   title: 'Daily Love - Your AI Friends',
   description: 'Create and interact with AI companions tailored to your preferences',
@@ -26,7 +32,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background-primary`}
       >
