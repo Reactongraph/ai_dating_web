@@ -41,6 +41,13 @@ export const useTelegramAutoLogin = () => {
     // Parse initData for optional parsedData parameter
     const parsedData = parseTelegramInitData(initData);
 
+    // Get referral code from start_param (reliable way)
+    const startParam =
+      parsedData?.start_param ||
+      (typeof window !== 'undefined'
+        ? window.Telegram?.WebApp?.initDataUnsafe?.start_param
+        : undefined);
+
     // Attempt automatic login
     const attemptAutoLogin = async () => {
       try {
@@ -48,8 +55,8 @@ export const useTelegramAutoLogin = () => {
 
         const response = await telegramLogin({
           initData,
-          parsedData,
-          referralCode: parsedData?.start_param,
+          parsedData: parsedData || undefined,
+          referralCode: startParam,
         }).unwrap();
 
         // Handle both direct token response and standard API response
