@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 interface TelegramAuthRequest {
   initData: string;
+  referralCode?: string;
   parsedData?: {
     user?: {
       id: string;
@@ -61,6 +62,7 @@ interface TelegramAuthResponse {
     incognitoMode?: boolean;
     profilePicture?: string;
     telegramId?: string;
+    referralCode?: string;
     [key: string]: unknown;
   };
   realtimeImage?: string[];

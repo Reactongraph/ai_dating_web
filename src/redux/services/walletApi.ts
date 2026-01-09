@@ -122,6 +122,15 @@ export interface TelegramStarsInvoiceResponse {
   message: string;
 }
 
+export interface PublicWalletSettingsResponse {
+  success: boolean;
+  data: {
+    referralBonusCredits: number;
+    signupBonusCredits: number;
+    creditConversionRate: number;
+  };
+}
+
 export const walletApi = createApi({
   reducerPath: 'walletApi',
   baseQuery: fetchBaseQuery({
@@ -226,6 +235,10 @@ export const walletApi = createApi({
         body,
       }),
     }),
+    // Get public wallet settings
+    getPublicWalletSettings: builder.query<PublicWalletSettingsResponse, void>({
+      query: () => '/wallet/settings/public',
+    }),
   }),
 });
 
@@ -238,4 +251,5 @@ export const {
   useFailTransactionMutation,
   useAddMoneyDirectMutation,
   useCreateTelegramStarsInvoiceMutation,
+  useGetPublicWalletSettingsQuery,
 } = walletApi;

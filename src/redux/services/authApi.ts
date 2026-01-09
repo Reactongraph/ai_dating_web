@@ -44,6 +44,7 @@ export interface LoginResponse {
     };
     isPremiumSubscriber?: boolean;
     incognitoMode?: boolean;
+    referralCode?: string;
     [key: string]: unknown; // For any additional user fields
   };
   realtimeImage?: string[];

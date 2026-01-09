@@ -49,15 +49,14 @@ export const useTelegramAutoLogin = () => {
         const response = await telegramLogin({
           initData,
           parsedData,
+          referralCode: parsedData?.start_param,
         }).unwrap();
 
         // Handle both direct token response and standard API response
         if (response.token || (response.statusCode === 200 && response.accessToken)) {
           // Cast to LoginResponse to satisfy type checker
           dispatch(
-            setCredentials(
-              response as unknown as import('@/redux/services/authApi').LoginResponse,
-            ),
+            setCredentials(response as unknown as import('@/redux/services/authApi').LoginResponse),
           );
           console.log('Telegram auto-login successful');
         } else {
@@ -88,4 +87,3 @@ export const useTelegramAutoLogin = () => {
     error,
   };
 };
-

@@ -13,6 +13,7 @@ import { clearCredentials } from '@/redux/slices/authSlice';
 import { useSnackbar } from '@/providers';
 import { signOut } from 'next-auth/react';
 import Image from 'next/image';
+import ReferralModal from '@/components/modals/ReferralModal';
 
 interface ProfileFormData {
   name: string;
@@ -27,6 +28,7 @@ interface ProfileFormData {
 export default function ProfilePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isReferralModalOpen, setIsReferralModalOpen] = useState(false);
   const { showSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
@@ -689,6 +691,25 @@ export default function ProfilePage() {
                 </div>
               </div>
 
+              {/* Referral Program */}
+              <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
+                <div className="flex justify-between items-center">
+                  <div className="flex-1">
+                    <h3 className="text-sm sm:text-base font-medium mb-1">Referral Program</h3>
+                    <p className="text-xs text-gray-400">
+                      Invite friends and earn 0.4 credits for each successful Telegram signup.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsReferralModalOpen(true)}
+                    className="ml-4 bg-gray-800 hover:bg-gray-700 text-cyan-400 border border-gray-700 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-md transition-colors flex-shrink-0"
+                  >
+                    Invite Friends
+                  </button>
+                </div>
+              </div>
+
               {/* Language Selection */}
               <div className="mb-4 sm:mb-6 bg-gray-900 p-3 sm:p-4 rounded-md border border-gray-800">
                 <label className="block text-xs text-gray-400 mb-2">Language</label>
@@ -698,8 +719,8 @@ export default function ProfilePage() {
                     defaultValue="en"
                   >
                     <option value="en">English</option>
-                    <option value="es">Spanish</option>
-                    <option value="fr">French</option>
+                    {/* <option value="es">Spanish</option>
+                    <option value="fr">French</option> */}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg
@@ -769,6 +790,12 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      <ReferralModal
+        isOpen={isReferralModalOpen}
+        onClose={() => setIsReferralModalOpen(false)}
+        referralCode={profileData?.referralCode || (user as any)?.referralCode || ''}
+      />
     </LayoutWithoutFooter>
   );
 }
