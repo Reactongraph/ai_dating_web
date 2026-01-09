@@ -256,9 +256,7 @@ export default function SubscriptionPurchaseModal({
                   {Math.ceil(planPrice * 44.5)} Stars
                 </span>
               </p>
-              <p className="text-xs text-text-secondary mt-1">
-                Rate: 1 USD = 44.5 Stars (1 Star = 2 INR, 89 INR = 1 USD)
-              </p>
+              <p className="text-xs text-text-secondary mt-1">Rate: 1 USD = 44.5 Stars</p>
             </div>
           )}
           {paymentMethod === 'upi' && (
