@@ -22,7 +22,7 @@ export default function ReferralModal({ isOpen, onClose, referralCode }: Referra
 
   // Get bot username from environment variables
   const botUsername = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'dailyloveai_bot';
-  const referralLink = `https://t.me/${botUsername}?start=${referralCode}`;
+  const referralLink = `https://t.me/${botUsername}?startapp=${referralCode}`;
 
   const copyToClipboard = async (text: string, type: 'code' | 'link') => {
     try {
