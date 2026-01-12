@@ -25,26 +25,70 @@ export default function ReferralModal({ isOpen, onClose, referralCode }: Referra
   const referralLink = `https://t.me/${botUsername}?startapp=${referralCode}`;
 
   const copyToClipboard = async (text: string, type: 'code' | 'link') => {
-    try {
-      await navigator.clipboard.writeText(text);
+    const notifySuccess = () => {
       showSnackbar(
         `${type === 'code' ? 'Referral code' : 'Referral link'} copied to clipboard!`,
         'success',
       );
       setIsCopying(true);
       setTimeout(() => setIsCopying(false), 2000);
+    };
+
+    // Try modern Clipboard API
+    if (navigator.clipboard && typeof window !== 'undefined' && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        notifySuccess();
+        return;
+      } catch (err) {
+        console.error('Clipboard API failed, falling back:', err);
+      }
+    }
+
+    // Fallback: document.execCommand('copy')
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      
+      // Ensure textarea is not visible but part of DOM
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-9999px';
+      textArea.style.top = '0';
+      document.body.appendChild(textArea);
+      
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        notifySuccess();
+      } else {
+        throw new Error('Fallback copy failed');
+      }
     } catch (err) {
       showSnackbar('Failed to copy to clipboard', 'error');
     }
   };
 
   const handleShare = async () => {
+    const shareText = `Use my referral code ${referralCode} to get started on Daily Love!`;
+    const shareUrl = referralLink;
+
+    // Special handling for Telegram Mini App
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+      window.Telegram.WebApp.openTelegramLink(telegramShareUrl);
+      return;
+    }
+
     if (navigator.share) {
       try {
         await navigator.share({
           title: 'Join me on Daily Love!',
-          text: `Use my referral code ${referralCode} to get started on Daily Love!`,
-          url: referralLink,
+          text: shareText,
+          url: shareUrl,
         });
       } catch (err) {
         // Share cancelled or failed
