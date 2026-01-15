@@ -267,7 +267,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
         // console.log('API Response:', response);
 
-        if (response.success && response.data.answer) {
+        if (response.success && (response.data.answer || response.data.image.imageURL)) {
           // Replace temporary user message with real one
           setMessages(prev =>
             deduplicateMessages(
