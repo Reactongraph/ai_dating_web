@@ -267,7 +267,7 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
 
         // console.log('API Response:', response);
 
-        if (response.success && (response.data.answer || response.data.image.imageURL)) {
+        if (response.success && (response.data.answer || response.data.image)) {
           // Replace temporary user message with real one
           setMessages(prev =>
             deduplicateMessages(
@@ -289,18 +289,21 @@ export const useChat = ({ chatId, botId, channelName }: UseChatProps) => {
           // Create unique IDs for bot messages to prevent duplicates
           const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-          // Add text response
-          const textMessage: ChatMessage = {
-            id: `bot-text-${uniqueId}`,
-            senderId: botId,
-            content: response.data.answer,
-            timestamp: new Date().toISOString(),
-            isUser: false,
-            type: 'TEXT',
-          };
+          const newMessages: ChatMessage[] = [];
+
+          // Add text response if present
+          if (response.data.answer) {
+            newMessages.push({
+              id: `bot-text-${uniqueId}`,
+              senderId: botId,
+              content: response.data.answer,
+              timestamp: new Date().toISOString(),
+              isUser: false,
+              type: 'TEXT',
+            });
+          }
 
           // Add image response if present
-          const newMessages: ChatMessage[] = [textMessage];
           if (response.data.image) {
             // Use image ID from response if available, otherwise create unique ID
             const imageId = response.data.image.id
